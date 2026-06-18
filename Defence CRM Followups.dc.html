@@ -1,0 +1,1705 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<template id="__bundler_thumbnail" data-bg-color="#0B1530">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#0B1530"/>
+    <g transform="translate(600 350)">
+      <path d="M0 -120 L150 -45 L0 30 L-150 -45 Z" fill="#2B5CC4"/>
+      <path d="M-150 -45 L0 30 L0 180 L-150 105 Z" fill="#1C2F63"/>
+      <path d="M150 -45 L0 30 L0 180 L150 105 Z" fill="#8CAA72"/>
+    </g>
+    <text x="600" y="640" font-family="sans-serif" font-size="56" font-weight="700" fill="#ffffff" text-anchor="middle" letter-spacing="-1">Hub Relay</text>
+    <text x="600" y="690" font-family="monospace" font-size="22" fill="#7E8FB8" text-anchor="middle" letter-spacing="6">DEFENCE CRM</text>
+  </svg>
+</template>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+::selection{background:#2B5CC4;color:#fff}
+@keyframes cfade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes cslide{from{transform:translateX(40px);opacity:.4}to{transform:translateX(0);opacity:1}}
+@keyframes cpulse{0%,100%{opacity:.4}50%{opacity:1}}
+@keyframes cgrow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes cspin{to{transform:rotate(360deg)}}
+.cscroll::-webkit-scrollbar{width:8px;height:8px}
+.cscroll::-webkit-scrollbar-thumb{background:#d3dae8;border-radius:8px}
+.cscroll::-webkit-scrollbar-track{background:transparent}
+</style>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+</helmet>
+
+<div ref="{{ rootRef }}" style="--ink:#0B1530;--navy:#13234E;--navy2:#1C2F63;--blue:#2B5CC4;--blueSoft:#E8EEFA;--steel:#3E7CA8;--green:#6E9152;--greenSoft:#ECF1E5;--clay:#BD6B4B;--claySoft:#F7ECE6;--paper:#FBFBFC;--mist:#F3F5F9;--line:#E2E7F0;--muted:#5C6886;height:100vh;width:100%;display:flex;background:var(--mist);font-family:'IBM Plex Sans',sans-serif;-webkit-font-smoothing:antialiased;color:var(--navy);overflow:hidden">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside style="flex:none;width:252px;background:radial-gradient(120% 90% at 20% 0%,#1B2D5E 0%,#0E1B3C 60%,#0B1530 100%);display:flex;flex-direction:column;padding:22px 16px 16px;color:#fff">
+    <div style="display:flex;align-items:center;gap:11px;padding:0 6px 22px">
+      <div style="width:30px;height:30px;position:relative;flex:none">
+        <div style="position:absolute;inset:0;clip-path:polygon(50% 0,100% 25%,50% 50%,0 25%);background:#2B5CC4"></div>
+        <div style="position:absolute;inset:0;clip-path:polygon(0 25%,50% 50%,50% 100%,0 75%);background:#1C2F63"></div>
+        <div style="position:absolute;inset:0;clip-path:polygon(100% 25%,50% 50%,50% 100%,100% 75%);background:#8CAA72"></div>
+      </div>
+      <div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15px;letter-spacing:-.01em;line-height:1">Hub Relay</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.18em;text-transform:uppercase;color:#7E8FB8;margin-top:3px">Defence CRM</div>
+      </div>
+    </div>
+
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:#5E6E96;padding:0 8px 8px">Pracovní plocha</div>
+    <nav style="display:flex;flex-direction:column;gap:2px">
+      <div onClick="{{ navDashboard }}" style="display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:11px;cursor:pointer;font-size:13.5px;font-weight:500;{{ sDashboard }}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="11" width="7" height="10" rx="1.5"/><rect x="3" y="15" width="7" height="6" rx="1.5"/></svg>
+        <span style="flex:1">Přehled</span>
+      </div>
+      <div onClick="{{ navPipeline }}" style="display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:11px;cursor:pointer;font-size:13.5px;font-weight:500;{{ sPipeline }}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="5" height="14" rx="1.5"/><rect x="9.5" y="4" width="5" height="10" rx="1.5"/><rect x="16" y="4" width="5" height="7" rx="1.5"/></svg>
+        <span style="flex:1">Pipeline</span>
+      </div>
+      <div onClick="{{ navContacts }}" style="display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:11px;cursor:pointer;font-size:13.5px;font-weight:500;{{ sContacts }}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3"/><path d="M3 19c0-3.3 2.7-5 6-5s6 1.7 6 5"/><path d="M16 6.4a3 3 0 0 1 0 5.8M18 13.4c2.2.5 3.6 1.9 3.6 4.4"/></svg>
+        <span style="flex:1">Kontakty</span>
+      </div>
+      <div onClick="{{ navMatches }}" style="display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:11px;cursor:pointer;font-size:13.5px;font-weight:500;{{ sMatches }}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h6M4 7l2.5-2.5M4 7l2.5 2.5"/><path d="M20 17h-6M20 17l-2.5-2.5M20 17l-2.5 2.5"/><circle cx="12" cy="12" r="2"/></svg>
+        <span style="flex:1">Shody</span>
+        <sc-if value="{{ hasNewMatch }}" hint-placeholder-val="{{ true }}"><span style="flex:none;background:#8CAA72;color:#0B1530;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;padding:1px 7px;border-radius:20px">{{ newMatchCount }}</span></sc-if>
+      </div>
+      <div onClick="{{ navCalendar }}" style="display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:11px;cursor:pointer;font-size:13.5px;font-weight:500;{{ sCalendar }}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="17" rx="2.5"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>
+        <span style="flex:1">Kalendář</span>
+        <span style="flex:none;width:7px;height:7px;border-radius:50%;background:#8CAA72" title="Synced s Teams"></span>
+      </div>
+      <div onClick="{{ navTrips }}" style="display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:11px;cursor:pointer;font-size:13.5px;font-weight:500;{{ sTrips }}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 21s7-6.5 7-12a7 7 0 0 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="9" r="2.5"/></svg>
+        <span style="flex:1">Cesty</span>
+      </div>
+      <div onClick="{{ navTrip }}" style="display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:11px;cursor:pointer;font-size:13.5px;font-weight:500;{{ sTrip }}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13a3 3 0 0 0 6 0V9"/></svg>
+        <span style="flex:1">Zpráva z cesty</span>
+        <span style="flex:none;font-family:'IBM Plex Mono',monospace;font-size:8px;letter-spacing:.08em;background:rgba(140,170,114,.2);color:#A8C48E;padding:2px 6px;border-radius:5px">AI</span>
+      </div>
+      <div onClick="{{ navReport }}" style="display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:11px;cursor:pointer;font-size:13.5px;font-weight:500;{{ sReport }}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
+        <span style="flex:1">Reporting</span>
+      </div>
+    </nav>
+
+    <div style="margin-top:auto;display:flex;flex-direction:column;gap:10px">
+      <div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:13px;padding:13px 14px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:#7E8FB8;margin-bottom:6px">Tým · Q2 2026</div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <div style="display:flex">
+            <span style="width:24px;height:24px;border-radius:50%;background:#2B5CC4;border:2px solid #0E1B3C;display:flex;align-items:center;justify-content:center;font-size:9.5px;font-weight:600">TH</span>
+            <span style="width:24px;height:24px;border-radius:50%;background:#6E9152;border:2px solid #0E1B3C;margin-left:-7px;display:flex;align-items:center;justify-content:center;font-size:9.5px;font-weight:600">NK</span>
+            <span style="width:24px;height:24px;border-radius:50%;background:#3E7CA8;border:2px solid #0E1B3C;margin-left:-7px;display:flex;align-items:center;justify-content:center;font-size:9.5px;font-weight:600">OT</span>
+            <span style="width:24px;height:24px;border-radius:50%;background:#1C2F63;border:2px solid #0E1B3C;margin-left:-7px;display:flex;align-items:center;justify-content:center;font-size:9.5px;font-weight:600">+2</span>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding:6px 8px">
+        <span style="width:32px;height:32px;border-radius:10px;background:#2B5CC4;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:12px;flex:none">{{ userInit }}</span>
+        <div style="flex:1;min-width:0"><div style="font-size:12.5px;font-weight:600;line-height:1.1">{{ userName }}</div><div style="font-size:10.5px;color:#7E8FB8">{{ userRole }}</div></div>
+        <div onClick="{{ signOut }}" title="Odhlásit" style="flex:none;width:28px;height:28px;border-radius:8px;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;cursor:pointer">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9AA8CC" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M10 17l5-5-5-5M15 12H3"/></svg>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <main style="flex:1;min-width:0;display:flex;flex-direction:column;background:var(--mist)">
+    <!-- TOP BAR -->
+    <header style="flex:none;height:72px;display:flex;align-items:center;gap:18px;padding:0 30px;background:var(--paper);border-bottom:1px solid var(--line)">
+      <div style="flex:1;min-width:0">
+        <h1 style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:21px;letter-spacing:-.02em;margin:0;line-height:1.1">{{ pageTitle }}</h1>
+        <div style="font-size:12.5px;color:var(--muted);margin-top:2px">{{ pageSub }}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:9px;flex:none">
+        <div style="display:flex;align-items:center;gap:8px;background:var(--mist);border:1px solid var(--line);border-radius:11px;padding:9px 13px;width:230px">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8693AD" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+          <input placeholder="Hledat kontakt, firmu…" style="border:none;background:none;outline:none;font-family:'IBM Plex Sans',sans-serif;font-size:13px;color:var(--navy);width:100%">
+        </div>
+        <button onClick="{{ startTour }}" title="Spustit průvodce" style="display:flex;align-items:center;gap:7px;background:var(--paper);color:var(--navy);border:1px solid var(--line);border-radius:11px;padding:10px 14px;font-family:'IBM Plex Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2B5CC4" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 4.5 1.5c0 1.5-2 2-2 3" stroke-linecap="round"/><circle cx="12" cy="17" r="0.6" fill="#2B5CC4" stroke="none"/></svg>
+          Průvodce
+        </button>
+        <button onClick="{{ openImport }}" style="display:flex;align-items:center;gap:7px;background:var(--paper);color:var(--navy);border:1px solid var(--line);border-radius:11px;padding:10px 15px;font-family:'IBM Plex Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6E9152" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M8 11l4 4 4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+          Import Excel
+        </button>
+        <button onClick="{{ openNew }}" style="display:flex;align-items:center;gap:7px;background:var(--ink);color:#fff;border:none;border-radius:11px;padding:10px 16px;font-family:'IBM Plex Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8CAA72" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+          Nový kontakt
+        </button>
+      </div>
+    </header>
+
+    <div class="cscroll" style="flex:1;min-height:0;overflow-y:auto">
+
+      <!-- ============================ DASHBOARD ============================ -->
+      <sc-if value="{{ isDashboard }}" hint-placeholder-val="{{ true }}">
+      <div style="padding:26px 30px 40px;animation:cfade .3s ease both">
+        <!-- KPI ROW -->
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px">
+          <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="4">
+            <div style="background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:17px 18px;border-top:3px solid {{ k.color }}">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600">{{ k.label }}</div>
+              <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:30px;letter-spacing:-.02em;color:var(--ink);margin-top:8px;line-height:1">{{ k.value }}</div>
+              <div style="font-size:11.5px;color:{{ k.deltaColor }};margin-top:6px;font-weight:500">{{ k.delta }}</div>
+            </div>
+          </sc-for>
+        </div>
+
+        <!-- NEW MATCHES — star feature -->
+        <div style="background:var(--ink);border-radius:18px;padding:20px 22px;margin-bottom:22px;position:relative;overflow:hidden">
+          <div style="position:absolute;top:-30px;right:-20px;width:150px;height:150px;opacity:.07;background:#8CAA72;clip-path:polygon(50% 0,100% 25%,50% 50%,0 25%)"></div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+            <span style="width:8px;height:8px;border-radius:50%;background:#8CAA72;animation:cpulse 2s infinite"></span>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#8CAA72;font-weight:600">Match engine · nové shody</span>
+          </div>
+          <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:16px">
+            <div style="color:#fff;font-size:13px;max-width:60ch;line-height:1.45;opacity:.82">Systém spároval <b style="color:#fff">poptávky</b> z jedné firmy s <b style="color:#fff">nabídkami</b> z druhé. Tyhle příležitosti čekají na propojení.</div>
+            <span onClick="{{ navMatches }}" style="flex:none;font-size:12.5px;color:#8CAA72;font-weight:600;cursor:pointer">Všechny shody ›</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:13px">
+            <sc-for list="{{ dashMatches }}" as="m" hint-placeholder-count="2">
+              <div onClick="{{ m.onOpen }}" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:15px;cursor:pointer">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:11px">
+                  <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#9DABCB">{{ m.sector }}</span>
+                  <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;color:#8CAA72">{{ m.scoreLabel }} shoda</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px">
+                  <div style="flex:1;min-width:0">
+                    <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:#7FA6F0;margin-bottom:3px">Poptává</div>
+                    <div style="font-size:12.5px;font-weight:600;color:#fff;line-height:1.2">{{ m.demandOrg }}</div>
+                    <div style="font-size:11px;color:#9DABCB;margin-top:2px;line-height:1.3">{{ m.demandText }}</div>
+                  </div>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8CAA72" stroke-width="2" stroke-linecap="round" style="flex:none"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                  <div style="flex:1;min-width:0;text-align:right">
+                    <div style="font-family:'IBM Plex Mono',monospace;font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:#A8C48E;margin-bottom:3px">Nabízí</div>
+                    <div style="font-size:12.5px;font-weight:600;color:#fff;line-height:1.2">{{ m.offerOrg }}</div>
+                    <div style="font-size:11px;color:#9DABCB;margin-top:2px;line-height:1.3">{{ m.offerText }}</div>
+                  </div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <!-- TWO COL: followups + activity -->
+        <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:18px">
+          <!-- FOLLOWUPS DUE -->
+          <div>
+            <div style="display:flex;align-items:center;gap:9px;margin-bottom:13px">
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600">K vyřízení dnes</span>
+              <span style="height:1px;flex:1;background:var(--line)"></span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <sc-for list="{{ todayList }}" as="o" hint-placeholder-count="4">
+                <div onClick="{{ o.onOpen }}" style="background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:13px;cursor:pointer;border-left:3px solid {{ o.followColor }}" style-hover="border-color:#cdd6e6">
+                  <div style="flex:none;width:40px;height:40px;border-radius:11px;background:{{ o.typeSoft }};display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;color:{{ o.typeColor }}">{{ o.mono }}</div>
+                  <div style="flex:1;min-width:0">
+                    <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14px;color:var(--navy)">{{ o.name }}</div>
+                    <div style="font-size:12px;color:var(--muted);margin-top:1px">{{ o.followTask }}</div>
+                  </div>
+                  <div style="flex:none;text-align:right">
+                    <div style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:600;color:{{ o.followColor }}">{{ o.followLabel }}</div>
+                    <div style="font-size:10.5px;color:var(--muted);margin-top:2px">{{ o.owner }}</div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <!-- TODAY IN TEAMS -->
+          <div style="margin-bottom:20px">
+            <div style="display:flex;align-items:center;gap:9px;margin-bottom:13px">
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600">Dnes v Teams</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="#5B5FC7"><rect x="3" y="6" width="11" height="12" rx="2"/><circle cx="17" cy="6" r="2.4"/><rect x="14" y="9" width="6" height="8" rx="2" opacity=".6"/></svg>
+              <span onClick="{{ navCalendar }}" style="margin-left:auto;font-size:11.5px;color:var(--blue);font-weight:600;cursor:pointer">Kalendář ›</span>
+            </div>
+            <div style="background:var(--paper);border:1px solid var(--line);border-radius:16px;overflow:hidden">
+              <sc-for list="{{ todayMeetings }}" as="t" hint-placeholder-count="3">
+                <div onClick="{{ t.onOpen }}" style="display:flex;align-items:center;gap:12px;padding:11px 16px;border-bottom:1px solid var(--mist);cursor:pointer" style-hover="background:#fafbfd">
+                  <div style="flex:none;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;color:var(--navy);width:42px">{{ t.time }}</div>
+                  <span style="flex:none;width:8px;height:8px;border-radius:50%;background:{{ t.color }}"></span>
+                  <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:var(--navy);line-height:1.2">{{ t.title }}</div><div style="font-size:11px;color:var(--muted);margin-top:1px">{{ t.sub }}</div></div>
+                  <span style="flex:none;width:22px;height:22px;border-radius:50%;background:{{ t.color }};color:#fff;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600">{{ t.init }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <!-- ACTIVITY -->
+          <div>
+            <div style="display:flex;align-items:center;gap:9px;margin-bottom:13px">
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600">Poslední aktivita</span>
+              <span style="height:1px;flex:1;background:var(--line)"></span>
+            </div>
+            <div style="background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:6px 18px">
+              <sc-for list="{{ activity }}" as="a" hint-placeholder-count="5">
+                <div style="display:flex;gap:13px;padding:13px 0;border-bottom:1px solid var(--mist)">
+                  <div style="flex:none;width:26px;display:flex;flex-direction:column;align-items:center">
+                    <span style="width:9px;height:9px;border-radius:50%;background:{{ a.color }};margin-top:3px"></span>
+                  </div>
+                  <div style="flex:1;min-width:0">
+                    <div style="font-size:13px;color:var(--navy);line-height:1.4">{{ a.text }}</div>
+                    <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px">{{ a.meta }}</div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ============================ PIPELINE ============================ -->
+      <sc-if value="{{ isPipeline }}" hint-placeholder-val="{{ false }}">
+      <div class="cscroll" style="padding:24px 30px 40px;overflow-x:auto;animation:cfade .3s ease both">
+        <div style="display:flex;gap:16px;align-items:flex-start;min-width:max-content">
+          <sc-for list="{{ columns }}" as="c" hint-placeholder-count="5">
+            <div style="flex:none;width:282px">
+              <div style="display:flex;align-items:center;gap:9px;padding:0 4px 12px">
+                <span style="width:9px;height:9px;border-radius:3px;background:{{ c.color }}"></span>
+                <span style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13.5px;color:var(--navy)">{{ c.label }}</span>
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted)">{{ c.count }}</span>
+                <span style="margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--muted)">{{ c.valueLabel }}</span>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:11px;background:rgba(0,0,0,.015);border-radius:14px;padding:11px;min-height:120px">
+                <sc-for list="{{ c.cards }}" as="o" hint-placeholder-count="2">
+                  <div onClick="{{ o.onOpen }}" style="background:var(--paper);border:1px solid var(--line);border-radius:13px;padding:13px 14px;cursor:pointer;box-shadow:0 1px 2px rgba(11,21,48,.04)" style-hover="border-color:#cdd6e6;box-shadow:0 4px 14px rgba(11,21,48,.07)">
+                    <div style="display:flex;align-items:center;gap:9px;margin-bottom:9px">
+                      <div style="flex:none;width:32px;height:32px;border-radius:9px;background:{{ o.typeSoft }};display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:11.5px;color:{{ o.typeColor }}">{{ o.mono }}</div>
+                      <div style="flex:1;min-width:0">
+                        <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13px;color:var(--navy);line-height:1.15">{{ o.name }}</div>
+                        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-top:2px">{{ o.typeLabel }}</div>
+                      </div>
+                      <sc-if value="{{ o.hasMatch }}" hint-placeholder-val="{{ false }}"><span title="Nová shoda" style="flex:none;width:8px;height:8px;border-radius:50%;background:#8CAA72;animation:cpulse 2s infinite"></span></sc-if>
+                    </div>
+                    <div style="font-size:11.5px;color:var(--muted);line-height:1.35;margin-bottom:11px">{{ o.sector }}</div>
+                    <div style="display:flex;align-items:center;justify-content:space-between">
+                      <span style="display:inline-flex;align-items:center;gap:5px;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:{{ o.followColor }};background:{{ o.followBg }};padding:3px 8px;border-radius:7px">{{ o.followLabel }}</span>
+                      <span style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:12px;color:var(--ink)">{{ o.valueLabel }}</span>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ============================ CONTACTS ============================ -->
+      <sc-if value="{{ isContacts }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:22px 30px 40px;animation:cfade .3s ease both">
+        <div style="display:flex;gap:8px;margin-bottom:16px">
+          <sc-for list="{{ filters }}" as="f" hint-placeholder-count="5">
+            <span onClick="{{ f.onClick }}" style="cursor:pointer;font-size:12.5px;font-weight:600;padding:7px 14px;border-radius:9px;border:1px solid {{ f.border }};color:{{ f.fg }};background:{{ f.bg }}">{{ f.label }} <span style="opacity:.6;font-family:'IBM Plex Mono',monospace;font-size:11px">{{ f.count }}</span></span>
+          </sc-for>
+        </div>
+        <div style="background:var(--paper);border:1px solid var(--line);border-radius:16px;overflow:hidden">
+          <div style="display:grid;grid-template-columns:2.4fr 1.3fr 1.1fr 1fr 0.9fr;gap:12px;padding:12px 20px;border-bottom:1px solid var(--line);background:var(--mist);font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600">
+            <span>Subjekt</span><span>Sektor</span><span>Fáze</span><span>Vlastník</span><span style="text-align:right">Followup</span>
+          </div>
+          <sc-for list="{{ contactRows }}" as="o" hint-placeholder-count="8">
+            <div onClick="{{ o.onOpen }}" style="display:grid;grid-template-columns:2.4fr 1.3fr 1.1fr 1fr 0.9fr;gap:12px;padding:14px 20px;border-bottom:1px solid var(--mist);align-items:center;cursor:pointer" style-hover="background:#fafbfd">
+              <div style="display:flex;align-items:center;gap:12px;min-width:0">
+                <div style="flex:none;width:38px;height:38px;border-radius:10px;background:{{ o.typeSoft }};display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:12.5px;color:{{ o.typeColor }}">{{ o.mono }}</div>
+                <div style="min-width:0">
+                  <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13.5px;color:var(--navy);display:flex;align-items:center;gap:7px">{{ o.name }}<sc-if value="{{ o.hasMatch }}" hint-placeholder-val="{{ false }}"><span style="width:7px;height:7px;border-radius:50%;background:#8CAA72"></span></sc-if></div>
+                  <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-top:2px">{{ o.typeLabel }} · {{ o.location }}</div>
+                </div>
+              </div>
+              <div style="font-size:12.5px;color:var(--muted)">{{ o.sector }}</div>
+              <div><span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:{{ o.stageColor }}"><span style="width:8px;height:8px;border-radius:3px;background:{{ o.stageColor }}"></span>{{ o.stageLabel }}</span></div>
+              <div style="display:flex;align-items:center;gap:7px"><span style="width:24px;height:24px;border-radius:50%;background:{{ o.ownerColor }};color:#fff;display:flex;align-items:center;justify-content:center;font-size:9.5px;font-weight:600">{{ o.ownerInit }}</span><span style="font-size:12px;color:var(--navy)">{{ o.owner }}</span></div>
+              <div style="text-align:right"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:{{ o.followColor }}">{{ o.followLabel }}</span></div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ============================ MATCHES ============================ -->
+      <sc-if value="{{ isMatches }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:24px 30px 40px;animation:cfade .3s ease both">
+        <div style="display:flex;flex-direction:column;gap:16px;max-width:980px">
+          <sc-for list="{{ matchList }}" as="m" hint-placeholder-count="3">
+            <div style="background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:20px 22px;border-left:4px solid {{ m.accent }}">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;background:var(--mist);padding:4px 10px;border-radius:7px">{{ m.sector }}</span>
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:{{ m.statusColor }};font-weight:600">{{ m.statusLabel }}</span>
+                <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
+                  <div style="width:120px;height:7px;border-radius:6px;background:var(--mist);overflow:hidden"><div style="height:100%;border-radius:6px;background:var(--green);width:{{ m.scoreW }};transform-origin:left;animation:cgrow .6s ease both"></div></div>
+                  <span style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;color:var(--green)">{{ m.scoreLabel }}</span>
+                </div>
+              </div>
+              <div style="display:flex;align-items:stretch;gap:0">
+                <!-- demand -->
+                <div onClick="{{ m.onOpenDemand }}" style="flex:1;cursor:pointer;padding-right:22px">
+                  <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--blue);font-weight:600;margin-bottom:9px">↙ Poptávka</div>
+                  <div style="display:flex;align-items:center;gap:11px;margin-bottom:9px">
+                    <div style="flex:none;width:40px;height:40px;border-radius:11px;background:var(--blueSoft);display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;color:var(--blue)">{{ m.demandMono }}</div>
+                    <div><div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14.5px;color:var(--navy)">{{ m.demandOrg }}</div><div style="font-size:11px;color:var(--muted)">{{ m.demandType }}</div></div>
+                  </div>
+                  <div style="font-size:13px;color:var(--navy);background:var(--mist);border-radius:10px;padding:10px 12px;line-height:1.4">„{{ m.demandText }}"</div>
+                </div>
+                <!-- connector -->
+                <div style="flex:none;width:54px;display:flex;flex-direction:column;align-items:center;justify-content:center;border-left:1px dashed var(--line);border-right:1px dashed var(--line)">
+                  <div style="width:34px;height:34px;border-radius:50%;background:var(--ink);display:flex;align-items:center;justify-content:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8CAA72" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+                </div>
+                <!-- offer -->
+                <div onClick="{{ m.onOpenOffer }}" style="flex:1;cursor:pointer;padding-left:22px">
+                  <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--green);font-weight:600;margin-bottom:9px">Nabídka ↗</div>
+                  <div style="display:flex;align-items:center;gap:11px;margin-bottom:9px">
+                    <div style="flex:none;width:40px;height:40px;border-radius:11px;background:var(--greenSoft);display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;color:var(--green)">{{ m.offerMono }}</div>
+                    <div><div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14.5px;color:var(--navy)">{{ m.offerOrg }}</div><div style="font-size:11px;color:var(--muted)">{{ m.offerType }}</div></div>
+                  </div>
+                  <div style="font-size:13px;color:var(--navy);background:var(--mist);border-radius:10px;padding:10px 12px;line-height:1.4">„{{ m.offerText }}"</div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;margin-top:16px;padding-top:15px;border-top:1px solid var(--mist)">
+                <div style="font-size:12px;color:var(--muted);flex:1">{{ m.rationale }}</div>
+                <sc-if value="{{ m.isNew }}" hint-placeholder-val="{{ true }}">
+                  <button onClick="{{ m.onDismiss }}" style="background:none;border:1px solid var(--line);color:var(--muted);border-radius:9px;padding:8px 14px;font-family:'IBM Plex Sans',sans-serif;font-size:12.5px;font-weight:600;cursor:pointer">Skrýt</button>
+                  <button onClick="{{ m.onIntro }}" style="display:flex;align-items:center;gap:7px;background:var(--ink);color:#fff;border:none;border-radius:9px;padding:8px 16px;font-family:'IBM Plex Sans',sans-serif;font-size:12.5px;font-weight:600;cursor:pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8CAA72" stroke-width="2.2"><path d="M4 4h16v12H7l-3 3V4z"/></svg>Propojit firmy</button>
+                </sc-if>
+                <sc-if value="{{ m.isIntroduced }}" hint-placeholder-val="{{ false }}">
+                  <span style="display:flex;align-items:center;gap:8px;color:var(--green);font-size:12.5px;font-weight:600"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6E9152" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Propojeno · intro e-mail odeslán</span>
+                </sc-if>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ============================ CALENDAR (TEAMS) ============================ -->
+      <sc-if value="{{ isCalendar }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:22px 30px 36px;animation:cfade .3s ease both">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px;flex-wrap:wrap">
+          <div onClick="{{ openTeams }}" style="display:flex;align-items:center;gap:9px;background:var(--paper);border:1px solid var(--line);border-radius:11px;padding:8px 13px;cursor:pointer">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="#5B5FC7"><rect x="3" y="6" width="11" height="12" rx="2"/><circle cx="17.5" cy="6" r="2.6"/><rect x="14" y="9" width="6.5" height="8" rx="2" opacity=".6"/></svg>
+            <span style="font-size:12.5px;font-weight:600;color:var(--navy)">Microsoft Teams</span>
+            <span style="display:flex;align-items:center;gap:5px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--green);font-weight:600"><span style="width:7px;height:7px;border-radius:50%;background:#6E9152;animation:cpulse 2s infinite"></span>{{ teamsConnectedLabel }}</span>
+            <span style="font-size:11.5px;color:var(--blue);font-weight:600;border-left:1px solid var(--line);padding-left:9px">Spravovat ›</span>
+          </div>
+          <span style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14px;color:var(--navy)">Týden 22.–26. 6. 2026</span>
+          <div style="margin-left:auto;display:flex;align-items:center;gap:7px">
+            <sc-for list="{{ calMembers }}" as="m" hint-placeholder-count="4">
+              <span onClick="{{ m.onClick }}" style="display:flex;align-items:center;gap:7px;cursor:pointer;background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:5px 11px 5px 6px;opacity:{{ m.opacity }}">
+                <span style="width:20px;height:20px;border-radius:50%;background:{{ m.color }};color:#fff;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600">{{ m.init }}</span>
+                <span style="font-size:11.5px;font-weight:600;color:var(--navy)">{{ m.name }}</span>
+              </span>
+            </sc-for>
+          </div>
+        </div>
+
+        <sc-if value="{{ hasUnconnected }}" hint-placeholder-val="{{ false }}">
+        <div onClick="{{ openTeams }}" style="display:flex;align-items:center;gap:12px;background:#EEF0FB;border:1px solid #d7daf2;border-radius:13px;padding:13px 16px;margin-bottom:14px;cursor:pointer">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="#5B5FC7" style="flex:none"><rect x="3" y="6" width="11" height="12" rx="2"/><circle cx="17.5" cy="6" r="2.6"/><rect x="14" y="9" width="6.5" height="8" rx="2" opacity=".6"/></svg>
+          <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:var(--navy)">Někteří členové týmu nemají připojený Teams kalendář</div><div style="font-size:11.5px;color:var(--muted);margin-top:1px">Připoj jejich účty, ať se schůzky synchronizují automaticky</div></div>
+          <span style="flex:none;font-size:12.5px;color:#3A3D6B;font-weight:600;background:#fff;border:1px solid #d3d6e8;border-radius:9px;padding:8px 13px">Připojit účty ›</span>
+        </div>
+        </sc-if>
+        <div style="background:var(--paper);border:1px solid var(--line);border-radius:16px;overflow:hidden">
+          <!-- day headers -->
+          <div style="display:flex;border-bottom:1px solid var(--line)">
+            <div style="flex:none;width:56px"></div>
+            <sc-for list="{{ calDays }}" as="dd" hint-placeholder-count="5">
+              <div style="flex:1;text-align:center;padding:11px 0;background:{{ dd.headBg }};color:{{ dd.headFg }};border-left:1px solid var(--mist)">
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;opacity:.75">{{ dd.lbl }}</div>
+                <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14px;margin-top:2px">{{ dd.date }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <!-- grid -->
+          <div style="display:flex;position:relative">
+            <!-- time gutter -->
+            <div style="flex:none;width:56px;position:relative;height:{{ calGridH }}">
+              <sc-for list="{{ hourLines }}" as="h" hint-placeholder-count="10">
+                <div style="position:absolute;top:{{ h.top }};right:9px;transform:translateY(-50%);font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted)">{{ h.label }}</div>
+              </sc-for>
+            </div>
+            <!-- day columns -->
+            <sc-for list="{{ calDays }}" as="dd" hint-placeholder-count="5">
+              <div style="flex:1;position:relative;height:{{ calGridH }};border-left:1px solid var(--mist);background-image:repeating-linear-gradient(var(--paper),var(--paper) 51px,var(--mist) 51px,var(--mist) 52px)">
+                <sc-for list="{{ dd.events }}" as="e" hint-placeholder-count="2">
+                  <div onClick="{{ e.onOpen }}" style="position:absolute;left:5px;right:5px;top:{{ e.top }};height:{{ e.height }};background:{{ e.bg }};border-left:3px solid {{ e.color }};border-radius:8px;padding:6px 8px;cursor:pointer;overflow:hidden">
+                    <div style="display:flex;align-items:center;gap:5px">
+                      <sc-if value="{{ e.isTeams }}" hint-placeholder-val="{{ false }}"><svg width="11" height="11" viewBox="0 0 24 24" fill="#5B5FC7" style="flex:none"><rect x="3" y="6" width="11" height="12" rx="2"/><circle cx="17" cy="6" r="2.4"/><rect x="14" y="9" width="6" height="8" rx="2" opacity=".6"/></svg></sc-if>
+                      <span style="font-size:11px;font-weight:600;color:var(--navy);line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ e.title }}</span>
+                    </div>
+                    <div style="font-size:9.5px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ e.time }} · {{ e.sub }}</div>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="font-size:11.5px;color:var(--muted);margin-top:12px;display:flex;align-items:center;gap:7px">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#6E9152" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l2.5 1.5"/></svg>
+          Schůzky se sytí z Teams kalendářů členů týmu. Naplánovaný followup v kontaktu se zapíše zpět do Teams.
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ============================ TRIP REPORT (AI) ============================ -->
+      <sc-if value="{{ isTripReport }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:24px 30px 48px;animation:cfade .3s ease both">
+
+        <!-- CAPTURE -->
+        <sc-if value="{{ trCapture }}" hint-placeholder-val="{{ true }}">
+        <div style="display:grid;grid-template-columns:1.15fr 1fr;gap:20px;max-width:1140px;align-items:start">
+
+          <!-- LEFT: inputs -->
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <!-- VOICE -->
+            <div style="background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:18px 20px">
+              <div style="display:flex;align-items:center;gap:9px;margin-bottom:14px">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#2B5CC4" stroke-width="1.9" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
+                <span style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14.5px;color:var(--navy)">Hlasová poznámka z cesty</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:12px;margin-bottom:13px">
+                <div onClick="{{ toggleRec }}" style="flex:none;width:54px;height:54px;border-radius:50%;background:{{ recDotBg }};display:flex;align-items:center;justify-content:center;cursor:pointer;border:1px solid var(--line)">
+                  <sc-if value="{{ recording }}" hint-placeholder-val="{{ false }}"><span style="width:18px;height:18px;border-radius:4px;background:#BD6B4B;animation:cpulse 1.2s infinite"></span></sc-if>
+                  <sc-if value="{{ notRecording }}" hint-placeholder-val="{{ true }}"><span style="width:18px;height:18px;border-radius:50%;background:#BD6B4B"></span></sc-if>
+                </div>
+                <div style="flex:1;min-width:0">
+                  <div style="font-size:13px;font-weight:600;color:var(--navy)">{{ recState }}</div>
+                  <div style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted);margin-top:2px">{{ recLabel }}</div>
+                </div>
+                <label style="flex:none;display:flex;align-items:center;gap:7px;background:var(--mist);border:1px solid var(--line);border-radius:10px;padding:9px 13px;cursor:pointer;font-size:12px;font-weight:600;color:var(--navy)">
+                  <input type="file" accept="audio/*" onChange="{{ onAudioFile }}" style="display:none">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5C6886" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M8 11l4 4 4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+                  Nahrát z diktafonu
+                </label>
+              </div>
+              {{ audioEl }}
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:6px">Přepis poznámky</div>
+              <textarea value="{{ tr.transcript }}" onInput="{{ trTranscript }}" placeholder="Co zaznělo na jednání — buď nadiktuj a přepiš, nebo rovnou napiš poznámky…" style="width:100%;height:84px;resize:vertical;border:1px solid var(--line);background:var(--mist);border-radius:11px;padding:11px 13px;font-family:'IBM Plex Sans',sans-serif;font-size:12.5px;color:var(--navy);outline:none;line-height:1.45"></textarea>
+              <div style="font-size:10.5px;color:var(--muted);margin-top:6px;line-height:1.4">V ostré verzi se hlas přepíše automaticky; v prototypu napiš/vlož přepis sem.</div>
+            </div>
+
+            <!-- BUSINESS CARDS -->
+            <div style="background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:18px 20px">
+              <div style="display:flex;align-items:center;gap:9px;margin-bottom:14px">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#3E7CA8" stroke-width="1.9"><rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="8" cy="11" r="2"/><path d="M13 10h5M13 14h5M5 16c.5-1.5 1.6-2 3-2s2.5.5 3 2"/></svg>
+                <span style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14.5px;color:var(--navy)">Vizitky</span>
+                <sc-if value="{{ hasCards }}" hint-placeholder-val="{{ false }}"><span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted)">{{ cardCount }}</span></sc-if>
+                <label style="margin-left:auto;display:flex;align-items:center;gap:7px;background:var(--ink);color:#fff;border-radius:10px;padding:8px 13px;cursor:pointer;font-size:12px;font-weight:600">
+                  <input type="file" accept="image/*" multiple onChange="{{ onCardFiles }}" style="display:none">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8CAA72" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+                  Přidat foto
+                </label>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:11px">
+                <sc-for list="{{ trCards }}" as="c" hint-placeholder-count="0">
+                  <div style="display:flex;gap:12px;background:var(--mist);border:1px solid var(--line);border-radius:13px;padding:11px">
+                    {{ c.imgEl }}
+                    <div style="flex:1;min-width:0;display:grid;grid-template-columns:1fr 1fr;gap:7px">
+                      <input value="{{ c.name }}" onInput="{{ c.onName }}" placeholder="Jméno" style="border:1px solid var(--line);background:var(--paper);border-radius:8px;padding:7px 9px;font-family:'IBM Plex Sans',sans-serif;font-size:12px;color:var(--navy);outline:none">
+                      <input value="{{ c.role }}" onInput="{{ c.onRole }}" placeholder="Funkce" style="border:1px solid var(--line);background:var(--paper);border-radius:8px;padding:7px 9px;font-family:'IBM Plex Sans',sans-serif;font-size:12px;color:var(--navy);outline:none">
+                      <input value="{{ c.org }}" onInput="{{ c.onOrg }}" placeholder="Firma" style="border:1px solid var(--line);background:var(--paper);border-radius:8px;padding:7px 9px;font-family:'IBM Plex Sans',sans-serif;font-size:12px;color:var(--navy);outline:none">
+                      <input value="{{ c.note }}" onInput="{{ c.onNote }}" placeholder="Pozn." style="border:1px solid var(--line);background:var(--paper);border-radius:8px;padding:7px 9px;font-family:'IBM Plex Sans',sans-serif;font-size:12px;color:var(--navy);outline:none">
+                    </div>
+                    <div onClick="{{ c.onRemove }}" style="flex:none;width:26px;height:26px;border-radius:7px;background:var(--paper);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);font-size:13px">✕</div>
+                  </div>
+                </sc-for>
+                <sc-if value="{{ noCards }}" hint-placeholder-val="{{ true }}">
+                  <div style="text-align:center;padding:18px;border:1.5px dashed #cdd6e6;border-radius:12px;font-size:12.5px;color:var(--muted)">Nahraj fotky vizitek — jména/firmy doplníš a uložíš do CRM</div>
+                </sc-if>
+              </div>
+            </div>
+
+            <!-- JUSTIFY + COMMENT -->
+            <div style="background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:18px 20px">
+              <div style="display:grid;grid-template-columns:1fr;gap:14px">
+                <div>
+                  <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:6px">Místo a kontext cesty</div>
+                  <input value="{{ tr.place }}" onInput="{{ trPlace }}" placeholder="Ostrava, 17. 6. 2026 — návštěva výroby + Falcon Munitions" style="width:100%;border:1px solid var(--line);background:var(--mist);border-radius:11px;padding:11px 13px;font-family:'IBM Plex Sans',sans-serif;font-size:12.5px;color:var(--navy);outline:none">
+                </div>
+                <div>
+                  <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:6px">Odůvodnění / účel akce</div>
+                  <textarea value="{{ tr.justify }}" onInput="{{ trJustify }}" placeholder="Proč se cesta konala, co bylo cílem…" style="width:100%;height:56px;resize:vertical;border:1px solid var(--line);background:var(--mist);border-radius:11px;padding:10px 12px;font-family:'IBM Plex Sans',sans-serif;font-size:12.5px;color:var(--navy);outline:none;line-height:1.45"></textarea>
+                </div>
+                <div>
+                  <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:6px">Krátký komentář</div>
+                  <textarea value="{{ tr.comment }}" onInput="{{ trComment }}" placeholder="Dojmy, na co nezapomenout, atmosféra jednání…" style="width:100%;height:56px;resize:vertical;border:1px solid var(--line);background:var(--mist);border-radius:11px;padding:10px 12px;font-family:'IBM Plex Sans',sans-serif;font-size:12.5px;color:var(--navy);outline:none;line-height:1.45"></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT: template + generate -->
+          <div style="position:sticky;top:0;display:flex;flex-direction:column;gap:16px">
+            <div style="background:var(--ink);border-radius:16px;padding:18px 20px">
+              <div style="display:flex;align-items:center;gap:9px;margin-bottom:6px">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8CAA72" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg>
+                <span style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14px;color:#fff">Vzor zprávy</span>
+                <span style="margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:9px;color:#8CAA72">uloží se</span>
+              </div>
+              <div style="font-size:11.5px;color:#9DABCB;line-height:1.45;margin-bottom:11px">Vlož svůj vzor — zpráva se vygeneruje přesně podle něj. Vzor zůstane uložený pro příště.</div>
+              <textarea value="{{ tr.template }}" onInput="{{ trTemplate }}" style="width:100%;height:200px;resize:vertical;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);border-radius:11px;padding:12px;font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#E6ECF8;outline:none;line-height:1.5"></textarea>
+            </div>
+            <button onClick="{{ generateReport }}" style="display:flex;align-items:center;justify-content:center;gap:9px;background:#8CAA72;color:#0B1530;border:none;border-radius:13px;padding:15px;font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;cursor:pointer">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0B1530" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 4.6L18 9l-4.2 1.4L12 15l-1.8-4.6L6 9l4.2-1.4z"/><path d="M19 14l.9 2.3L22 17l-2.1.7L19 20l-.9-2.3L16 17l2.1-.7z"/></svg>
+              Vygenerovat zprávu z cesty
+            </button>
+            <div style="font-size:11px;color:var(--muted);text-align:center;line-height:1.4">Spojí hlas, vizitky, odůvodnění i komentář do jedné zprávy podle vzoru</div>
+          </div>
+        </div>
+        </sc-if>
+
+        <!-- RESULT -->
+        <sc-if value="{{ trResult }}" hint-placeholder-val="{{ false }}">
+        <div style="max-width:840px">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+            <span onClick="{{ backToCapture }}" style="display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);font-weight:600;cursor:pointer">‹ Zpět k podkladům</span>
+            <div style="margin-left:auto;display:flex;gap:9px">
+              <button onClick="{{ saveCardsToCrm }}" style="display:flex;align-items:center;gap:7px;background:var(--paper);border:1px solid var(--line);color:var(--navy);border-radius:10px;padding:9px 15px;font-family:'IBM Plex Sans',sans-serif;font-size:12.5px;font-weight:600;cursor:pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3E7CA8" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Uložit vizitky do CRM</button>
+              <button onClick="{{ copyReport }}" style="display:flex;align-items:center;gap:7px;background:var(--ink);color:#fff;border:none;border-radius:10px;padding:9px 16px;font-family:'IBM Plex Sans',sans-serif;font-size:12.5px;font-weight:600;cursor:pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8CAA72" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>Kopírovat</button>
+            </div>
+          </div>
+
+          <sc-if value="{{ generating }}" hint-placeholder-val="{{ true }}">
+          <div style="background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:60px 30px;display:flex;flex-direction:column;align-items:center;gap:16px">
+            <span style="width:30px;height:30px;border:3px solid #d8e3cb;border-top-color:#6E9152;border-radius:50%;animation:cspin .7s linear infinite"></span>
+            <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15px;color:var(--navy)">Skládám zprávu podle tvého vzoru…</div>
+            <div style="font-size:12.5px;color:var(--muted)">Spojuji hlas, vizitky, odůvodnění a komentář</div>
+          </div>
+          </sc-if>
+
+          <sc-if value="{{ hasReport }}" hint-placeholder-val="{{ false }}">
+          <div style="background:var(--paper);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 4px 24px rgba(11,21,48,.06)">
+            <div style="background:radial-gradient(120% 130% at 90% 0%,#1B2D5E,#0B1530);padding:16px 24px;display:flex;align-items:center;gap:10px">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#8CAA72" stroke-width="2" stroke-linecap="round"><path d="M12 3l1.8 4.6L18 9l-4.2 1.4L12 15l-1.8-4.6L6 9l4.2-1.4z"/></svg>
+              <span style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14px;color:#fff">Zpráva ze služební cesty</span>
+              <span style="margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#8CAA72;letter-spacing:.08em">VYGENEROVÁNO · UPRAVITELNÉ</span>
+            </div>
+            <textarea value="{{ trReport }}" onInput="{{ trReportEdit }}" style="width:100%;min-height:460px;resize:vertical;border:none;background:var(--paper);padding:24px 26px;font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--navy);outline:none;line-height:1.6;white-space:pre-wrap"></textarea>
+          </div>
+          </sc-if>
+        </div>
+        </sc-if>
+
+      </div>
+      </sc-if>
+
+      <!-- ============================ TRIPS ============================ -->
+      <sc-if value="{{ isTrips }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:24px 30px 40px;animation:cfade .3s ease both">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;max-width:1080px">
+          <sc-for list="{{ trips }}" as="t" hint-placeholder-count="2">
+            <div style="background:var(--paper);border:1px solid var(--line);border-radius:18px;overflow:hidden">
+              <div style="background:radial-gradient(120% 130% at 85% 0%,#1B2D5E,#0B1530);padding:18px 20px;color:#fff;position:relative">
+                <div style="position:absolute;inset:0;opacity:.5;background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);background-size:22px 22px"></div>
+                <div style="position:relative">
+                  <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:#7FA6F0;font-weight:600">{{ t.dates }}</div>
+                  <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:20px;margin-top:6px;letter-spacing:-.01em">{{ t.city }}</div>
+                  <div style="display:flex;gap:8px;margin-top:11px">
+                    <span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);padding:4px 9px;border-radius:7px;color:#D6DEF0">{{ t.office }}</span>
+                    <span style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;background:rgba(140,170,114,.18);border:1px solid rgba(140,170,114,.3);padding:4px 9px;border-radius:7px;color:#B7CE9D">{{ t.meetCount }} schůzek</span>
+                  </div>
+                </div>
+              </div>
+              <div style="padding:8px 18px 14px">
+                <sc-for list="{{ t.stops }}" as="s" hint-placeholder-count="3">
+                  <div onClick="{{ s.onOpen }}" style="display:flex;align-items:center;gap:13px;padding:12px 0;border-bottom:1px solid var(--mist);cursor:pointer">
+                    <div style="flex:none;width:46px;text-align:center"><div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14px;color:var(--blue);line-height:1">{{ s.time }}</div></div>
+                    <div style="flex:1;min-width:0;border-left:1px solid var(--line);padding-left:13px">
+                      <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13.5px;color:var(--navy)">{{ s.name }}</div>
+                      <div style="font-size:11.5px;color:var(--muted);margin-top:1px">{{ s.purpose }}</div>
+                    </div>
+                    <span style="flex:none;color:var(--blue);font-size:17px">›</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- ============================ REPORT ============================ -->
+      <sc-if value="{{ isReport }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:26px 30px 40px;animation:cfade .3s ease both">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;max-width:1080px">
+          <div style="background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:20px 22px">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:18px">Pipeline podle fáze</div>
+            <sc-for list="{{ reportStages }}" as="r" hint-placeholder-count="5">
+              <div style="margin-bottom:15px">
+                <div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:6px"><span style="color:var(--navy);font-weight:500">{{ r.label }}</span><span style="font-family:'Space Grotesk',sans-serif;font-weight:600;color:var(--ink)">{{ r.value }}</span></div>
+                <div style="height:9px;border-radius:6px;background:var(--mist);overflow:hidden"><div style="height:100%;border-radius:6px;background:{{ r.color }};width:{{ r.w }};transform-origin:left;animation:cgrow .6s ease both"></div></div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:20px 22px">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:18px">Aktivita týmu · 30 dní</div>
+            <sc-for list="{{ reportTeam }}" as="r" hint-placeholder-count="4">
+              <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+                <span style="width:30px;height:30px;border-radius:50%;background:{{ r.color }};color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex:none">{{ r.init }}</span>
+                <div style="flex:1;min-width:0">
+                  <div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:5px"><span style="color:var(--navy);font-weight:500">{{ r.name }}</span><span style="font-family:'IBM Plex Mono',monospace;color:var(--muted)">{{ r.count }} interakcí</span></div>
+                  <div style="height:7px;border-radius:5px;background:var(--mist);overflow:hidden"><div style="height:100%;border-radius:5px;background:{{ r.color }};width:{{ r.w }};transform-origin:left;animation:cgrow .6s ease both"></div></div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="grid-column:1 / -1;display:grid;grid-template-columns:repeat(4,1fr);gap:14px">
+            <sc-for list="{{ reportKpis }}" as="k" hint-placeholder-count="4">
+              <div style="background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:16px 18px;border-top:3px solid {{ k.color }}">
+                <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600">{{ k.label }}</div>
+                <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:25px;color:var(--ink);margin-top:7px;line-height:1">{{ k.value }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+    </div>
+  </main>
+
+  <!-- ============================ DETAIL PANEL ============================ -->
+  <sc-if value="{{ panelOpen }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ closePanel }}" style="position:fixed;inset:0;background:rgba(11,21,48,.34);z-index:40;animation:cfade .2s ease both"></div>
+  <aside class="cscroll" style="position:fixed;top:0;right:0;height:100vh;width:480px;background:var(--paper);z-index:41;overflow-y:auto;box-shadow:-24px 0 60px -20px rgba(11,21,48,.4);animation:cslide .28s cubic-bezier(.22,1,.36,1) both">
+    <!-- header -->
+    <div style="position:sticky;top:0;z-index:2;background:radial-gradient(120% 130% at 90% 0%,#1B2D5E,#0B1530);color:#fff;padding:20px 24px 22px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:{{ d.typeChipColor }};background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);padding:4px 10px;border-radius:7px">{{ d.typeLabel }}</span>
+        <div onClick="{{ closePanel }}" style="width:32px;height:32px;border-radius:9px;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px">✕</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px">
+        <div style="flex:none;width:54px;height:54px;border-radius:14px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:18px;color:#fff">{{ d.mono }}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:21px;letter-spacing:-.01em;line-height:1.1">{{ d.name }}</div>
+          <div style="font-size:12.5px;color:#9DABCB;margin-top:3px">{{ d.sector }} · {{ d.location }}</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:18px">
+        <a href="{{ d.mailto }}" style="flex:1;display:flex;align-items:center;justify-content:center;gap:7px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14);border-radius:10px;padding:9px;font-size:12.5px;font-weight:600;color:#fff;text-decoration:none"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8CAA72" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>E-mail</a>
+        <div onClick="{{ d.onLog }}" style="flex:1;display:flex;align-items:center;justify-content:center;gap:7px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14);border-radius:10px;padding:9px;font-size:12.5px;font-weight:600;cursor:pointer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8CAA72" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>Záznam</div>
+        <div onClick="{{ d.onSchedule }}" style="flex:1;display:flex;align-items:center;justify-content:center;gap:7px;background:#8CAA72;color:#0B1530;border-radius:10px;padding:9px;font-size:12.5px;font-weight:600;cursor:pointer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0B1530" stroke-width="2"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>Followup</div>
+      </div>
+    </div>
+
+    <div style="padding:22px 24px 40px">
+      <!-- STAGE STEPPER -->
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:11px">Fáze vztahu — klikni pro posun</div>
+      <div style="display:flex;gap:5px;margin-bottom:8px">
+        <sc-for list="{{ d.stages }}" as="s" hint-placeholder-count="5">
+          <div onClick="{{ s.onClick }}" title="{{ s.label }}" style="flex:1;height:7px;border-radius:5px;cursor:pointer;background:{{ s.bg }}"></div>
+        </sc-for>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px">
+        <span style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14px;color:{{ d.stageColor }}">{{ d.stageLabel }}</span>
+        <span style="font-size:12px;color:var(--muted)">Vlastník: {{ d.owner }} · {{ d.value }}</span>
+      </div>
+
+      <!-- NEXT FOLLOWUP -->
+      <div style="background:{{ d.followBg }};border:1px solid {{ d.followBorder }};border-radius:13px;padding:13px 15px;display:flex;align-items:center;gap:12px;margin-bottom:22px">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="{{ d.followColor }}" stroke-width="1.9" style="flex:none"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:var(--navy)">{{ d.followTask }}</div><div style="font-size:11.5px;color:var(--muted);margin-top:1px">{{ d.followWhen }}</div></div>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:{{ d.followColor }}">{{ d.followLabel }}</span>
+      </div>
+
+      <!-- POPTAVKY / NABIDKY -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px">
+        <div style="background:var(--blueSoft);border:1px solid #cfdcf5;border-radius:13px;padding:14px">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);font-weight:600;margin-bottom:9px">Poptávky</div>
+          <sc-for list="{{ d.demands }}" as="x" hint-placeholder-count="2"><div style="font-size:12.5px;color:var(--navy);line-height:1.35;padding:5px 0;border-bottom:1px solid rgba(43,92,196,.1)">{{ x }}</div></sc-for>
+          <sc-if value="{{ d.noDemands }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;color:var(--muted);font-style:italic">Zatím žádné</div></sc-if>
+        </div>
+        <div style="background:var(--greenSoft);border:1px solid #d8e3cb;border-radius:13px;padding:14px">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--green);font-weight:600;margin-bottom:9px">Nabízí</div>
+          <sc-for list="{{ d.offers }}" as="x" hint-placeholder-count="2"><div style="font-size:12.5px;color:var(--navy);line-height:1.35;padding:5px 0;border-bottom:1px solid rgba(110,145,82,.12)">{{ x }}</div></sc-for>
+          <sc-if value="{{ d.noOffers }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;color:var(--muted);font-style:italic">Zatím žádné</div></sc-if>
+        </div>
+      </div>
+
+      <!-- MATCHES FOR THIS ORG -->
+      <sc-if value="{{ d.hasMatches }}" hint-placeholder-val="{{ false }}">
+      <div style="margin-bottom:24px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:11px">Navržené shody</div>
+        <sc-for list="{{ d.matches }}" as="m" hint-placeholder-count="1">
+          <div onClick="{{ m.onOpen }}" style="background:var(--ink);border-radius:13px;padding:14px 15px;margin-bottom:9px;cursor:pointer;display:flex;align-items:center;gap:12px">
+            <div style="flex:1;min-width:0"><div style="font-size:10px;font-family:'IBM Plex Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#8CAA72;margin-bottom:3px">{{ m.dir }}</div><div style="font-size:13px;font-weight:600;color:#fff;line-height:1.25">{{ m.partner }}</div><div style="font-size:11.5px;color:#9DABCB;margin-top:2px">{{ m.text }}</div></div>
+            <span style="flex:none;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;color:#8CAA72">{{ m.score }}</span>
+          </div>
+        </sc-for>
+      </div>
+      </sc-if>
+
+      <!-- UPSELL / CROSS-SELL -->
+      <sc-if value="{{ d.hasUpsell }}" hint-placeholder-val="{{ false }}">
+      <div style="margin-bottom:24px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:11px">Příležitosti · upsell / cross-sell</div>
+        <div style="display:flex;flex-direction:column;gap:9px">
+          <sc-for list="{{ d.upsells }}" as="u" hint-placeholder-count="2">
+            <div style="display:flex;align-items:center;gap:11px;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:12px 14px;border-left:3px solid {{ u.color }}">
+              <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:var(--navy)">{{ u.title }}</div><div style="font-size:11.5px;color:var(--muted);margin-top:1px">{{ u.note }}</div></div>
+              <span style="flex:none;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:{{ u.color }};font-weight:600">{{ u.tag }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- FILES TO SEND -->
+      <div style="margin-bottom:24px">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:11px">Soubory k odeslání</div>
+        <div style="background:var(--paper);border:1px solid var(--line);border-radius:13px;overflow:hidden">
+          <sc-for list="{{ d.files }}" as="f" hint-placeholder-count="3">
+            <div style="display:flex;align-items:center;gap:12px;padding:12px 15px;border-bottom:1px solid var(--mist)">
+              <div style="flex:none;width:32px;height:32px;border-radius:8px;background:var(--mist);display:flex;align-items:center;justify-content:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="{{ f.iconColor }}" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></div>
+              <div style="flex:1;min-width:0"><div style="font-size:12.5px;font-weight:600;color:var(--navy)">{{ f.name }}</div><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);margin-top:1px">{{ f.meta }}</div></div>
+              <sc-if value="{{ f.sent }}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;font-weight:600;color:var(--green);display:flex;align-items:center;gap:5px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#6E9152" stroke-width="2.6" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>Odesláno</span></sc-if>
+              <sc-if value="{{ f.notSent }}" hint-placeholder-val="{{ true }}"><button onClick="{{ f.onSend }}" style="background:var(--ink);color:#fff;border:none;border-radius:8px;padding:6px 13px;font-family:'IBM Plex Sans',sans-serif;font-size:11.5px;font-weight:600;cursor:pointer">Poslat</button></sc-if>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <!-- INTERACTION HISTORY -->
+      <div style="margin-bottom:24px">
+        <div style="display:flex;align-items:center;gap:9px;margin-bottom:13px">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600">Historie interakcí</span>
+          <sc-if value="{{ d.logClosed }}" hint-placeholder-val="{{ true }}"><span onClick="{{ d.onLog }}" style="margin-left:auto;display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--blue);font-weight:600;cursor:pointer"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2B5CC4" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Záznam</span></sc-if>
+        </div>
+        <sc-if value="{{ d.logOpen }}" hint-placeholder-val="{{ false }}">
+        <div style="background:var(--mist);border:1px solid var(--line);border-radius:13px;padding:12px;margin-bottom:14px">
+          <textarea value="{{ d.logText }}" onInput="{{ d.onLogText }}" placeholder="Co se odehrálo — call, e-mail, schůzka, dohoda…" style="width:100%;height:62px;resize:none;border:1px solid var(--line);background:var(--paper);border-radius:10px;padding:10px 12px;font-family:'IBM Plex Sans',sans-serif;font-size:12.5px;color:var(--navy);outline:none;line-height:1.45"></textarea>
+          <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:9px">
+            <button onClick="{{ d.cancelLog }}" style="background:none;border:1px solid var(--line);color:var(--muted);border-radius:8px;padding:7px 13px;font-family:'IBM Plex Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer">Zrušit</button>
+            <button onClick="{{ d.saveLog }}" style="display:flex;align-items:center;gap:6px;background:var(--ink);color:#fff;border:none;border-radius:8px;padding:7px 14px;font-family:'IBM Plex Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#8CAA72" stroke-width="2.4" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>Uložit</button>
+          </div>
+        </div>
+        </sc-if>
+        <div style="position:relative;padding-left:22px">
+          <div style="position:absolute;left:5px;top:4px;bottom:4px;width:1.5px;background:var(--line)"></div>
+          <sc-for list="{{ d.history }}" as="h" hint-placeholder-count="4">
+            <div style="position:relative;padding-bottom:17px">
+              <span style="position:absolute;left:-22px;top:2px;width:11px;height:11px;border-radius:50%;background:var(--paper);border:2.5px solid {{ h.color }}"></span>
+              <div style="font-size:13px;color:var(--navy);line-height:1.4;font-weight:500">{{ h.text }}</div>
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);margin-top:3px">{{ h.meta }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <!-- NOTES -->
+      <div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:11px">Poznámka</div>
+        <div style="background:#FFFCF4;border:1px solid #efe7d3;border-radius:13px;padding:14px 16px;font-size:13px;color:#4a4126;line-height:1.5">{{ d.note }}</div>
+      </div>
+    </div>
+  </aside>
+  </sc-if>
+
+  <!-- ============================ IMPORT MODAL ============================ -->
+  <sc-if value="{{ importOpen }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ closeImport }}" style="position:fixed;inset:0;background:rgba(11,21,48,.4);z-index:50;display:flex;align-items:center;justify-content:center;padding:24px;animation:cfade .2s ease both">
+    <div onClick="{{ stop }}" style="width:560px;max-width:100%;max-height:88vh;overflow-y:auto;background:var(--paper);border-radius:20px;box-shadow:0 40px 90px -25px rgba(11,21,48,.55)">
+      <div style="padding:22px 26px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:13px">
+        <div style="flex:none;width:42px;height:42px;border-radius:12px;background:var(--greenSoft);display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6E9152" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M8 11l4 4 4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg></div>
+        <div style="flex:1;min-width:0"><div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:17px;color:var(--navy)">Import z Excelu</div><div style="font-size:12.5px;color:var(--muted);margin-top:1px">Nahraj .xlsx nebo .csv — sloupce se napárují automaticky</div></div>
+        <div onClick="{{ closeImport }}" style="flex:none;width:32px;height:32px;border-radius:9px;background:var(--mist);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted)">✕</div>
+      </div>
+
+      <div style="padding:22px 26px 24px">
+        <!-- STEP: DROP -->
+        <sc-if value="{{ importDrop }}" hint-placeholder-val="{{ true }}">
+        <div>
+          <label style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;border:2px dashed #cdd6e6;border-radius:16px;padding:36px 20px;cursor:pointer;text-align:center;background:var(--mist)">
+            <input type="file" accept=".xlsx,.xls,.csv" onChange="{{ onFile }}" style="display:none">
+            <div style="width:48px;height:48px;border-radius:13px;background:var(--paper);border:1px solid var(--line);display:flex;align-items:center;justify-content:center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2B5CC4" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M8 11l4 4 4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg></div>
+            <div><div style="font-size:14px;font-weight:600;color:var(--navy)">Klikni a vyber soubor</div><div style="font-size:12px;color:var(--muted);margin-top:2px">.xlsx · .xls · .csv</div></div>
+          </label>
+          <sc-if value="{{ hasImportError }}" hint-placeholder-val="{{ false }}"><div style="margin-top:13px;background:var(--claySoft);border:1px solid #ecd5c9;border-radius:11px;padding:11px 14px;font-size:12.5px;color:var(--clay)">{{ importError }}</div></sc-if>
+          <div style="margin-top:18px;background:var(--paper);border:1px solid var(--line);border-radius:13px;padding:14px 16px">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:9px">Rozpoznané sloupce</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px">
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--mist);border:1px solid var(--line);padding:4px 9px;border-radius:7px;color:var(--navy)">Název</span>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--mist);border:1px solid var(--line);padding:4px 9px;border-radius:7px;color:var(--navy)">Typ</span>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--mist);border:1px solid var(--line);padding:4px 9px;border-radius:7px;color:var(--navy)">Sektor</span>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--mist);border:1px solid var(--line);padding:4px 9px;border-radius:7px;color:var(--navy)">Fáze</span>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--mist);border:1px solid var(--line);padding:4px 9px;border-radius:7px;color:var(--navy)">Vlastník</span>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--blueSoft);border:1px solid #cfdcf5;padding:4px 9px;border-radius:7px;color:var(--blue)">Poptávky</span>
+              <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--greenSoft);border:1px solid #d8e3cb;padding:4px 9px;border-radius:7px;color:var(--green)">Nabídky</span>
+            </div>
+            <div style="font-size:11.5px;color:var(--muted);margin-top:10px;line-height:1.45">Poptávky a nabídky oddělené čárkou nebo středníkem. Po importu systém automaticky najde <b style="color:var(--green)">shody</b> napříč databází.</div>
+          </div>
+        </div>
+        </sc-if>
+
+        <!-- STEP: PREVIEW -->
+        <sc-if value="{{ importPreview }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+            <span style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:22px;color:var(--ink)">{{ importCount }}</span>
+            <span style="font-size:13px;color:var(--muted)">záznamů ze souboru <b style="color:var(--navy)">{{ importFileName }}</b></span>
+          </div>
+          <div style="background:var(--paper);border:1px solid var(--line);border-radius:13px;overflow:hidden;margin-bottom:14px">
+            <sc-for list="{{ importPreviewRows }}" as="r" hint-placeholder-count="4">
+              <div style="display:flex;align-items:center;gap:12px;padding:11px 15px;border-bottom:1px solid var(--mist)">
+                <div style="flex:none;width:34px;height:34px;border-radius:9px;background:{{ r.typeSoft }};display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:12px;color:{{ r.typeColor }}">{{ r.mono }}</div>
+                <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:var(--navy)">{{ r.name }}</div><div style="font-size:11px;color:var(--muted);margin-top:1px">{{ r.typeLabel }} · {{ r.sector }}</div></div>
+                <span style="flex:none;display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;color:{{ r.stageColor }}"><span style="width:7px;height:7px;border-radius:3px;background:{{ r.stageColor }}"></span>{{ r.stageLabel }}</span>
+              </div>
+            </sc-for>
+            <sc-if value="{{ hasImportMore }}" hint-placeholder-val="{{ false }}"><div style="padding:10px 15px;font-size:12px;color:var(--muted);text-align:center">+ {{ importMore }} dalších záznamů</div></sc-if>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <span onClick="{{ openImport }}" style="font-size:12.5px;color:var(--muted);font-weight:600;cursor:pointer">‹ Jiný soubor</span>
+            <div style="margin-left:auto;display:flex;gap:9px">
+              <button onClick="{{ closeImport }}" style="background:none;border:1px solid var(--line);color:var(--muted);border-radius:10px;padding:10px 16px;font-family:'IBM Plex Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer">Zrušit</button>
+              <button onClick="{{ confirmImport }}" style="display:flex;align-items:center;gap:7px;background:var(--ink);color:#fff;border:none;border-radius:10px;padding:10px 18px;font-family:'IBM Plex Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8CAA72" stroke-width="2.2" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>Importovat {{ importCount }}</button>
+            </div>
+          </div>
+        </div>
+        </sc-if>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============================ TEAMS CONNECT MODAL ============================ -->
+  <sc-if value="{{ teamsOpen }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ closeTeams }}" style="position:fixed;inset:0;background:rgba(11,21,48,.4);z-index:50;display:flex;align-items:center;justify-content:center;padding:24px;animation:cfade .2s ease both">
+    <div onClick="{{ stop }}" style="width:540px;max-width:100%;max-height:88vh;overflow-y:auto;background:var(--paper);border-radius:20px;box-shadow:0 40px 90px -25px rgba(11,21,48,.55)">
+      <div style="padding:22px 26px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:13px">
+        <div style="flex:none;width:42px;height:42px;border-radius:12px;background:#EEF0FB;display:flex;align-items:center;justify-content:center"><svg width="23" height="23" viewBox="0 0 24 24" fill="#5B5FC7"><rect x="3" y="6" width="11" height="12" rx="2"/><circle cx="17.5" cy="6" r="2.6"/><rect x="14" y="9" width="6.5" height="8" rx="2" opacity=".6"/></svg></div>
+        <div style="flex:1;min-width:0"><div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:17px;color:var(--navy)">Připojení Microsoft Teams</div><div style="font-size:12.5px;color:var(--muted);margin-top:1px">Propoj kalendáře členů týmu přes Microsoft účet</div></div>
+        <div onClick="{{ closeTeams }}" style="flex:none;width:32px;height:32px;border-radius:9px;background:var(--mist);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted)">✕</div>
+      </div>
+      <div style="padding:18px 26px 12px">
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <sc-for list="{{ teamsRows }}" as="m" hint-placeholder-count="4">
+            <div style="display:flex;align-items:center;gap:13px;background:var(--paper);border:1px solid var(--line);border-radius:13px;padding:13px 15px">
+              <span style="flex:none;width:38px;height:38px;border-radius:50%;background:{{ m.color }};color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600">{{ m.init }}</span>
+              <div style="flex:1;min-width:0"><div style="font-size:13.5px;font-weight:600;color:var(--navy)">{{ m.name }}</div><div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);margin-top:1px">{{ m.email }}</div></div>
+              <sc-if value="{{ m.connected }}" hint-placeholder-val="{{ false }}">
+                <div style="text-align:right">
+                  <div style="display:flex;align-items:center;gap:6px;justify-content:flex-end;font-size:12px;font-weight:600;color:var(--green)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6E9152" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Připojeno</div>
+                  <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:var(--muted);margin-top:2px">sync {{ m.lastSync }}</div>
+                </div>
+              </sc-if>
+              <sc-if value="{{ m.syncing }}" hint-placeholder-val="{{ false }}">
+                <span style="display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:var(--blue)"><span style="width:13px;height:13px;border:2px solid #cfdcf5;border-top-color:#2B5CC4;border-radius:50%;animation:cspin .7s linear infinite"></span>Připojuji…</span>
+              </sc-if>
+              <sc-if value="{{ m.idle }}" hint-placeholder-val="{{ true }}">
+                <button onClick="{{ m.onConnect }}" style="display:flex;align-items:center;gap:7px;background:#fff;border:1px solid #d3d6e8;border-radius:9px;padding:8px 13px;font-family:'IBM Plex Sans',sans-serif;font-size:12px;font-weight:600;color:#3A3D6B;cursor:pointer"><svg width="14" height="14" viewBox="0 0 23 23"><rect x="1" y="1" width="10" height="10" fill="#F25022"/><rect x="12" y="1" width="10" height="10" fill="#7FBA00"/><rect x="1" y="12" width="10" height="10" fill="#00A4EF"/><rect x="12" y="12" width="10" height="10" fill="#FFB900"/></svg>Připojit</button>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <div style="padding:8px 26px 22px;display:flex;align-items:center;gap:9px">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5C6886" stroke-width="1.8"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V8a5 5 0 0 1 10 0v3"/></svg>
+        <span style="font-size:11.5px;color:var(--muted);line-height:1.4">Čteme jen kalendář (Calendars.Read). Schůzky se synchronizují každých 15 minut.</span>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============================ NEW CONTACT MODAL ============================ -->
+  <sc-if value="{{ newOpen }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ closeNew }}" style="position:fixed;inset:0;background:rgba(11,21,48,.4);z-index:50;display:flex;align-items:center;justify-content:center;padding:24px;animation:cfade .2s ease both">
+    <div onClick="{{ stop }}" style="width:580px;max-width:100%;max-height:88vh;overflow-y:auto;background:var(--paper);border-radius:20px;box-shadow:0 40px 90px -25px rgba(11,21,48,.55)">
+      <div style="padding:22px 26px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:13px">
+        <div style="flex:none;width:42px;height:42px;border-radius:12px;background:var(--blueSoft);display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2B5CC4" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></div>
+        <div style="flex:1;min-width:0"><div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:17px;color:var(--navy)">Nový kontakt</div><div style="font-size:12.5px;color:var(--muted);margin-top:1px">Přidej startup, firmu, investora nebo pobočku</div></div>
+        <div onClick="{{ closeNew }}" style="flex:none;width:32px;height:32px;border-radius:9px;background:var(--mist);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted)">✕</div>
+      </div>
+      <div style="padding:20px 26px 8px">
+        <div style="margin-bottom:14px">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:6px">Název subjektu *</div>
+          <input value="{{ nf.name }}" onInput="{{ nfName }}" placeholder="např. Arester Dynamics" style="width:100%;border:1px solid var(--line);background:var(--mist);border-radius:11px;padding:11px 13px;font-family:'IBM Plex Sans',sans-serif;font-size:13.5px;color:var(--navy);outline:none">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+          <div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:6px">Typ</div>
+            <select value="{{ nf.type }}" onChange="{{ nfType }}" style="width:100%;border:1px solid var(--line);background:var(--mist);border-radius:11px;padding:11px 13px;font-family:'IBM Plex Sans',sans-serif;font-size:13.5px;color:var(--navy);outline:none;cursor:pointer">
+              <option value="startup">Startup</option>
+              <option value="firma">Firma</option>
+              <option value="investor">Investor</option>
+              <option value="region">Regionální kancelář</option>
+            </select>
+          </div>
+          <div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:6px">Vlastník</div>
+            <select value="{{ nf.owner }}" onChange="{{ nfOwner }}" style="width:100%;border:1px solid var(--line);background:var(--mist);border-radius:11px;padding:11px 13px;font-family:'IBM Plex Sans',sans-serif;font-size:13.5px;color:var(--navy);outline:none;cursor:pointer">
+              <option value="Tomáš H.">Tomáš H.</option>
+              <option value="Nadia K.">Nadia K.</option>
+              <option value="Ondřej T.">Ondřej T.</option>
+              <option value="Vít Č.">Vít Č.</option>
+            </select>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:12px;margin-bottom:14px">
+          <div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:6px">Sektor</div>
+            <input value="{{ nf.sector }}" onInput="{{ nfSector }}" placeholder="Bezpilotní systémy" style="width:100%;border:1px solid var(--line);background:var(--mist);border-radius:11px;padding:11px 13px;font-family:'IBM Plex Sans',sans-serif;font-size:13.5px;color:var(--navy);outline:none">
+          </div>
+          <div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:6px">Lokalita</div>
+            <input value="{{ nf.location }}" onInput="{{ nfLocation }}" placeholder="Brno" style="width:100%;border:1px solid var(--line);background:var(--mist);border-radius:11px;padding:11px 13px;font-family:'IBM Plex Sans',sans-serif;font-size:13.5px;color:var(--navy);outline:none">
+          </div>
+          <div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:6px">Hodnota</div>
+            <input value="{{ nf.value }}" onInput="{{ nfValue }}" placeholder="1,4 M €" style="width:100%;border:1px solid var(--line);background:var(--mist);border-radius:11px;padding:11px 13px;font-family:'IBM Plex Sans',sans-serif;font-size:13.5px;color:var(--navy);outline:none">
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+          <div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);font-weight:600;margin-bottom:6px">Poptávky</div>
+            <textarea value="{{ nf.demands }}" onInput="{{ nfDemands }}" placeholder="Termovizní moduly, pohonné jednotky…" style="width:100%;height:64px;resize:none;border:1px solid #cfdcf5;background:var(--blueSoft);border-radius:11px;padding:10px 12px;font-family:'IBM Plex Sans',sans-serif;font-size:12.5px;color:var(--navy);outline:none;line-height:1.4"></textarea>
+            <div style="font-size:10px;color:var(--muted);margin-top:4px">Odděl čárkou — použije se pro hledání shod</div>
+          </div>
+          <div>
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--green);font-weight:600;margin-bottom:6px">Nabízí</div>
+            <textarea value="{{ nf.offers }}" onInput="{{ nfOffers }}" placeholder="Drony třídy I, SW pro navigaci…" style="width:100%;height:64px;resize:none;border:1px solid #d8e3cb;background:var(--greenSoft);border-radius:11px;padding:10px 12px;font-family:'IBM Plex Sans',sans-serif;font-size:12.5px;color:var(--navy);outline:none;line-height:1.4"></textarea>
+            <div style="font-size:10px;color:var(--muted);margin-top:4px">Odděl čárkou — použije se pro hledání shod</div>
+          </div>
+        </div>
+        <div style="margin-bottom:6px">
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:6px">Poznámka</div>
+          <textarea value="{{ nf.note }}" onInput="{{ nfNote }}" placeholder="Kontext, klíčové osoby, další kroky…" style="width:100%;height:54px;resize:none;border:1px solid var(--line);background:var(--mist);border-radius:11px;padding:10px 12px;font-family:'IBM Plex Sans',sans-serif;font-size:12.5px;color:var(--navy);outline:none;line-height:1.4"></textarea>
+        </div>
+      </div>
+      <div style="padding:6px 26px 22px;display:flex;align-items:center;gap:9px;justify-content:flex-end">
+        <button onClick="{{ closeNew }}" style="background:none;border:1px solid var(--line);color:var(--muted);border-radius:10px;padding:10px 16px;font-family:'IBM Plex Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer">Zrušit</button>
+        <button onClick="{{ saveNew }}" style="display:flex;align-items:center;gap:7px;background:var(--ink);color:#fff;border:none;border-radius:10px;padding:10px 18px;font-family:'IBM Plex Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8CAA72" stroke-width="2.2" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>Přidat kontakt</button>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============================ LOGIN ============================ -->
+  <sc-if value="{{ notAuthed }}" hint-placeholder-val="{{ true }}">
+  <div style="position:fixed;inset:0;z-index:100;display:flex;background:#0B1530;animation:cfade .25s ease both">
+    <!-- left brand panel -->
+    <div style="flex:1;min-width:0;position:relative;background:radial-gradient(120% 90% at 25% 10%,#1B2D5E 0%,#0E1B3C 55%,#0B1530 100%);display:flex;flex-direction:column;justify-content:space-between;padding:48px">
+      <div style="position:absolute;inset:0;opacity:.5;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:32px 32px"></div>
+      <div style="position:relative;display:flex;align-items:center;gap:13px">
+        <div style="width:34px;height:34px;position:relative;flex:none">
+          <div style="position:absolute;inset:0;clip-path:polygon(50% 0,100% 25%,50% 50%,0 25%);background:#2B5CC4"></div>
+          <div style="position:absolute;inset:0;clip-path:polygon(0 25%,50% 50%,50% 100%,0 75%);background:#1C2F63"></div>
+          <div style="position:absolute;inset:0;clip-path:polygon(100% 25%,50% 50%,50% 100%,100% 75%);background:#8CAA72"></div>
+        </div>
+        <div><div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:18px;color:#fff;line-height:1">Hub Relay</div><div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:#7E8FB8;margin-top:3px">Defence CRM</div></div>
+      </div>
+      <div style="position:relative;max-width:30ch">
+        <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:34px;line-height:1.15;letter-spacing:-.02em;color:#fff">Followupy, shody a zprávy z cest — na jednom místě.</div>
+        <div style="font-size:14px;color:#9DABCB;margin-top:16px;line-height:1.5">CRM pro Defence Hub CzechInvest. Napojené na kalendáře týmu v Microsoft Teams.</div>
+      </div>
+      <div style="position:relative;display:flex;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#5E6E96">
+        <span style="width:7px;height:7px;border-radius:50%;background:#8CAA72"></span>Zabezpečené přihlášení přes Microsoft Entra ID
+      </div>
+    </div>
+    <!-- right login card -->
+    <div style="flex:none;width:480px;max-width:100%;background:#FBFBFC;display:flex;flex-direction:column;justify-content:center;padding:48px 52px">
+      <div style="display:flex;align-items:center;gap:11px;margin-bottom:38px">
+        <div style="width:28px;height:28px;position:relative;flex:none">
+          <div style="position:absolute;inset:0;clip-path:polygon(50% 0,100% 25%,50% 50%,0 25%);background:#2B5CC4"></div>
+          <div style="position:absolute;inset:0;clip-path:polygon(0 25%,50% 50%,50% 100%,0 75%);background:#1C2F63"></div>
+          <div style="position:absolute;inset:0;clip-path:polygon(100% 25%,50% 50%,50% 100%,100% 75%);background:#8CAA72"></div>
+        </div>
+        <span style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:16px;color:#13234E">Hub Relay</span>
+      </div>
+      <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:24px;letter-spacing:-.01em;color:#13234E;margin-bottom:8px">Přihlášení</div>
+      <div style="font-size:13.5px;color:#5C6886;line-height:1.5;margin-bottom:30px">Přihlas se pracovním účtem Microsoft. Hub Relay tak získá přístup ke kalendáři tvého týmu v Teams.</div>
+
+      <button onClick="{{ signIn }}" style="display:flex;align-items:center;justify-content:center;gap:11px;width:100%;background:#fff;border:1px solid #d3d6e8;border-radius:12px;padding:15px;font-family:'IBM Plex Sans',sans-serif;font-size:14.5px;font-weight:600;color:#2A2E52;cursor:pointer;box-shadow:0 1px 2px rgba(11,21,48,.04)" style-hover="border-color:#a9b0d4">
+        <sc-if value="{{ notSigningIn }}" hint-placeholder-val="{{ true }}">
+          <svg width="20" height="20" viewBox="0 0 23 23"><rect x="1" y="1" width="10" height="10" fill="#F25022"/><rect x="12" y="1" width="10" height="10" fill="#7FBA00"/><rect x="1" y="12" width="10" height="10" fill="#00A4EF"/><rect x="12" y="12" width="10" height="10" fill="#FFB900"/></svg>
+          <span>Přihlásit přes Microsoft</span>
+        </sc-if>
+        <sc-if value="{{ signingIn }}" hint-placeholder-val="{{ false }}">
+          <span style="width:18px;height:18px;border:2px solid #cfdcf5;border-top-color:#2B5CC4;border-radius:50%;animation:cspin .7s linear infinite"></span>
+          <span style="color:#5C6886">Přihlašuji přes Teams…</span>
+        </sc-if>
+      </button>
+
+      <div style="display:flex;align-items:center;gap:12px;margin:26px 0">
+        <span style="height:1px;flex:1;background:#E2E7F0"></span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#8693AD">Oprávnění</span>
+        <span style="height:1px;flex:1;background:#E2E7F0"></span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:11px">
+        <div style="display:flex;align-items:center;gap:10px;font-size:12.5px;color:#5C6886"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6E9152" stroke-width="2" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>Čtení kalendáře (Calendars.Read)</div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:12.5px;color:#5C6886"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6E9152" stroke-width="2" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>Základní profil (User.Read)</div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:12.5px;color:#5C6886"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6E9152" stroke-width="2" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>Členství v týmu (Team.ReadBasic)</div>
+      </div>
+      <div style="font-size:11px;color:#8693AD;margin-top:30px;line-height:1.5">Přihlášením souhlasíš s interními pravidly Defence Hub CzechInvest pro zpracování dat.</div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============================ TOUR ============================ -->
+  <sc-if value="{{ tourOn }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:70;width:520px;max-width:calc(100% - 48px);background:var(--ink);border-radius:18px;box-shadow:0 30px 70px -18px rgba(11,21,48,.6);padding:20px 22px 18px;animation:cfade .3s ease both;color:#fff">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:9px">
+      <span style="width:26px;height:26px;border-radius:8px;background:#8CAA72;display:flex;align-items:center;justify-content:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0B1530" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 4.6L18 9l-4.2 1.4L12 15l-1.8-4.6L6 9z"/></svg></span>
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:#8CAA72;font-weight:600">Průvodce demem</span>
+      <span style="margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#9DABCB">{{ tourStepLabel }}</span>
+      <span onClick="{{ endTour }}" style="margin-left:10px;width:24px;height:24px;border-radius:7px;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;color:#9DABCB">✕</span>
+    </div>
+    <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:18px;letter-spacing:-.01em;margin-bottom:7px">{{ tourTitle }}</div>
+    <div style="font-size:13px;line-height:1.5;color:#C7D0E6;margin-bottom:16px">{{ tourBody }}</div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div style="display:flex;gap:5px">
+        <sc-for list="{{ tourDots }}" as="d" hint-placeholder-count="8">
+          <span onClick="{{ d.onClick }}" style="width:7px;height:7px;border-radius:50%;cursor:pointer;background:{{ d.dot }}"></span>
+        </sc-for>
+      </div>
+      <div style="margin-left:auto;display:flex;gap:8px">
+        <sc-if value="{{ tourHasPrev }}" hint-placeholder-val="{{ false }}"><button onClick="{{ tourPrev }}" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:#fff;border-radius:9px;padding:9px 15px;font-family:'IBM Plex Sans',sans-serif;font-size:12.5px;font-weight:600;cursor:pointer">‹ Zpět</button></sc-if>
+        <button onClick="{{ tourNext }}" style="background:#8CAA72;color:#0B1530;border:none;border-radius:9px;padding:9px 18px;font-family:'IBM Plex Sans',sans-serif;font-size:12.5px;font-weight:600;cursor:pointer">{{ tourNextLabel }}</button>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============================ TOAST ============================ -->
+  <sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:60;background:var(--ink);color:#fff;border-radius:12px;padding:13px 20px;display:flex;align-items:center;gap:11px;box-shadow:0 18px 50px -12px rgba(11,21,48,.6);animation:cfade .25s ease both">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#8CAA72" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+    <span style="font-size:13px;font-weight:500">{{ toast }}</span>
+  </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:800}}">
+class Component extends DCLogic {
+  constructor(props){
+    super(props);
+    const STAGES=[
+      {id:'lead',label:'Lead',color:'#8693AD'},
+      {id:'kontakt',label:'Kontaktováno',color:'#3E7CA8'},
+      {id:'jednani',label:'Jednání',color:'#2B5CC4'},
+      {id:'nabidka',label:'Nabídka',color:'#13234E'},
+      {id:'uzavreno',label:'Uzavřeno',color:'#6E9152'},
+    ];
+    this.STAGES=STAGES;
+    this.TYPE={
+      startup:{label:'Startup',color:'#2B5CC4',soft:'#E8EEFA'},
+      firma:{label:'Firma',color:'#1C2F63',soft:'#E7EAF3'},
+      investor:{label:'Investor',color:'#6E9152',soft:'#ECF1E5'},
+      region:{label:'Reg. kancelář',color:'#3E7CA8',soft:'#E6EFF5'},
+    };
+    this.OWNERS={
+      'Tomáš H.':'#2B5CC4','Nadia K.':'#6E9152','Ondřej T.':'#3E7CA8','Vít Č.':'#1C2F63'
+    };
+    this.MEMBER_SOFT={'Tomáš H.':'#E8EEFA','Nadia K.':'#ECF1E5','Ondřej T.':'#E6EFF5','Vít Č.':'#E7EAF3'};
+    this.MEMBERS=[
+      {name:'Tomáš H.',init:'TH'},{name:'Nadia K.',init:'NK'},{name:'Ondřej T.',init:'OT'},{name:'Vít Č.',init:'VČ'}
+    ];
+    this.WEEK=[{lbl:'Po',date:'22. 6.'},{lbl:'Út',date:'23. 6.'},{lbl:'St',date:'24. 6.'},{lbl:'Čt',date:'25. 6.'},{lbl:'Pá',date:'26. 6.'}];
+    this.TODAY=2;
+    this.calEvents=[
+      {day:0,start:9,end:9.5,title:'Týmový sync',sub:'Microsoft Teams',member:'Tomáš H.',kind:'teams'},
+      {day:0,start:11,end:12,title:'Vendor Optics',sub:'Cenová nabídka',member:'Nadia K.',orgId:'vendoroptics',kind:'crm'},
+      {day:0,start:14,end:15,title:'Příprava demo',sub:'Strážce Systems',member:'Ondřej T.',orgId:'strazce',kind:'teams'},
+      {day:1,start:10,end:10.75,title:'Iniciátor s.r.o.',sub:'Ověření kapacity',member:'Nadia K.',orgId:'iniciator',kind:'crm'},
+      {day:1,start:13,end:13.5,title:'Strážce Systems',sub:'Demo platformy',member:'Ondřej T.',orgId:'strazce',kind:'crm'},
+      {day:1,start:15,end:16,title:'Atlas Ventures',sub:'Příprava decku',member:'Tomáš H.',orgId:'atlas',kind:'teams'},
+      {day:2,start:10,end:12,title:'Meridian Capital',sub:'Due diligence · Vídeň',member:'Tomáš H.',orgId:'meridian',kind:'crm'},
+      {day:2,start:11,end:11.5,title:'Iniciátor — kapacita',sub:'Teams call',member:'Nadia K.',orgId:'iniciator',kind:'teams'},
+      {day:2,start:13,end:13.5,title:'Falcon Munitions',sub:'Iniciátory — call',member:'Tomáš H.',orgId:'falcon',kind:'crm'},
+      {day:3,start:9.5,end:10,title:'Follow-up calls',sub:'Microsoft Teams',member:'Nadia K.',kind:'teams'},
+      {day:3,start:14,end:15,title:'KOVOSPOL Brno',sub:'Příprava návštěvy',member:'Vít Č.',orgId:'kovospol',kind:'teams'},
+      {day:4,start:9,end:9.5,title:'Týdenní review',sub:'Microsoft Teams',member:'Tomáš H.',kind:'teams'},
+      {day:4,start:11,end:12,title:'Pobočka Ostrava',sub:'Plán cesty 27. 6.',member:'Vít Č.',orgId:'severni',kind:'crm'},
+    ];
+    this.state={
+      view:'dashboard', panelOpen:false, selId:null, filter:'all',
+      importOpen:false, importStep:'drop', importRows:[], importFileName:'', importError:'', toast:'', calHidden:[],
+      teamsOpen:false,
+      newOpen:false,
+      nf:{name:'',type:'startup',sector:'',owner:'Tomáš H.',location:'',value:'',demands:'',offers:'',note:''},
+      tr:{
+        place:'Olomouc, 2. 6. 2026 — konference WE CONNECT 2026 RESILIENCE',
+        justify:'Prezentace aktivit Defence Hub CzechInvest a programu NATO DIANA Accelerator Czechia odborné veřejnosti, firmám a regionálním inovačním partnerům; akvizice nových firem se zájmem o obranné a dual-use příležitosti.',
+        transcript:'Odvedla jsem keynote a Q&A. Mluvila jsem o projektu Defence Hub, propojení na ministerstvo obrany a akcelerátor NATO DIANA Czechia. Zpropagovala jsem novou výzvu NATO DIANA 2027 a nadcházející TECH4DEFENCE. Po keynote jsem navázala vztahy s několika účastníky. Bližší kontakt jsem navázala s ředitelkou olomoucké regionální kanceláře Veronikou Voltnerovou. Získané kontakty: Rene Naplava, founder Gate2Natura, rene.naplava@seznam.cz; Štěpán Konecký, Defense Robotics UGV, stepan.konecky@outlook.com; Ondrej Grolmus, VP Sales Europe Ness Digital Engineering, ondrej.grolmus@gmail.com; Michaela Vanya, Impact Ventures.',
+        comment:'Keynote úspěšný, ověřila jsem si, že dokážu o Defence Hubu mluvit a vysvětlit specifika projektu.',
+        template:''},
+      trCards:[], recording:false, recSecs:0, audioUrl:'', generating:false, trReport:'', trStep:'capture',
+      tourOn:false, tourI:0,
+      authed:false, signingIn:false, authUser:null,
+      logOpen:false, logText:'',
+      teams:[
+        {name:'Tomáš H.',email:'tomas.hajek@hubrelay.cz',connected:true,syncing:false,lastSync:'před 4 min'},
+        {name:'Nadia K.',email:'nadia.kovac@hubrelay.cz',connected:true,syncing:false,lastSync:'před 11 min'},
+        {name:'Ondřej T.',email:'ondrej.tremer@hubrelay.cz',connected:false,syncing:false,lastSync:''},
+        {name:'Vít Č.',email:'vit.cermak@hubrelay.cz',connected:false,syncing:false,lastSync:''},
+      ],
+      orgs:[
+        {id:'arester',name:'Arester Dynamics',mono:'AD',type:'startup',sector:'Bezpilotní systémy (UAV)',stage:'jednani',owner:'Tomáš H.',value:'1,4 M €',location:'Brno',
+         follow:{state:'today',label:'Dnes',task:'Poslat technické datasheet termovize',when:'Naplánováno na dnes 14:00'},
+         demands:['Termovizní moduly 640×512 pro UAV','Lehké pohonné jednotky'],
+         offers:['Autonomní průzkumné drony třídy I','SW pro rojovou navigaci'],
+         upsells:[{title:'Servisní kontrakt 24 měsíců',note:'Po podpisu dodávky',tag:'Upsell',color:'#6E9152'},{title:'Modul pro noční provoz',note:'Navazuje na poptávku termovize',tag:'Cross-sell',color:'#2B5CC4'}],
+         files:[{name:'Hub Relay — capability sheet.pdf',meta:'PDF · 2,1 MB',sent:false},{name:'NDA — oboustranné.pdf',meta:'PDF · 320 kB',sent:true},{name:'Reference UAV programy.pdf',meta:'PDF · 4,8 MB',sent:false}],
+         history:[{text:'Schůzka na veletrhu IDET, představení portfolia',color:'#2B5CC4',meta:'12. 6. · Tomáš H.'},{text:'E-mail: zaslán draft NDA',color:'#3E7CA8',meta:'9. 6. · Tomáš H.'},{text:'První kontakt přes LinkedIn',color:'#8693AD',meta:'2. 6. · Nadia K.'}],
+         note:'CTO Marek chce vidět integraci s naší termovizí do konce Q2. Rozpočet potvrzen z grantu MO.',
+         people:[{name:'Marek Sýkora',role:'CTO',init:'MS'}]},
+
+        {id:'vendoroptics',name:'Vendor Optics',mono:'VO',type:'firma',sector:'Optika a senzory',stage:'nabidka',owner:'Nadia K.',value:'860 k €',location:'Praha',
+         follow:{state:'overdue',label:'Po termínu',task:'Odpovědět na cenovou poptávku',when:'Bylo do 16. 6.'},
+         demands:['Distribuční kanál do pobaltí'],
+         offers:['Termovizní a noční optika 640×512','Laserové dálkoměry','Stabilizované gimbaly'],
+         upsells:[{title:'Rámcová smlouva na 3 roky',note:'Objem nad 500 ks/rok',tag:'Upsell',color:'#6E9152'}],
+         files:[{name:'Hub Relay — capability sheet.pdf',meta:'PDF · 2,1 MB',sent:true},{name:'Cenová nabídka Q3.xlsx',meta:'XLSX · 88 kB',sent:false}],
+         history:[{text:'Zaslána cenová nabídka na 200 ks modulů',color:'#13234E',meta:'14. 6. · Nadia K.'},{text:'Call: upřesnění specifikace',color:'#2B5CC4',meta:'10. 6. · Nadia K.'}],
+         note:'Mají skladem 120 ks, zbytek do 8 týdnů. Klíčový dodavatel pro shodu s Arester.',
+         people:[{name:'Jana Dvořáková',role:'Obchodní ředitelka',init:'JD'}]},
+
+        {id:'meridian',name:'Meridian Defense Capital',mono:'MC',type:'investor',sector:'Venture kapitál · obrana',stage:'jednani',owner:'Tomáš H.',value:'—',location:'Vídeň',
+         follow:{state:'soon',label:'24. 6.',task:'Připravit data room pro due diligence',when:'Termín 24. 6.'},
+         demands:['Deal flow v segmentu UAV a C2','Co-investiční partneři v ČR'],
+         offers:['Série A 3–8 M €','Síť kontaktů v NATO ekosystému'],
+         upsells:[{title:'Představit Arester Dynamics',note:'Pasuje do investiční teze',tag:'Network',color:'#3E7CA8'}],
+         files:[{name:'Investor deck — portfolio.pdf',meta:'PDF · 6,2 MB',sent:false},{name:'Term sheet template.pdf',meta:'PDF · 210 kB',sent:false}],
+         history:[{text:'Oběd ve Vídni, shoda na investiční tezi',color:'#2B5CC4',meta:'11. 6. · Tomáš H.'},{text:'Intro e-mail od společného kontaktu',color:'#8693AD',meta:'4. 6. · —'}],
+         note:'Hledají český UAV startup do portfolia. Můžeme propojit s Arester výměnou za co-investment.',
+         people:[{name:'Lukas Berger',role:'Partner',init:'LB'}]},
+
+        {id:'kovospol',name:'KOVOSPOL Brno',mono:'KB',type:'firma',sector:'Přesné obrábění · munice',stage:'jednani',owner:'Vít Č.',value:'520 k €',location:'Brno',
+         follow:{state:'soon',label:'27. 6.',task:'Návštěva výroby během cesty do Brna',when:'Cesta Brno 27. 6.'},
+         demands:['Dlouhodobé objednávky pouzder','Tepelné zpracování — kooperace'],
+         offers:['CNC obrábění dílů','Pouzdra munice ráže 155mm','Povrchové úpravy'],
+         upsells:[{title:'Rozšíření o montážní linku',note:'Diskutováno na poslední schůzce',tag:'Upsell',color:'#6E9152'}],
+         files:[{name:'Hub Relay — capability sheet.pdf',meta:'PDF · 2,1 MB',sent:true},{name:'Audit kvality ISO.pdf',meta:'PDF · 1,1 MB',sent:false}],
+         history:[{text:'Telefonát: kapacita na Q3 potvrzena',color:'#2B5CC4',meta:'13. 6. · Vít Č.'},{text:'Návštěva provozu',color:'#3E7CA8',meta:'28. 5. · Vít Č.'}],
+         note:'Spolehlivý dodavatel. Kapacita pouzder může pokrýt poptávku Falcon Munitions.',
+         people:[{name:'Petr Novák',role:'Jednatel',init:'PN'}]},
+
+        {id:'falcon',name:'Falcon Munitions',mono:'FM',type:'firma',sector:'Dělostřelecká munice',stage:'jednani',owner:'Tomáš H.',value:'2,3 M €',location:'Ostrava',
+         follow:{state:'today',label:'Dnes',task:'Zavolat ohledně iniciátorů',when:'Naplánováno na dnes 11:00'},
+         demands:['Rozněcovače a iniciátory','Pouzdra ráže 155mm','Logistický partner pro export'],
+         offers:['155mm dělostřelecká munice','Cvičná munice'],
+         upsells:[{title:'Doplnit dodávkou pouzder z KOVOSPOL',note:'Cross-sell v rámci sítě',tag:'Cross-sell',color:'#2B5CC4'}],
+         files:[{name:'Hub Relay — capability sheet.pdf',meta:'PDF · 2,1 MB',sent:true},{name:'Exportní licence — info.pdf',meta:'PDF · 540 kB',sent:false}],
+         history:[{text:'Poptávka na 50 000 ks iniciátorů',color:'#2B5CC4',meta:'15. 6. · Tomáš H.'},{text:'Schůzka v Ostravě',color:'#3E7CA8',meta:'6. 6. · Tomáš H.'}],
+         note:'Velký objem. Shání iniciátory — máme v síti Iniciátor s.r.o. Příležitost propojit.',
+         people:[{name:'Roman Bílý',role:'Nákup',init:'RB'}]},
+
+        {id:'iniciator',name:'Iniciátor s.r.o.',mono:'IS',type:'firma',sector:'Pyrotechnika · iniciátory',stage:'kontakt',owner:'Nadia K.',value:'410 k €',location:'Pardubice',
+         follow:{state:'soon',label:'23. 6.',task:'Ověřit certifikace a kapacitu',when:'Termín 23. 6.'},
+         demands:['Větší odběratelé munice'],
+         offers:['Rozněcovače a iniciátory','Zápalkové systémy','Certifikace dle STANAG'],
+         upsells:[],
+         files:[{name:'Hub Relay — capability sheet.pdf',meta:'PDF · 2,1 MB',sent:false}],
+         history:[{text:'Úvodní call: zájem o spolupráci',color:'#3E7CA8',meta:'12. 6. · Nadia K.'},{text:'Doporučeno partnerem z PII',color:'#8693AD',meta:'8. 6. · —'}],
+         note:'Kapacita 80 000 ks/měsíc. Ideální dodavatel pro Falcon Munitions.',
+         people:[{name:'Eva Horáková',role:'Obchod',init:'EH'}]},
+
+        {id:'strazce',name:'Strážce Systems',mono:'SS',type:'startup',sector:'C2 software · velení a řízení',stage:'kontakt',owner:'Ondřej T.',value:'640 k €',location:'Praha',
+         follow:{state:'soon',label:'25. 6.',task:'Domluvit demo platformy',when:'Termín 25. 6.'},
+         demands:['Senzorová data z UAV','Investora pro seed'],
+         offers:['C2 platforma pro pozemní jednotky','Integrace senzorů'],
+         upsells:[{title:'Propojit s Meridian Capital',note:'Hledají seed investora',tag:'Network',color:'#3E7CA8'}],
+         files:[{name:'Hub Relay — capability sheet.pdf',meta:'PDF · 2,1 MB',sent:false}],
+         history:[{text:'Předání kontaktu na akci T4D',color:'#3E7CA8',meta:'10. 6. · Ondřej T.'}],
+         note:'Mladý tým, silný produkt. Hledá seed i datové partnery (UAV).',
+         people:[{name:'David Král',role:'CEO',init:'DK'}]},
+
+        {id:'severni',name:'Pobočka Ostrava',mono:'PO',type:'region',sector:'Regionální kancelář · MS kraj',stage:'jednani',owner:'Vít Č.',value:'—',location:'Ostrava',
+         follow:{state:'soon',label:'27. 6.',task:'Sync schůzek během cesty',when:'Cesta Ostrava 27. 6.'},
+         demands:['Lokální leady ze strojírenství'],
+         offers:['Zázemí pro schůzky','Znalost regionálního trhu'],
+         upsells:[],
+         files:[],
+         history:[{text:'Měsíční report — 6 nových leadů',color:'#3E7CA8',meta:'1. 6. · Vít Č.'}],
+         note:'Pokrývá Moravskoslezský kraj. Naplánovat společné návštěvy Falcon + KOVOSPOL.',
+         people:[{name:'Vít Čermák',role:'Regionální manažer',init:'VČ'}]},
+
+        {id:'atlas',name:'Atlas Ventures',mono:'AV',type:'investor',sector:'Early-stage · dual-use',stage:'lead',owner:'Tomáš H.',value:'—',location:'Praha',
+         follow:{state:'soon',label:'30. 6.',task:'Poslat úvodní deck',when:'Termín 30. 6.'},
+         demands:['Dual-use startupy'],
+         offers:['Pre-seed / seed do 1,5 M €'],
+         upsells:[],
+         files:[{name:'Investor deck — portfolio.pdf',meta:'PDF · 6,2 MB',sent:false}],
+         history:[{text:'Přidán do databáze z konference',color:'#8693AD',meta:'14. 6. · Tomáš H.'}],
+         note:'Zatím studený kontakt. Potenciál pro Strážce Systems.',
+         people:[{name:'Klára Šimková',role:'Principal',init:'KŠ'}]},
+      ],
+      matches:[
+        {id:'m1',demandId:'arester',offerId:'vendoroptics',demandText:'Termovizní moduly 640×512 pro UAV',offerText:'Termovizní a noční optika 640×512',score:94,sector:'Optika · UAV',status:'new',rationale:'Specifikace 640×512 se přesně shoduje. Vendor Optics má 120 ks skladem.'},
+        {id:'m2',demandId:'falcon',offerId:'iniciator',demandText:'Rozněcovače a iniciátory',offerText:'Rozněcovače a iniciátory · STANAG',score:91,sector:'Munice · iniciátory',status:'new',rationale:'Falcon poptává 50 000 ks, Iniciátor s.r.o. má kapacitu 80 000 ks/měsíc a STANAG certifikaci.'},
+        {id:'m3',demandId:'falcon',offerId:'kovospol',demandText:'Pouzdra ráže 155mm',offerText:'Pouzdra munice ráže 155mm',score:78,sector:'Munice · obrábění',status:'new',rationale:'KOVOSPOL vyrábí pouzdra 155mm, kapacita potvrzena na Q3.'},
+        {id:'m4',demandId:'meridian',offerId:'arester',demandText:'Deal flow v segmentu UAV',offerText:'Autonomní průzkumné drony · Série A',score:86,sector:'Investice · UAV',status:'introduced',rationale:'Arester hledá Sérii A, Meridian investuje 3–8 M € do UAV. Intro odesláno.'},
+      ],
+    };
+  }
+
+  org(id){ return this.state.orgs.find(o=>o.id===id); }
+  setView(v){ this.setState({view:v, panelOpen:false}); }
+  toastMsg(t){ this.setState({toast:t}); setTimeout(()=>{ if(this.state.toast===t) this.setState({toast:''}); },3500); }
+  toggleCalMember(name){ this.setState(s=>({calHidden:s.calHidden.includes(name)?s.calHidden.filter(x=>x!==name):[...s.calHidden,name]})); }
+  fmtH(h){ const hh=Math.floor(h), mm=Math.round((h-hh)*60); return hh+':'+(mm<10?'0':'')+mm; }
+  stop(e){ if(e&&e.stopPropagation) e.stopPropagation(); }
+  openNew(){ this.setState({newOpen:true,nf:{name:'',type:'startup',sector:'',owner:'Tomáš H.',location:'',value:'',demands:'',offers:'',note:''}}); }
+  closeNew(){ this.setState({newOpen:false}); }
+  setNf(k,v){ this.setState(s=>({nf:{...s.nf,[k]:v}})); }
+  saveNew(){
+    const f=this.state.nf;
+    if(!f.name.trim()){ this.toastMsg('Vyplň název subjektu'); return; }
+    const split=s=>s?s.split(/[;,\n]+/).map(x=>x.trim()).filter(Boolean):[];
+    const w=f.name.trim().split(/\s+/);
+    const mono=(w.length>1?(w[0][0]+w[1][0]):f.name.trim().slice(0,2)).toUpperCase();
+    const org={id:'new-'+Date.now(),name:f.name.trim(),mono,type:f.type,
+      sector:f.sector.trim()||'—',stage:'lead',owner:f.owner,value:f.value.trim()||'—',location:f.location.trim()||'—',
+      follow:{state:'soon',label:'Nový',task:'Naplánovat první kontakt',when:'Nově přidáno'},
+      demands:split(f.demands),offers:split(f.offers),upsells:[],
+      files:[{name:'Hub Relay — capability sheet.pdf',meta:'PDF · 2,1 MB',sent:false}],
+      history:[{text:'Kontakt vytvořen ručně',color:'#8693AD',meta:'dnes · '+f.owner}],
+      note:f.note.trim()||'Nově přidaný kontakt.',people:[]};
+    const nm=this.generateMatches([org]);
+    this.setState(s=>({orgs:[...s.orgs,org],matches:[...s.matches,...nm],newOpen:false,view:'contacts',selId:org.id,panelOpen:true}));
+    this.toastMsg('Kontakt přidán'+(nm.length?' · '+nm.length+' nových shod':''));
+  }
+
+  // ---------- Trip report (Zpráva z cesty) ----------
+  componentDidMount(){
+    try{ const t=localStorage.getItem('hubrelay_tpl'); if(t) this.setState(s=>({tr:{...s.tr,template:t}}));
+    else this.setState(s=>({tr:{...s.tr,template:this.defaultTemplate()}})); }catch(e){ this.setState(s=>({tr:{...s.tr,template:this.defaultTemplate()}})); }
+    try{ const a=localStorage.getItem('hubrelay_auth'); if(a){ const u=JSON.parse(a); this.setState({authed:true,authUser:u}); } }catch(e){}
+  }
+  signIn(){
+    if(this.state.signingIn) return;
+    this.setState({signingIn:true});
+    setTimeout(()=>{
+      const user={name:'Tomáš Hájek',email:'tomas.hajek@czechinvest.org',init:'TH',role:'Business development'};
+      try{ localStorage.setItem('hubrelay_auth',JSON.stringify(user)); }catch(e){}
+      this.setState({signingIn:false,authed:true,authUser:user});
+      const firstTime=(()=>{ try{ return !localStorage.getItem('hubrelay_seen'); }catch(e){ return true; } })();
+      if(firstTime){ try{ localStorage.setItem('hubrelay_seen','1'); }catch(e){} setTimeout(()=>this.startTour(),500); }
+    },1300);
+  }
+  signOut(){ try{ localStorage.removeItem('hubrelay_auth'); }catch(e){} this.setState({authed:false,authUser:null,tourOn:false,view:'dashboard'}); }
+  get TOUR(){ return [
+    {view:'dashboard',title:'Přehled — denní velín',body:'KPI týmu, followupy „k vyřízení dnes" (po termínu / dnes), strip schůzek z Teams a živá aktivita celého týmu na jednom místě.'},
+    {view:'matches',title:'Match engine — srdce CRM',body:'Systém spáruje poptávku jedné firmy s nabídkou druhé napříč databází, ohodnotí shodu a nabídne „Propojit firmy". Přesně ten scénář: poptávka na iniciátory ↔ firma, která je nabízí.'},
+    {view:'pipeline',title:'Pipeline podle fáze',body:'Vztahy od leadu po uzavřeno — karta ukazuje typ, hodnotu, stav followupu i odznak nové shody. Klik otevře detail.'},
+    {view:'contacts',title:'Kontakty',body:'Startupy, firmy, investoři a regionální kanceláře. Filtry nahoře, detail kontaktu se vším — fáze, historie, soubory, upselly.'},
+    {view:'calendar',title:'Kalendář napojený na Teams',body:'Schůzky celého týmu synchronizované z Microsoft Teams, barevně podle člena. Účty se připojují přes „Spravovat".'},
+    {view:'tripreport',title:'Zpráva z cesty (AI)',body:'Hlas z diktafonu + fotky vizitek + komentář → hotová zpráva přesně podle tvého vzoru. Příklad je předvyplněný — stačí kliknout „Vygenerovat zprávu z cesty".'},
+    {view:'report',title:'Reporting',body:'Zdraví pipeline podle fáze a aktivita jednotlivých členů týmu za 30 dní.'},
+    {view:'dashboard',title:'A to je celé 👌',body:'Import z Excelu a Nový kontakt máš vpravo nahoře. Průvodce kdykoliv znovu spustíš tlačítkem „Průvodce".'},
+  ]; }
+  startTour(){ this.setState({tourOn:true,tourI:0,view:this.TOUR[0].view,panelOpen:false}); }
+  tourGo(i){ const T=this.TOUR; if(i<0||i>=T.length) return; this.setState({tourI:i,view:T[i].view,panelOpen:false}); }
+  tourNext(){ const i=this.state.tourI+1; if(i>=this.TOUR.length){ this.endTour(); return; } this.tourGo(i); }
+  tourPrev(){ this.tourGo(this.state.tourI-1); }
+  endTour(){ this.setState({tourOn:false}); }
+  defaultTemplate(){
+    return ['Zpráva z pracovní cesty [místo] [datum]','','Účastníci: [jména]','Místo: [místo]','','Program:','[datum] [bod programu]','[datum] [bod programu]','','Průběh pracovní cesty:','[souvislý popis jednání a setkání — po dnech nebo po subjektech; co se projednalo, dohody, předané kontakty a materiály]','','Získané kontakty:','[Jméno Příjmení] – [funkce, organizace], [e-mail]','','Závěr','[stručné zhodnocení přínosu cesty]','','Zpracoval: [jméno], [datum]'].join('\n');
+  }
+  setTr(k,v){ this.setState(s=>({tr:{...s.tr,[k]:v}})); if(k==='template'){ try{ localStorage.setItem('hubrelay_tpl',v); }catch(e){} } }
+  openTrip(){ this.setState({view:'tripreport',trStep:'capture'}); }
+
+  async toggleRec(){
+    if(this.state.recording){
+      if(this._rec && this._rec.state!=='inactive') this._rec.stop();
+      if(this._timer) clearInterval(this._timer);
+      this.setState({recording:false});
+      return;
+    }
+    try{
+      const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+      const rec=new MediaRecorder(stream); this._rec=rec; this._chunks=[];
+      rec.ondataavailable=e=>{ if(e.data.size>0) this._chunks.push(e.data); };
+      rec.onstop=()=>{ const blob=new Blob(this._chunks,{type:'audio/webm'}); const url=URL.createObjectURL(blob); this.setState({audioUrl:url}); stream.getTracks().forEach(t=>t.stop()); };
+      rec.start(); this.setState({recording:true,recSecs:0,audioUrl:''});
+      this._timer=setInterval(()=>this.setState(s=>({recSecs:s.recSecs+1})),1000);
+    }catch(err){ this.toastMsg('Mikrofon nedostupný — nahraj soubor nebo napiš přepis'); }
+  }
+  onAudioFile(e){ const f=e.target.files&&e.target.files[0]; if(!f) return; const url=URL.createObjectURL(f); this.setState({audioUrl:url,recSecs:0}); this.toastMsg('Záznam nahrán · '+f.name); }
+  onCardFiles(e){
+    const files=[...(e.target.files||[])]; if(!files.length) return;
+    files.forEach(f=>{ const r=new FileReader(); r.onload=ev=>{ this.setState(s=>({trCards:[...s.trCards,{id:'c'+Date.now()+Math.random().toString(36).slice(2,5),img:ev.target.result,name:'',role:'',org:'',note:''}]})); }; r.readAsDataURL(f); });
+  }
+  setCard(id,k,v){ this.setState(s=>({trCards:s.trCards.map(c=>c.id===id?{...c,[k]:v}:c)})); }
+  removeCard(id){ this.setState(s=>({trCards:s.trCards.filter(c=>c.id!==id)})); }
+  fmtSecs(n){ const m=Math.floor(n/60),s=n%60; return m+':'+(s<10?'0':'')+s; }
+
+  async generateReport(){
+    const t=this.state.tr, cards=this.state.trCards;
+    this.setState({generating:true,trStep:'result',trReport:''});
+    const cardLines=cards.map(c=>`- ${c.name||'(jméno z vizitky)'}${c.role?', '+c.role:''}${c.org?' — '+c.org:''}${c.note?' ('+c.note+')':''}`).join('\n')||'(žádné vizitky)';
+    const prompt=`Jsi asistent v týmu Defence Hub CzechInvest (podpora obranných a dual-use inovací, programy NATO DIANA, EUDIS, TECH4DEFENCE). Na základě níže uvedených surových podkladů z cesty napiš ČISTOU, profesionální zprávu z pracovní cesty v ČEŠTINĚ, věcným úředním tónem.
+
+DŮLEŽITÉ: Dodrž PŘESNĚ strukturu a formát následujícího VZORU (sekce Program po dnech, souvislý Průběh pracovní cesty, Získané kontakty ve tvaru „Jméno – funkce, organizace, e-mail", a podpis Zpracoval). Doplň ho reálnými informacemi z podkladů. Nevymýšlej fakta, která nejsou v podkladech — kde chybí informace, napiš stručně a neutrálně. Vrať POUZE text zprávy, bez úvodních vět.
+
+=== VZOR ZPRÁVY ===
+${t.template||this.defaultTemplate()}
+
+=== PODKLADY ===
+Místo a kontext cesty: ${t.place||'(neuvedeno)'}
+Odůvodnění / účel akce: ${t.justify||'(neuvedeno)'}
+Přepis hlasové poznámky z jednání: ${t.transcript||'(neuvedeno)'}
+Doplňující komentář: ${t.comment||'(neuvedeno)'}
+Navštívené subjekty / kontakty z vizitek:
+${cardLines}`;
+    try{
+      const out=await window.claude.complete({messages:[{role:'user',content:prompt}]});
+      this.setState({trReport:(out||'').trim(),generating:false});
+    }catch(err){ this.setState({generating:false,trReport:'',trStep:'capture'}); this.toastMsg('Generování selhalo, zkus to znovu'); }
+  }
+  copyReport(){ try{ navigator.clipboard.writeText(this.state.trReport); this.toastMsg('Zpráva zkopírována'); }catch(e){} }
+  backToCapture(){ this.setState({trStep:'capture'}); }
+  saveCardsToCrm(){
+    const cards=this.state.trCards.filter(c=>c.name||c.org);
+    if(!cards.length){ this.toastMsg('Vyplň aspoň jméno nebo firmu u vizitky'); return; }
+    const newOrgs=cards.map((c,i)=>{ const nm=(c.org||c.name).trim(); const w=nm.split(/\s+/); const mono=(w.length>1?(w[0][0]+w[1][0]):nm.slice(0,2)).toUpperCase();
+      return {id:'card-'+Date.now()+'-'+i,name:nm,mono,type:'firma',sector:c.role||'—',stage:'lead',owner:'Tomáš H.',value:'—',location:this.state.tr.place||'—',
+        follow:{state:'soon',label:'Nový',task:'Navázat po cestě',when:'Z vizitky'},demands:[],offers:[],upsells:[],
+        files:[{name:'Hub Relay — capability sheet.pdf',meta:'PDF · 2,1 MB',sent:false}],
+        history:[{text:'Přidáno z vizitky na cestě',color:'#8693AD',meta:'dnes · import'}],
+        note:c.note||'Kontakt z vizitky. '+(c.name?'Osoba: '+c.name+(c.role?', '+c.role:''):''),people:c.name?[{name:c.name,role:c.role||'',init:c.name.split(/\s+/).map(x=>x[0]).join('').slice(0,2).toUpperCase()}]:[]};});
+    this.setState(s=>({orgs:[...s.orgs,...newOrgs]}));
+    this.toastMsg(newOrgs.length+' kontaktů uloženo do CRM');
+  }
+  openTeams(){ this.setState({teamsOpen:true}); }
+  closeTeams(){ this.setState({teamsOpen:false}); }
+  connectTeams(name){
+    this.setState(s=>({teams:s.teams.map(t=>t.name===name?{...t,syncing:true}:t)}));
+    setTimeout(()=>{
+      this.setState(s=>({teams:s.teams.map(t=>t.name===name?{...t,syncing:false,connected:true,lastSync:'právě teď'}:t)}));
+      this.toastMsg('Teams kalendář připojen · '+name);
+    },1100);
+  }
+  openOrg(id){ this.setState({selId:id, panelOpen:true}); }
+  closePanel(){ this.setState({panelOpen:false,logOpen:false,logText:''}); }
+  openLog(){ this.setState({logOpen:true,logText:''}); }
+  cancelLog(){ this.setState({logOpen:false,logText:''}); }
+  saveLog(){
+    const txt=this.state.logText.trim(); if(!txt){ this.setState({logOpen:false}); return; }
+    const who=(this.state.authUser||{}).name||'Tomáš Hájek';
+    const first=who.split(' ')[0]+' '+(who.split(' ')[1]||'').charAt(0)+'.';
+    const id=this.state.selId;
+    this.setState(s=>({orgs:s.orgs.map(o=>o.id===id?{...o,history:[{text:txt,color:'#2B5CC4',meta:'právě teď · '+first},...o.history]}:o),logOpen:false,logText:''}));
+    this.toastMsg('Interakce zaznamenána');
+  }
+  setFilter(f){ this.setState({filter:f}); }
+  setStage(id,stage){ this.setState(s=>({orgs:s.orgs.map(o=>o.id===id?{...o,stage}:o)})); }
+  sendFile(id,idx){ this.setState(s=>({orgs:s.orgs.map(o=>o.id===id?{...o,files:o.files.map((f,i)=>i===idx?{...f,sent:true}:f)}:o)})); }
+  introduce(mid){ this.setState(s=>({matches:s.matches.map(m=>m.id===mid?{...m,status:'introduced'}:m)})); }
+  dismissMatch(mid){ this.setState(s=>({matches:s.matches.map(m=>m.id===mid?{...m,status:'dismissed'}:m)})); }
+
+  // ---------- Excel import ----------
+  openImport(){ this.setState({importOpen:true,importStep:'drop',importRows:[],importFileName:'',importError:''}); }
+  closeImport(){ this.setState({importOpen:false}); }
+  onFile(e){
+    const file=e.target&&e.target.files&&e.target.files[0]; if(!file) return;
+    if(!window.XLSX){ this.setState({importError:'Načítám knihovnu, zkus to za vteřinu znovu.'}); return; }
+    const reader=new FileReader();
+    reader.onload=(ev)=>{
+      try{
+        const wb=window.XLSX.read(new Uint8Array(ev.target.result),{type:'array'});
+        const ws=wb.Sheets[wb.SheetNames[0]];
+        const json=window.XLSX.utils.sheet_to_json(ws,{defval:''});
+        const rows=this.mapRows(json);
+        this.setState({importRows:rows,importStep:'preview',importFileName:file.name,importError:''});
+      }catch(err){ this.setState({importError:'Soubor se nepodařilo načíst: '+err}); }
+    };
+    reader.readAsArrayBuffer(file);
+  }
+  norm(k){ return k.toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim(); }
+  mapRows(json){
+    const SYN={name:['nazev','firma','spolecnost','subjekt','name','company','organizace','klient'],type:['typ','type','kategorie'],sector:['sektor','sector','obor','odvetvi','zamereni','segment'],stage:['faze','stage','status','stav'],owner:['vlastnik','owner','obchodnik','manazer','garant'],location:['lokalita','mesto','location','sidlo','region','stat'],value:['hodnota','value','castka','objem','potencial'],demands:['poptavky','poptavka','demand','demands','hleda','potreba','poptava'],offers:['nabidky','nabidka','offer','offers','nabizi']};
+    const headers=json.length?Object.keys(json[0]):[];
+    const map={};
+    headers.forEach(h=>{const n=this.norm(h);for(const f in SYN){if(map[f])continue;if(SYN[f].some(s=>n.includes(s))){map[f]=h;break;}}});
+    return json.map((row,i)=>this.rowToOrg(row,map,i)).filter(o=>o.name);
+  }
+  rowToOrg(row,map,i){
+    const get=f=>map[f]!==undefined?String(row[map[f]]==null?'':row[map[f]]).trim():'';
+    const name=get('name'); if(!name) return {name:''};
+    const rt=get('type').toLowerCase(); let type='firma';
+    if(/start/.test(rt))type='startup'; else if(/invest|vc|fond|kapit/.test(rt))type='investor'; else if(/pobock|kancel|region/.test(rt))type='region';
+    const rs=get('stage').toLowerCase(); let stage='lead';
+    if(/kontakt/.test(rs))stage='kontakt'; else if(/jedn/.test(rs))stage='jednani'; else if(/nab/.test(rs))stage='nabidka'; else if(/uzav|won|closed|hotov/.test(rs))stage='uzavreno';
+    const split=s=>s?s.split(/[;,\n]+/).map(x=>x.trim()).filter(Boolean):[];
+    const w=name.split(/\s+/);
+    const mono=(w.length>1?(w[0][0]+w[1][0]):name.slice(0,2)).toUpperCase();
+    return {id:'imp-'+i+'-'+name.toLowerCase().normalize('NFD').replace(/[^a-z0-9]+/g,'').slice(0,6),name,mono,type,
+      sector:get('sector')||'—',stage,owner:get('owner')||'—',value:get('value')||'—',location:get('location')||'—',
+      follow:{state:'soon',label:'Nový',task:'Ověřit a naplánovat první kontakt',when:'Importováno z Excelu'},
+      demands:split(get('demands')),offers:split(get('offers')),upsells:[],
+      files:[{name:'Hub Relay — capability sheet.pdf',meta:'PDF · 2,1 MB',sent:false}],
+      history:[{text:'Importováno z Excelu',color:'#8693AD',meta:'dnes · import'}],
+      note:'Záznam importován z Excelu.',people:[]};
+  }
+  tokens(s){ const stop=new Set(['pro','partner','partnera','partnery','vetsi','dlouhodobe','system','systemy','cesky','cesti','nove','novi','odberatele','vyrobu','dodavku','sluzby','spoluprace']);
+    return (s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').split(/[^a-z0-9]+/).filter(x=>x.length>3&&!stop.has(x)); }
+  generateMatches(newOrgs){
+    const all=[...this.state.orgs,...newOrgs]; const res=[]; const seen=new Set();
+    const add=(dId,oId,dt,ot,shared)=>{const key=dId+'>'+oId; if(seen.has(key))return; seen.add(key);
+      res.push({id:'imp'+res.length+'-'+(Date.now()%10000),demandId:dId,offerId:oId,demandText:dt,offerText:ot,score:Math.min(95,60+shared.length*12),sector:'Auto-shoda z importu',status:'new',rationale:'Automaticky spárováno podle klíčových slov: '+shared.join(', ')+'.'});};
+    newOrgs.forEach(no=>{
+      (no.demands||[]).forEach(dt=>{const dk=this.tokens(dt);
+        all.forEach(oo=>{if(oo.id===no.id)return;(oo.offers||[]).forEach(ot=>{const sh=this.tokens(ot).filter(x=>dk.includes(x));if(sh.length)add(no.id,oo.id,dt,ot,sh);});});});
+      (no.offers||[]).forEach(ot=>{const ok=this.tokens(ot);
+        all.forEach(oo=>{if(oo.id===no.id)return;(oo.demands||[]).forEach(dt=>{const sh=this.tokens(dt).filter(x=>ok.includes(x));if(sh.length)add(oo.id,no.id,dt,ot,sh);});});});
+    });
+    return res.sort((a,b)=>b.score-a.score).slice(0,8);
+  }
+  confirmImport(){
+    const rows=(this.state.importRows||[]).filter(o=>o.name);
+    if(!rows.length){ this.closeImport(); return; }
+    const nm=this.generateMatches(rows);
+    this.setState(s=>({orgs:[...s.orgs,...rows],matches:[...s.matches,...nm],importOpen:false,importStep:'drop',importRows:[],view:'contacts',
+      toast:'Importováno '+rows.length+' kontaktů'+(nm.length?' · '+nm.length+' nových shod':'')}));
+    setTimeout(()=>{ this.setState({toast:''}); },4500);
+  }
+
+  fMeta(o){
+    const st=o.follow.state;
+    if(st==='overdue') return {color:'#BD6B4B',bg:'#F7ECE6',border:'#ecd5c9'};
+    if(st==='today') return {color:'#6E9152',bg:'#ECF1E5',border:'#d8e3cb'};
+    return {color:'#5C6886',bg:'#F3F5F9',border:'#E2E7F0'};
+  }
+  stageMeta(id){ return this.STAGES.find(s=>s.id===id)||this.STAGES[0]; }
+  hasNewMatchFor(id){ return this.state.matches.some(m=>m.status==='new'&&(m.demandId===id||m.offerId===id)); }
+
+  cardView(o){
+    const t=this.TYPE[o.type], sm=this.stageMeta(o.stage), fm=this.fMeta(o);
+    return {id:o.id,name:o.name,mono:o.mono,sector:o.sector,owner:o.owner,
+      typeLabel:t.label,typeColor:t.color,typeSoft:t.soft,
+      stageLabel:sm.label,stageColor:sm.color,location:o.location,
+      ownerInit:(o.owner||'').split(' ').map(x=>x[0]).join(''),ownerColor:this.OWNERS[o.owner]||'#5C6886',
+      valueLabel:o.value, followLabel:o.follow.label, followTask:o.follow.task,
+      followColor:fm.color, followBg:fm.bg, hasMatch:this.hasNewMatchFor(o.id),
+      onOpen:()=>this.openOrg(o.id)};
+  }
+
+  renderVals(){
+    const S=this.state, V=S.view;
+    const titles={dashboard:['Přehled','Co dnes řešit napříč týmem'],pipeline:['Pipeline','Vztahy podle fáze'],contacts:['Kontakty','Startupy, firmy, investoři a pobočky'],matches:['Shody','Match engine — poptávky × nabídky'],calendar:['Kalendář','Synchronizováno z Microsoft Teams · celý tým'],trips:['Cesty','Plán schůzek na služebních cestách'],tripreport:['Zpráva z cesty','Hlas, vizitky a komentář → hotová zpráva podle tvého vzoru'],report:['Reporting','Aktivita a zdraví pipeline']};
+    const navStyle=v=>V===v?'background:rgba(255,255,255,.08);color:#fff':'color:#9AA8CC';
+    const activeOrgs=S.orgs.filter(o=>o.stage!=='uzavreno');
+    const newMatches=S.matches.filter(m=>m.status==='new');
+    const dueOrder={overdue:0,today:1,soon:2};
+    const due=S.orgs.filter(o=>o.follow.state==='overdue'||o.follow.state==='today').sort((a,b)=>dueOrder[a.follow.state]-dueOrder[b.follow.state]);
+
+    // KPIs
+    const kpis=[
+      {label:'Aktivní vztahy',value:String(activeOrgs.length),delta:'+3 tento měsíc',deltaColor:'#6E9152',color:'#2B5CC4'},
+      {label:'Followupy dnes',value:String(due.length),delta:due.filter(o=>o.follow.state==='overdue').length+' po termínu',deltaColor:'#BD6B4B',color:'#BD6B4B'},
+      {label:'Nové shody',value:String(newMatches.length),delta:'čeká na propojení',deltaColor:'#6E9152',color:'#6E9152'},
+      {label:'Hodnota pipeline',value:'6,8 M €',delta:'+1,2 M € vs. minulý měsíc',deltaColor:'#6E9152',color:'#13234E'},
+    ];
+
+    const dashMatches=newMatches.slice(0,2).map(m=>{
+      const d=this.org(m.demandId),of=this.org(m.offerId);
+      return {sector:m.sector,scoreLabel:m.score+'%',demandOrg:d.name,demandText:m.demandText,offerOrg:of.name,offerText:m.offerText,onOpen:()=>this.setView('matches')};
+    });
+
+    const todayList=due.map(o=>this.cardView(o));
+
+    const activity=[
+      {text:'Tomáš H. zalogoval schůzku — Arester Dynamics',color:'#2B5CC4',meta:'dnes 09:12'},
+      {text:'Nová shoda 91 %: Falcon Munitions ↔ Iniciátor s.r.o.',color:'#6E9152',meta:'dnes 08:40'},
+      {text:'Nadia K. odeslala cenovou nabídku — Vendor Optics',color:'#3E7CA8',meta:'včera 16:20'},
+      {text:'Intro odesláno: Arester ↔ Meridian Capital',color:'#6E9152',meta:'včera 11:05'},
+      {text:'Vít Č. přidal 6 leadů z pobočky Ostrava',color:'#1C2F63',meta:'1. 6.'},
+    ];
+
+    // pipeline columns
+    const columns=this.STAGES.map(s=>{
+      const cards=S.orgs.filter(o=>o.stage===s.id);
+      const sum=cards.reduce((a,o)=>{const n=parseFloat((o.value||'').replace(/[^\d,]/g,'').replace(',','.'));return a+(isNaN(n)?0:(o.value.includes('M')?n*1000:n));},0);
+      const valueLabel=sum>=1000?(sum/1000).toFixed(1).replace('.',',')+' M €':sum>0?Math.round(sum)+' k €':'—';
+      return {id:s.id,label:s.label,color:s.color,count:cards.length,valueLabel,cards:cards.map(o=>{const cv=this.cardView(o);cv.followBg=this.fMeta(o).bg;return cv;})};
+    });
+
+    // contacts
+    const filterDefs=[{id:'all',label:'Vše'},{id:'startup',label:'Startupy'},{id:'firma',label:'Firmy'},{id:'investor',label:'Investoři'},{id:'region',label:'Pobočky'}];
+    const filters=filterDefs.map(f=>{
+      const active=S.filter===f.id;
+      const count=f.id==='all'?S.orgs.length:S.orgs.filter(o=>o.type===f.id).length;
+      return {label:f.label,count,onClick:()=>this.setFilter(f.id),
+        bg:active?'#0B1530':'#FBFBFC',fg:active?'#fff':'#5C6886',border:active?'#0B1530':'#E2E7F0'};
+    });
+    const contactRows=S.orgs.filter(o=>S.filter==='all'||o.type===S.filter).map(o=>this.cardView(o));
+
+    // matches list
+    const matchList=S.matches.filter(m=>m.status!=='dismissed').map(m=>{
+      const d=this.org(m.demandId),of=this.org(m.offerId);
+      const intro=m.status==='introduced';
+      return {sector:m.sector,scoreLabel:m.score+'%',scoreW:m.score+'%',accent:intro?'#6E9152':'#8CAA72',
+        statusLabel:intro?'PROPOJENO':'NOVÁ PŘÍLEŽITOST',statusColor:intro?'#6E9152':'#BD6B4B',
+        demandOrg:d.name,demandMono:d.mono,demandType:this.TYPE[d.type].label,demandText:m.demandText,
+        offerOrg:of.name,offerMono:of.mono,offerType:this.TYPE[of.type].label,offerText:m.offerText,
+        rationale:m.rationale,isNew:!intro,isIntroduced:intro,
+        onIntro:()=>this.introduce(m.id),onDismiss:()=>this.dismissMatch(m.id),
+        onOpenDemand:()=>this.openOrg(m.demandId),onOpenOffer:()=>this.openOrg(m.offerId)};
+    });
+
+    // trips
+    const trips=[
+      {dates:'27. 6. 2026 · Po',city:'Ostrava · Moravskoslezský kraj',office:'Pobočka Ostrava',meetCount:3,stops:[
+        {time:'9:30',name:'Pobočka Ostrava — sync',purpose:'Regionální leady, plán Q3',onOpen:()=>this.openOrg('severni')},
+        {time:'11:00',name:'Falcon Munitions',purpose:'Iniciátory · velký objem',onOpen:()=>this.openOrg('falcon')},
+        {time:'14:00',name:'KOVOSPOL Brno (cestou)',purpose:'Návštěva výroby pouzder',onOpen:()=>this.openOrg('kovospol')},
+      ]},
+      {dates:'2. 7. 2026 · St',city:'Vídeň · Rakousko',office:'Investor track',meetCount:2,stops:[
+        {time:'10:00',name:'Meridian Defense Capital',purpose:'Due diligence · data room',onOpen:()=>this.openOrg('meridian')},
+        {time:'15:00',name:'Networking — NATO DIANA',purpose:'Nové kontakty, dual-use',onOpen:()=>this.openOrg('atlas')},
+      ]},
+    ];
+
+    // report
+    const reportStages=this.STAGES.map(s=>{const c=S.orgs.filter(o=>o.stage===s.id).length;return {label:s.label,value:String(c),color:s.color,w:Math.round(c/3*100)+'%'};});
+    const teamCounts=[{name:'Tomáš H.',init:'TH',count:42,color:'#2B5CC4'},{name:'Nadia K.',init:'NK',count:31,color:'#6E9152'},{name:'Vít Č.',init:'VČ',count:24,color:'#1C2F63'},{name:'Ondřej T.',init:'OT',count:18,color:'#3E7CA8'}];
+    const maxc=Math.max(...teamCounts.map(t=>t.count));
+    const reportTeam=teamCounts.map(t=>({...t,w:Math.round(t.count/maxc*100)+'%'}));
+    const reportKpis=[
+      {label:'Propojených shod',value:'9',color:'#6E9152'},
+      {label:'Odeslaných souborů',value:'37',color:'#2B5CC4'},
+      {label:'Schůzek / měsíc',value:'21',color:'#3E7CA8'},
+      {label:'Konverze do nabídky',value:'34 %',color:'#13234E'},
+    ];
+
+    // calendar (Teams)
+    const ROWH=52, DAY_START=8, DAY_END=17;
+    const hourLines=[]; for(let h=DAY_START;h<=DAY_END;h++) hourLines.push({label:(h<10?'0':'')+h+':00',top:((h-DAY_START)*ROWH)+'px'});
+    const calMembers=this.MEMBERS.map(m=>{const active=!S.calHidden.includes(m.name);return {name:m.name,init:m.init,color:this.OWNERS[m.name],active,opacity:active?'1':'.38',onClick:()=>this.toggleCalMember(m.name)};});
+    const calGridH=((DAY_END-DAY_START)*ROWH)+'px';
+    const calDays=this.WEEK.map((wd,di)=>{
+      const evs=this.calEvents.filter(e=>e.day===di && !S.calHidden.includes(e.member)).map(e=>({
+        title:e.title,sub:e.sub,member:e.member,init:(this.MEMBERS.find(m=>m.name===e.member)||{}).init||'',
+        color:this.OWNERS[e.member]||'#5C6886',bg:this.MEMBER_SOFT[e.member]||'#F3F5F9',
+        isTeams:e.kind==='teams',time:this.fmtH(e.start)+'–'+this.fmtH(e.end),
+        top:((e.start-DAY_START)*ROWH)+'px',height:(Math.max(0.5,(e.end-e.start))*ROWH-4)+'px',
+        onOpen:e.orgId?(()=>this.openOrg(e.orgId)):(()=>this.toastMsg('Schůzka v Teams · '+e.title)),
+      }));
+      return {lbl:wd.lbl,date:wd.date,isToday:di===this.TODAY,
+        headBg:di===this.TODAY?'#0B1530':'#FBFBFC',headFg:di===this.TODAY?'#fff':'#13234E',
+        events:evs};
+    });
+    const todayMeetings=this.calEvents.filter(e=>e.day===this.TODAY && !S.calHidden.includes(e.member)).sort((a,b)=>a.start-b.start)
+      .map(e=>({title:e.title,sub:e.sub,time:this.fmtH(e.start),color:this.OWNERS[e.member]||'#5C6886',init:(this.MEMBERS.find(m=>m.name===e.member)||{}).init||'',isTeams:e.kind==='teams',
+        onOpen:e.orgId?(()=>this.openOrg(e.orgId)):(()=>this.toastMsg('Schůzka v Teams · '+e.title))}));
+
+    // teams accounts
+    const teamsRows=S.teams.map(t=>({name:t.name,email:t.email,init:(this.MEMBERS.find(m=>m.name===t.name)||{}).init||'',color:this.OWNERS[t.name]||'#5C6886',
+      connected:t.connected&&!t.syncing,syncing:t.syncing,idle:!t.connected&&!t.syncing,lastSync:t.lastSync,onConnect:()=>this.connectTeams(t.name)}));
+    const teamsConnected=S.teams.filter(t=>t.connected).length;
+    const teamsTotal=S.teams.length;
+    const teamsAllConnected=teamsConnected===teamsTotal;
+
+    // import preview
+    const importPreviewRows=(S.importRows||[]).slice(0,6).map(o=>{const t=this.TYPE[o.type];return {name:o.name,mono:o.mono,typeLabel:t.label,typeColor:t.color,typeSoft:t.soft,stageLabel:this.stageMeta(o.stage).label,stageColor:this.stageMeta(o.stage).color,sector:o.sector};});
+    const importMore=Math.max(0,(S.importRows||[]).length-6);
+
+    // detail panel
+    let d=null;
+    if(S.panelOpen && S.selId){
+      const o=this.org(S.selId), t=this.TYPE[o.type], sm=this.stageMeta(o.stage), fm=this.fMeta(o);
+      const myMatches=S.matches.filter(m=>m.status!=='dismissed'&&(m.demandId===o.id||m.offerId===o.id)).map(m=>{
+        const isDemand=m.demandId===o.id, partner=this.org(isDemand?m.offerId:m.demandId);
+        return {dir:isDemand?'Pro tvou poptávku nabízí':'Tvou nabídku poptává',partner:partner.name,
+          text:isDemand?m.offerText:m.demandText,score:m.score+'%',onOpen:()=>this.openOrg(partner.id)};
+      });
+      d={
+        name:o.name,mono:o.mono,sector:o.sector,location:o.location,owner:o.owner,value:o.value,
+        typeLabel:t.label,typeChipColor:t.soft,
+        stageLabel:sm.label,stageColor:sm.color,
+        mailto:'mailto:?subject='+encodeURIComponent('Hub Relay — '+o.name),
+        stages:this.STAGES.map((s,i)=>{
+          const curIdx=this.STAGES.findIndex(x=>x.id===o.stage);
+          return {label:s.label,onClick:()=>this.setStage(o.id,s.id),bg:i<=curIdx?sm.color:'#E2E7F0'};
+        }),
+        followTask:o.follow.task,followWhen:o.follow.when,followLabel:o.follow.label,
+        followColor:fm.color,followBg:fm.bg,followBorder:fm.border,
+        demands:o.demands,offers:o.offers,noDemands:o.demands.length===0,noOffers:o.offers.length===0,
+        hasMatches:myMatches.length>0,matches:myMatches,
+        hasUpsell:o.upsells.length>0,upsells:o.upsells,
+        files:o.files.map((f,i)=>({name:f.name,meta:f.meta,sent:f.sent,notSent:!f.sent,iconColor:f.sent?'#6E9152':'#5C6886',onSend:()=>this.sendFile(o.id,i)})),
+        history:o.history,note:o.note,
+        onLog:()=>this.openLog(),
+        onSchedule:()=>this.toastMsg('Schůzka vytvořena v Teams kalendáři · '+o.name),
+        logOpen:S.logOpen,logClosed:!S.logOpen,logText:S.logText,
+        onLogText:e=>this.setState({logText:e.target.value}),saveLog:()=>this.saveLog(),cancelLog:()=>this.cancelLog(),
+      };
+    }
+
+    return {
+      rootRef:null,
+      navDashboard:()=>this.setView('dashboard'),navPipeline:()=>this.setView('pipeline'),
+      navContacts:()=>this.setView('contacts'),navMatches:()=>this.setView('matches'),
+      navCalendar:()=>this.setView('calendar'),
+      navTrips:()=>this.setView('trips'),navReport:()=>this.setView('report'),
+      sDashboard:navStyle('dashboard'),sPipeline:navStyle('pipeline'),sContacts:navStyle('contacts'),
+      sMatches:navStyle('matches'),sCalendar:navStyle('calendar'),sTrips:navStyle('trips'),sReport:navStyle('report'),
+      hasNewMatch:newMatches.length>0,newMatchCount:String(newMatches.length),
+      pageTitle:titles[V][0],pageSub:titles[V][1],
+      isDashboard:V==='dashboard',isPipeline:V==='pipeline',isContacts:V==='contacts',
+      isMatches:V==='matches',isCalendar:V==='calendar',isTrips:V==='trips',isReport:V==='report',
+      kpis,dashMatches,todayList,activity,columns,filters,contactRows,matchList,trips,
+      reportStages,reportTeam,reportKpis,
+      hourLines,calMembers,calDays,calGridH,todayMeetings,
+      stop:(e)=>this.stop(e),openTeams:()=>this.openTeams(),closeTeams:()=>this.closeTeams(),
+      openNew:()=>this.openNew(),closeNew:()=>this.closeNew(),saveNew:()=>this.saveNew(),newOpen:S.newOpen,
+      nf:S.nf,
+      nfName:e=>this.setNf('name',e.target.value),nfType:e=>this.setNf('type',e.target.value),
+      nfSector:e=>this.setNf('sector',e.target.value),nfOwner:e=>this.setNf('owner',e.target.value),
+      nfLocation:e=>this.setNf('location',e.target.value),nfValue:e=>this.setNf('value',e.target.value),
+      nfDemands:e=>this.setNf('demands',e.target.value),nfOffers:e=>this.setNf('offers',e.target.value),
+      nfNote:e=>this.setNf('note',e.target.value),
+      navTrip:()=>this.openTrip(),sTrip:navStyle('tripreport'),isTripReport:V==='tripreport',
+      tr:S.tr,
+      trPlace:e=>this.setTr('place',e.target.value),trJustify:e=>this.setTr('justify',e.target.value),
+      trTranscript:e=>this.setTr('transcript',e.target.value),trComment:e=>this.setTr('comment',e.target.value),
+      trTemplate:e=>this.setTr('template',e.target.value),
+      recording:S.recording,notRecording:!S.recording,recLabel:S.recording?this.fmtSecs(S.recSecs)+' · nahrávám':(S.audioUrl?'Záznam připraven':this.fmtSecs(S.recSecs)),
+      recState:S.recording?'Nahrávání…':'Nahrát hlasovou poznámku',recDotBg:S.recording?'#F7ECE6':'#FBFBFC',
+      hasAudio:!!S.audioUrl,noCards:S.trCards.length===0,
+      audioEl:S.audioUrl?React.createElement('audio',{controls:true,src:S.audioUrl,style:{width:'100%',height:'38px',marginBottom:'12px'}}):null,
+      toggleRec:()=>this.toggleRec(),onAudioFile:e=>this.onAudioFile(e),onCardFiles:e=>this.onCardFiles(e),
+      trCards:S.trCards.map(c=>({id:c.id,name:c.name,role:c.role,org:c.org,note:c.note,
+        imgEl:React.createElement('img',{src:c.img,style:{flex:'none',width:'96px',height:'62px',objectFit:'cover',borderRadius:'9px',border:'1px solid #E2E7F0'}}),
+        onName:e=>this.setCard(c.id,'name',e.target.value),onRole:e=>this.setCard(c.id,'role',e.target.value),
+        onOrg:e=>this.setCard(c.id,'org',e.target.value),onNote:e=>this.setCard(c.id,'note',e.target.value),
+        onRemove:()=>this.removeCard(c.id)})),
+      hasCards:S.trCards.length>0,cardCount:String(S.trCards.length),
+      generateReport:()=>this.generateReport(),generating:S.generating,trReport:S.trReport,hasReport:!!S.trReport,
+      trCapture:V==='tripreport'&&S.trStep==='capture',trResult:V==='tripreport'&&S.trStep==='result',
+      copyReport:()=>this.copyReport(),backToCapture:()=>this.backToCapture(),saveCardsToCrm:()=>this.saveCardsToCrm(),
+      trReportEdit:e=>this.setState({trReport:e.target.value}),
+      startTour:()=>this.startTour(),tourNext:()=>this.tourNext(),tourPrev:()=>this.tourPrev(),endTour:()=>this.endTour(),
+      tourOn:S.tourOn,tourTitle:(this.TOUR[S.tourI]||{}).title,tourBody:(this.TOUR[S.tourI]||{}).body,
+      tourStepLabel:(S.tourI+1)+' / '+this.TOUR.length,tourNextLabel:S.tourI===this.TOUR.length-1?'Dokončit':'Další ›',
+      tourHasPrev:S.tourI>0,tourDots:this.TOUR.map((_,i)=>({dot:i===S.tourI?'#8CAA72':'rgba(255,255,255,.2)',onClick:()=>this.tourGo(i)})),
+      authed:S.authed,notAuthed:!S.authed,signingIn:S.signingIn,notSigningIn:!S.signingIn,
+      signIn:()=>this.signIn(),signOut:()=>this.signOut(),
+      userName:(S.authUser||{}).name||'Tomáš Hájek',userRole:(S.authUser||{}).role||'Business development',userInit:(S.authUser||{}).init||'TH',
+      teamsOpen:S.teamsOpen,teamsRows,teamsConnectedLabel:teamsConnected+'/'+teamsTotal+' účtů',teamsAllConnected,hasUnconnected:!teamsAllConnected,
+      openImport:()=>this.openImport(),closeImport:()=>this.closeImport(),onFile:(e)=>this.onFile(e),confirmImport:()=>this.confirmImport(),
+      importOpen:S.importOpen,importDrop:S.importOpen&&S.importStep==='drop',importPreview:S.importOpen&&S.importStep==='preview',
+      importPreviewRows,importCount:String((S.importRows||[]).length),importMore:String(importMore),hasImportMore:importMore>0,
+      importFileName:S.importFileName,importError:S.importError,hasImportError:!!S.importError,
+      toast:S.toast,hasToast:!!S.toast,
+      panelOpen:S.panelOpen,closePanel:()=>this.closePanel(),d,
+    };
+  }
+}
+</script>
+</body>
+</html>
