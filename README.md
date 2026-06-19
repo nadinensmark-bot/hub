@@ -1,46 +1,70 @@
 # Hub Relay — Defence CRM
 
-Interaktivní CRM prototyp pro **Defence Hub CzechInvest** — followupy, párování poptávek a nabídek (match engine), pipeline, kalendář napojený na Microsoft Teams, import z Excelu a AI generování zpráv z pracovních cest.
+Followupy, párování poptávek a nabídek, pipeline, kalendář z Microsoft Teams, import z Excelu a AI generování zpráv z pracovních cest. Pro **Defence Hub CzechInvest**.
 
-## Co umí
+Aplikace běží jako statický web — **bez serveru** (ideální pro GitHub Pages).
 
-- **Přihlášení přes Microsoft / Teams** (v prototypu simulované)
-- **Přehled** — KPI, followupy „k vyřízení dnes", schůzky z Teams, aktivita týmu
-- **Match engine** — automatické párování poptávka ↔ nabídka napříč databází
-- **Pipeline** — vztahy podle fáze (lead → uzavřeno)
-- **Kontakty** — startupy, firmy, investoři, regionální kanceláře + filtry a detail
-- **Kalendář** — schůzky celého týmu z Microsoft Teams, připojení účtů
-- **Cesty** — plán schůzek na služebních cestách
-- **Zpráva z cesty (AI)** — hlas + vizitky + komentář → hotová zpráva podle vlastního vzoru
-- **Reporting** — zdraví pipeline a aktivita týmu
-- **Import z Excelu** (.xlsx / .csv) s automatickým párováním sloupců
-- **Záznam interakcí** a **soubory k odeslání** v detailu kontaktu
+---
 
-## Spuštění lokálně
-
-Stačí otevřít `index.html` v prohlížeči (Chrome / Edge) — je to jeden soběstačný soubor, funguje i offline.
-
-> **Poznámka:** AI tlačítko „Vygenerovat zprávu z cesty" potřebuje online prostředí s napojením na jazykový model. V offline `index.html` poběží celé UI, ale samotné AI generování ne. Stejně tak přihlášení přes Microsoft a synchronizace Teams jsou v této verzi simulované — pro ostrý provoz je nutné napojení na Microsoft Entra ID / Graph API.
-
-## Nasazení na GitHub Pages
-
-1. Nahraj obsah této složky do repozitáře (viz příkazy níže).
-2. V repozitáři: **Settings → Pages → Source: Deploy from a branch → `main` / root**.
-3. Web poběží na `https://<uživatel>.github.io/<repo>/`.
-
-## Struktura
+## Soubory
 
 ```
-index.html        # běžící aplikace (self-contained, pro GitHub Pages)
-src/              # zdrojové soubory
-  Defence CRM Followups.dc.html
-  support.js
+index.html        # aplikace
+support.js        # runtime (needed — nech vedle index.html)
+msal-config.js    # JEDINÉ, co upravuješ — přihlášení přes Microsoft
 README.md
 ```
 
-## Další fáze (ostrý provoz)
+---
 
-- Reálné přihlášení přes Microsoft Entra ID (OAuth) + Graph API pro Teams kalendáře
-- Sdílená databáze (kontakty, shody, historie)
+## A) Rychlé nasazení (DEMO režim, ~3 min)
+
+Funguje hned, přihlášení je ukázkové (neptá se Microsoftu).
+
+1. **github.com → + → New repository** → název např. `hub-relay-crm` → **Public** → Create
+2. V repu **Add file → Upload files** → přetáhni `index.html`, `support.js`, `msal-config.js`, `README.md` → **Commit**
+3. **Settings → Pages → Source: Deploy from a branch → `main` / root → Save**
+4. Za ~1 min běží na `https://<účet>.github.io/hub-relay-crm/`
+
+---
+
+## B) Skutečné přihlášení přes Microsoft / Teams
+
+Aby se appka přihlašovala doopravdy a četla **tvůj reálný kalendář z Teams**, potřebuje jednu věc: **Application (client) ID** z registrace aplikace v Microsoft Entra ID. Většinou to zvládneš sama, bez IT správce.
+
+### 1. Zaregistruj aplikaci (cca 5 min)
+1. Otevři **https://entra.microsoft.com** → přihlas se pracovním účtem
+2. **Applications → App registrations → New registration**
+3. **Name:** `Hub Relay CRM`
+4. **Supported account types:** *Accounts in this organizational directory only*
+5. **Redirect URI:** vyber **Single-page application (SPA)** a vlož PŘESNOU adresu, kde appka běží — tu z kroku A4, např.
+   `https://<účet>.github.io/hub-relay-crm/`
+6. **Register**
+7. Na stránce **Overview** zkopíruj **Application (client) ID** a **Directory (tenant) ID**
+8. **API permissions → Add a permission → Microsoft Graph → Delegated permissions** → zaškrtni **User.Read** a **Calendars.Read** → **Add**
+   *(Calendars.Read pro vlastní kalendář nevyžaduje souhlas správce.)*
+
+### 2. Vlož údaje do `msal-config.js`
+```js
+window.HUBRELAY_MSAL = {
+  clientId: "SEM-VLOŽ-CLIENT-ID",
+  tenantId: "SEM-VLOŽ-TENANT-ID",
+  redirectUri: window.location.origin + window.location.pathname,
+  scopes: ["User.Read", "Calendars.Read"]
+};
+```
+Ulož, nahraj upravený `msal-config.js` do repa (Commit). Hotovo — tlačítko „Přihlásit přes Microsoft" teď přihlásí doopravdy a v **Kalendáři** se tlačítkem **„Načíst můj kalendář"** stáhnou tvoje skutečné schůzky z tohoto týdne.
+
+> Pokud krok 1.2 (New registration) účet nepustí, má váš tenant vypnuté self-service registrace → požádej IT o Client ID. Jinak to ale projde.
+
+---
+
+## Co je hotové a co je další fáze
+
+**Funguje teď:** všechny obrazovky, pipeline, kontakty, import z Excelu, kalendář, zprávy z cest (UI), demo i reálné Microsoft přihlášení + čtení vlastního kalendáře přes Graph.
+
+**Další fáze (vyžaduje backend / IT):**
+- Sdílená databáze místo lokálních dat (kontakty, shody, historie pro celý tým)
+- Kalendáře *ostatních* členů týmu (vyžaduje jejich přihlášení nebo aplikační oprávnění se souhlasem správce)
 - Automatický přepis hlasu a OCR vizitek
-- Napojení na stávající CRM (Dynamics)
+- AI generování zpráv v ostrém provozu (vlastní API klíč modelu)
