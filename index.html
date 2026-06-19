@@ -107,6 +107,10 @@
           </div>
         </div>
       </div>
+      <div onClick="{{ resetData }}" title="Vymazat všechna data a vrátit ukázkový stav" style="display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:9px;cursor:pointer;color:#7E8FB8;font-size:11.5px;font-weight:500" style-hover="background:rgba(255,255,255,.05);color:#C7D0E6">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/><path d="M10 11v5M14 11v5"/></svg>
+        Vymazat data
+      </div>
       <div style="display:flex;align-items:center;gap:10px;padding:6px 8px">
         <span style="width:32px;height:32px;border-radius:10px;background:#2B5CC4;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:12px;flex:none">{{ userInit }}</span>
         <div style="flex:1;min-width:0"><div style="font-size:12.5px;font-weight:600;line-height:1.1">{{ userName }}</div><div style="font-size:10.5px;color:#7E8FB8">{{ userRole }}</div></div>
@@ -1128,8 +1132,13 @@ class Component extends DCLogic {
     this.MEMBERS=[
       {name:'Tomáš H.',init:'TH'},{name:'Nadia K.',init:'NK'},{name:'Ondřej T.',init:'OT'},{name:'Vít Č.',init:'VČ'}
     ];
-    this.WEEK=[{lbl:'Po',date:'22. 6.'},{lbl:'Út',date:'23. 6.'},{lbl:'St',date:'24. 6.'},{lbl:'Čt',date:'25. 6.'},{lbl:'Pá',date:'26. 6.'}];
-    this.TODAY=2;
+    // Pracovní týden a "dnes" se počítají z aktuálního data — kalendář tak vždy
+    // sedí na reálné schůzky načtené z Microsoftu (víkend se zarovná na pátek).
+    const now=new Date();
+    const dayIdx=(now.getDay()+6)%7; // Po=0 … Ne=6
+    this.TODAY=Math.min(dayIdx,4);
+    const mon=new Date(now); mon.setDate(now.getDate()-dayIdx);
+    this.WEEK=['Po','Út','St','Čt','Pá'].map((lbl,i)=>{ const d=new Date(mon); d.setDate(mon.getDate()+i); return {lbl,date:d.getDate()+'. '+(d.getMonth()+1)+'.'}; });
     this.calEvents=[
       {day:0,start:9,end:9.5,title:'Týmový sync',sub:'Microsoft Teams',member:'Tomáš H.',kind:'teams'},
       {day:0,start:11,end:12,title:'Vendor Optics',sub:'Cenová nabídka',member:'Nadia K.',orgId:'vendoroptics',kind:'crm'},
@@ -1308,7 +1317,12 @@ class Component extends DCLogic {
     }
   }
   persist(){ try{ localStorage.setItem('hubrelay_data', JSON.stringify({orgs:this.state.orgs, matches:this.state.matches})); }catch(e){} }
-  resetData(){ try{ localStorage.removeItem('hubrelay_data'); }catch(e){} this.toastMsg('Obnoveno na ukázková data — načti stránku'); }
+  resetData(){
+    if(typeof confirm==='function' && !confirm('Vymazat všechna data a vrátit ukázkový stav?')) return;
+    try{ localStorage.removeItem('hubrelay_data'); }catch(e){}
+    this._lastOrgs=null; this._lastMatches=null;
+    try{ location.reload(); }catch(e){ this.toastMsg('Data vymazána — načti stránku'); }
+  }
   exportCSV(){
     const esc=v=>{ v=(v==null?'':String(v)); return /[";\n]/.test(v) ? '"'+v.replace(/"/g,'""')+'"' : v; };
     const head=['Název','Typ','Sektor','Fáze','Vlastník','Lokalita','Hodnota','Poptávky','Nabídky','Další followup'];
@@ -1356,7 +1370,7 @@ class Component extends DCLogic {
     if(!this.msalEnabled()){
       this.setState({signingIn:true});
       setTimeout(()=>{
-        const user={name:'Tomáš Hájek',email:'tomas.hajek@czechinvest.org',init:'TH',role:'Business development (demo)'};
+        const user={name:'Naďa Sokolová',email:'nada.sokolova@czechinvest.org',init:'NS',role:'Defence Hub (demo)'};
         try{ localStorage.setItem('hubrelay_auth',JSON.stringify(user)); }catch(e){}
         this.setState({signingIn:false,authed:true,authUser:user});
         this.maybeTour();
@@ -1413,7 +1427,6 @@ class Component extends DCLogic {
       const data=await resp.json();
       const me=(this.state.authUser||{}).name||'Já';
       const evs=(data.value||[]).map(ev=>{
-        const s=new Date(ev.start.dateTime+ (ev.start.dateTime.endsWith('Z')?'':'Z')); // treat as local-ish
         const sd=new Date(ev.start.dateTime), ed=new Date(ev.end.dateTime);
         const day=(sd.getDay()+6)%7;
         const start=sd.getHours()+sd.getMinutes()/60, endH=ed.getHours()+ed.getMinutes()/60;
@@ -1554,10 +1567,49 @@ Přepis hlasové poznámky z jednání: ${t.transcript||'(neuvedeno)'}
 Doplňující komentář: ${t.comment||'(neuvedeno)'}
 Navštívené subjekty / kontakty z vizitek:
 ${cardLines}`;
+    // AI běží jen tam, kde je k dispozici model (window.claude — návrhové prostředí
+    // nebo budoucí serverový endpoint). Jinak se zpráva poskládá lokálně z podkladů,
+    // aby funkce fungovala i v běžném prohlížeči / na GitHub Pages.
+    const hasAI = typeof window!=='undefined' && window.claude && typeof window.claude.complete==='function';
+    if(!hasAI){
+      this.setState({trReport:this.localReport(),generating:false});
+      this.toastMsg('Zpráva sestavena z podkladů (AI model není v tomto prostředí dostupný)');
+      return;
+    }
     try{
       const out=await window.claude.complete({messages:[{role:'user',content:prompt}]});
-      this.setState({trReport:(out||'').trim(),generating:false});
-    }catch(err){ this.setState({generating:false,trReport:'',trStep:'capture'}); this.toastMsg('Generování selhalo, zkus to znovu'); }
+      const txt=(out||'').trim();
+      this.setState({trReport:txt||this.localReport(),generating:false});
+    }catch(err){ this.setState({trReport:this.localReport(),generating:false}); this.toastMsg('AI generování selhalo — zpráva sestavena z podkladů'); }
+  }
+  // Lokální sestavení zprávy z podkladů (fallback bez AI).
+  localReport(){
+    const t=this.state.tr, cards=this.state.trCards;
+    const who=(this.state.authUser||{}).name||'Naďa Sokolová';
+    const today=new Date().toLocaleDateString('cs-CZ');
+    const contacts=cards.filter(c=>c.name||c.org).map(c=>{
+      const parts=[c.role,c.org].filter(Boolean).join(', ');
+      return '- '+(c.name||'(jméno z vizitky)')+(parts?' – '+parts:'')+(c.note?' ('+c.note+')':'');
+    });
+    const L=[];
+    L.push('Zpráva z pracovní cesty');
+    if(t.place) L.push(t.place);
+    L.push('');
+    L.push('Účel a kontext cesty:');
+    L.push(t.justify||'(neuvedeno)');
+    L.push('');
+    L.push('Průběh pracovní cesty:');
+    L.push(t.transcript||'(neuvedeno)');
+    if(t.comment){ L.push(''); L.push('Doplňující poznámky:'); L.push(t.comment); }
+    L.push('');
+    L.push('Získané kontakty:');
+    L.push(contacts.length?contacts.join('\n'):'(žádné nové kontakty)');
+    L.push('');
+    L.push('Závěr:');
+    L.push('Cesta splnila svůj účel; navázané kontakty budou zpracovány v rámci followupů.');
+    L.push('');
+    L.push('Zpracoval: '+who+', '+today);
+    return L.join('\n');
   }
   copyReport(){ try{ navigator.clipboard.writeText(this.state.trReport); this.toastMsg('Zpráva zkopírována'); }catch(e){} }
   backToCapture(){ this.setState({trStep:'capture'}); }
@@ -1588,7 +1640,7 @@ ${cardLines}`;
   cancelLog(){ this.setState({logOpen:false,logText:''}); }
   saveLog(){
     const txt=this.state.logText.trim(); if(!txt){ this.setState({logOpen:false}); return; }
-    const who=(this.state.authUser||{}).name||'Tomáš Hájek';
+    const who=(this.state.authUser||{}).name||'Naďa Sokolová';
     const first=who.split(' ')[0]+' '+(who.split(' ')[1]||'').charAt(0)+'.';
     const id=this.state.selId;
     this.setState(s=>({orgs:s.orgs.map(o=>o.id===id?{...o,history:[{text:txt,color:'#2B5CC4',meta:'právě teď · '+first},...o.history]}:o),logOpen:false,logText:''}));
@@ -1764,7 +1816,9 @@ ${cardLines}`;
     ];
 
     // report
-    const reportStages=this.STAGES.map(s=>{const c=S.orgs.filter(o=>o.stage===s.id).length;return {label:s.label,value:String(c),color:s.color,w:Math.round(c/3*100)+'%'};});
+    const stageCounts=this.STAGES.map(s=>S.orgs.filter(o=>o.stage===s.id).length);
+    const stageMax=Math.max(1,...stageCounts);
+    const reportStages=this.STAGES.map((s,i)=>({label:s.label,value:String(stageCounts[i]),color:s.color,w:Math.round(stageCounts[i]/stageMax*100)+'%'}));
     const teamCounts=[{name:'Tomáš H.',init:'TH',count:42,color:'#2B5CC4'},{name:'Nadia K.',init:'NK',count:31,color:'#6E9152'},{name:'Vít Č.',init:'VČ',count:24,color:'#1C2F63'},{name:'Ondřej T.',init:'OT',count:18,color:'#3E7CA8'}];
     const maxc=Math.max(...teamCounts.map(t=>t.count));
     const reportTeam=teamCounts.map(t=>({...t,w:Math.round(t.count/maxc*100)+'%'}));
@@ -1892,7 +1946,7 @@ ${cardLines}`;
       tourHasPrev:S.tourI>0,tourDots:this.TOUR.map((_,i)=>({dot:i===S.tourI?'#8CAA72':'rgba(255,255,255,.2)',onClick:()=>this.tourGo(i)})),
       authed:S.authed,notAuthed:!S.authed,signingIn:S.signingIn,notSigningIn:!S.signingIn,
       signIn:()=>this.signIn(),signOut:()=>this.signOut(),
-      userName:(S.authUser||{}).name||'Tomáš Hájek',userRole:(S.authUser||{}).role||'Business development',userInit:(S.authUser||{}).init||'TH',
+      userName:(S.authUser||{}).name||'Naďa Sokolová',userRole:(S.authUser||{}).role||'Defence Hub',userInit:(S.authUser||{}).init||'NS',
       msalEnabled:this.msalEnabled(),isDemoAuth:!this.msalEnabled(),
       authError:S.authError,hasAuthError:!!S.authError,
       loginTitle:this.msalEnabled()?'Přihlášení':'Přihlášení (demo)',

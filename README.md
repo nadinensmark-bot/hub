@@ -61,10 +61,10 @@ Ulož, nahraj upravený `msal-config.js` do repa (Commit). Hotovo — tlačítko
 
 ## Co je hotové a co je další fáze
 
-**Funguje teď:** všechny obrazovky, pipeline, kontakty, import z Excelu, kalendář, zprávy z cest (UI), demo i reálné Microsoft přihlášení + čtení vlastního kalendáře přes Graph.
+**Funguje teď:** všechny obrazovky, pipeline, kontakty, import z Excelu, export do CSV, kalendář (vždy aktuální týden), demo i reálné Microsoft přihlášení + čtení vlastního kalendáře přes Graph, import `.ics`, a **zprávy z cest** — tlačítko „Vygenerovat" vždy vrátí hotový koncept: pokud je dostupný AI model, použije ho; jinak zprávu sestaví lokálně z vyplněných podkladů (místo, účel, přepis, vizitky). Data se ukládají do prohlížeče; tlačítko **„Vymazat data"** v levém panelu vrátí ukázkový stav.
 
 **Další fáze (vyžaduje backend / IT):**
 - Sdílená databáze místo lokálních dat (kontakty, shody, historie pro celý tým)
 - Kalendáře *ostatních* členů týmu (vyžaduje jejich přihlášení nebo aplikační oprávnění se souhlasem správce)
 - Automatický přepis hlasu a OCR vizitek
-- AI generování zpráv v ostrém provozu (vlastní API klíč modelu)
+- AI generování zpráv v ostrém provozu přes server (vlastní API klíč modelu) — místo lokálního konceptu
