@@ -2,10 +2,14 @@
 
 > **Nové:** ve složce [`navigator/`](navigator/) je **DH Kompas** — průvodce EU programy
 > pro defence & dual-use startupy: výběr programu, hlídání výzev a uzávěrek, jak napsat
-> přihlášku, dual-use test (jste dual-use? jaké regulace a certifikace se vás týkají)
+> přihlášku, dual-use test podle kontrolních seznamů (Společný vojenský seznam EU
+> a příloha I nařízení 2021/821, kategorie 0–9) s návodem „co dál" kvůli exportu,
 > a dual-use překladač use casů. Dvojjazyčné CZ/EN. Statický web bez serveru; obsah se
 > spravuje v `navigator/kb.js` (česky) a `navigator/kb-en.js` (anglicky) — oba soubory
-> udržovat souběžně. Po nasazení na GitHub Pages běží na adrese `…/navigator/`.
+> udržovat souběžně; to je skutečná správa obsahu („backend" = tento repozitář).
+> Záložka Knowledge base v aplikaci je jen pro tým: v menu se zobrazí po otevření
+> adresy s `#admin` (skryje se přes `#noadmin`) a její editor ukládá pouze lokálně
+> do prohlížeče. Po nasazení na GitHub Pages běží aplikace na adrese `…/navigator/`.
 
 Followupy, párování poptávek a nabídek, pipeline, kalendář z Microsoft Teams, import z Excelu a AI generování zpráv z pracovních cest. Pro **Defence Hub CzechInvest**.
 

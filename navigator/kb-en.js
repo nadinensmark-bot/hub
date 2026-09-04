@@ -371,48 +371,109 @@ window.DH_KB_EN = {
     }
   },
 
-  // Dual-use self-assessment – indicative only, NOT legal advice
-  // (the disclaimer field says so everywhere in the app).
+  // Dual-use test – preliminary classification against the control lists:
+  // the EU Common Military List and Annex I of Regulation (EU) 2021/821.
+  // The priklady fields are ILLUSTRATIVE examples, not the full list –
+  // the exact technical thresholds are defined by Annex I. Not legal
+  // advice (see disclaimer). Regime conditions: {question:"answer"} =
+  // all must hold; special keys: katAno (≥1 category answered "ano"),
+  // katNevim (≥1 answered "nevim").
   dualUseTest: {
+    uvod: "Classification is done against two control lists: the EU Common Military List and Annex I of Regulation (EU) 2021/821 (dual-use). This test walks you through them and tells you what to verify next. Nothing is sent anywhere.",
     otazky: [
-      { id: "vojenske", text: "Is the product designed or specially modified for military use?", napoveda: "E.g. integration into a weapon system, or development to a military specification." },
-      { id: "civilni", text: "Does the product have real civilian uses and customers?", napoveda: "" },
-      { id: "armadni", text: "Could armed or security forces use the product?", napoveda: "Military, police, intelligence services, civil protection." },
-      { id: "export", text: "Do you plan to sell outside the EU?", napoveda: "Export control mainly applies to exports to third countries." },
+      { id: "vojenske", text: "Is the product designed, developed or specially modified for military use?", napoveda: "The key criterion of the EU Common Military List (categories ML1–ML22): weapons, ammunition, military vehicles and aircraft, fire-control systems, imaging equipment for military use, plus related software and technology. What matters is the design purpose, not who buys it." },
+      { id: "civilni", text: "Will you also sell to civilian customers in the EU?", napoveda: "Because of civilian certifications (CE and sector norms)." },
+      { id: "dataai", text: "Does the product process personal data or use AI?", napoveda: "Because of GDPR and the EU AI regulation (AI Act)." },
+      { id: "export", text: "Do you plan to sell outside the EU?", napoveda: "For dual-use items an export authorisation applies to exports to third countries; for a sensitive subset (Annex IV of the Regulation) even within the EU." },
       { id: "usa", text: "Does the product contain US components, software or technology?", napoveda: "Because of the US ITAR/EAR rules – they apply even without exporting from the US." },
       { id: "utajeni", text: "Do you expect to work with classified information?", napoveda: "E.g. contracts for ministries of defence." }
     ],
-    kategorie: {
-      text: "Does your technology fall into any of these areas?",
-      napoveda: "Areas typically covered by EU export control lists. Multiple choices possible.",
-      moznosti: [
-        { v: "krypto", t: "Encryption and cyber" },
-        { v: "senzory", t: "Sensors and lasers" },
-        { v: "navigace", t: "Navigation and avionics" },
-        { v: "letectvi", t: "Aerospace and space" },
-        { v: "elektronika", t: "Electronics and computing" },
-        { v: "materialy", t: "Special materials and chemistry" },
-        { v: "jaderne", t: "Nuclear technologies" },
-        { v: "ai", t: "AI and data processing" },
-        { v: "zadna", t: "None of the above" }
+    kategorieAnnex: {
+      text: "Which categories of Annex I of Regulation (EU) 2021/821 could your product fall into?",
+      napoveda: "Select all relevant categories (0–9). Each category controls items that reach defined technical parameters – for the selected categories the test asks whether your product exceeds them.",
+      otazkaParametry: "Does your product reach or exceed the technical parameters of controlled items in this category?",
+      napovedaParametry: "The exact thresholds (performance, accuracy, sensitivity, key length…) are defined by Annex I for specific items. Compare your product with the Annex text, or answer “not sure” – then an expert classification is needed.",
+      zadna: "None of the categories",
+      polozky: [
+        { kod: "0", nazev: "Nuclear materials, facilities and equipment", priklady: ["fissile and special fissile materials", "reactors and their components", "enrichment and reprocessing equipment"] },
+        { kod: "1", nazev: "Special materials and related equipment", priklady: ["special alloys and composite materials", "chemical precursors", "protection and detection equipment against chemical and biological agents"] },
+        { kod: "2", nazev: "Materials processing", priklady: ["high-precision CNC machine tools", "isostatic presses", "bearings and production equipment of special parameters"] },
+        { kod: "3", nazev: "Electronics", priklady: ["radiation-hardened integrated circuits", "high-frequency and microwave components", "fast high-resolution A/D converters"] },
+        { kod: "4", nazev: "Computers", priklady: ["high-performance computing systems above a defined threshold", "computers hardened for extreme conditions"] },
+        { kod: "5", nazev: "Telecommunications and “information security”", priklady: ["radio systems with frequency hopping and adaptive techniques", "interception- and jamming-resistant systems", "cryptography above defined parameters (algorithm type, key length)"] },
+        { kod: "6", nazev: "Sensors and lasers", priklady: ["thermal and night-vision cameras above defined sensitivity/resolution", "acoustic and underwater sensors (hydrophones)", "radars, gravimeters, lasers above defined power or wavelengths"] },
+        { kod: "7", nazev: "Navigation and avionics", priklady: ["inertial navigation systems and gyroscopes with drift below a defined limit", "jamming-resistant GNSS receivers for high speeds and altitudes"] },
+        { kod: "8", nazev: "Marine", priklady: ["submersible and uncrewed underwater vehicles", "quiet propulsion", "sensors for underwater use"] },
+        { kod: "9", nazev: "Aerospace and propulsion", priklady: ["rocket and jet engines and their components", "UAVs with a defined range/payload", "space technologies"] }
       ]
     },
     verdikty: {
-      vojensky: { nazev: "Likely military material", text: "A product designed specifically for military use usually falls under the military-material trade regime – stricter than dual-use. All the more reason to seek advice before talking to foreign partners." },
-      dual: { nazev: "Likely dual-use", text: "Civilian use combined with potential for armed forces is the typical dual-use profile. It opens programmes such as DIANA, EUDIS or EIC – and may also mean export control." },
-      civil: { nazev: "Likely purely civilian", text: "Without use by armed forces this is most likely a civilian technology. Note: export control can apply to civilian products too if they fall into controlled categories." },
-      nejasny: { nazev: "Unclear – we recommend a consultation", text: "The answers don't determine the profile clearly. Contact the Defence Hub and we'll go through it with you." }
+      vojensky: {
+        nazev: "Likely military material (EU Common Military List)",
+        text: "A product designed or specially modified for military use usually falls on the EU Common Military List – the military-material trade regime, stricter than dual-use. Verify the specific ML category and your obligations before talking to foreign partners.",
+        dalsiKroky: [
+          "Determine the ML category (1–22) on the EU Common Military List – with an expert or the licensing authority (in Czechia the MPO Licensing Authority).",
+          "Before any foreign business, obtain the military-material trade permit (MPO Licensing Authority) – without it you may not even negotiate a contract with a foreign partner. [VERIFY exact scope with a lawyer]",
+          "Then apply for a licence for each specific deal; expect input from other ministries and lead times of weeks to months.",
+          "Screen end users and require an end-user certificate.",
+          "Set up internal compliance: who in the company controls what may be sent to whom – including technical data and demos at trade fairs.",
+          "Contact the Defence Hub – we will connect you with experts and with companies that have been through it."
+        ]
+      },
+      listed: {
+        nazev: "Likely a controlled dual-use item (Annex I)",
+        text: "Based on your answers the product reaches the parameters of controlled items in Annex I of Regulation (EU) 2021/821. You will need an export authorisation for exports outside the EU.",
+        dalsiKroky: [
+          "Determine the exact item number in Annex I (e.g. 5A002) – everything else follows from it. If unsure, ask the MPO Licensing Authority for a classification.",
+          "Check whether the item is also in Annex IV – then an authorisation is needed even for transfers within the EU.",
+          "Check whether an EU General Export Authorisation (EU001 and others) covers your target countries – exports to many allied countries are then administratively simpler. [VERIFY the current list of authorisations]",
+          "For other countries apply for an individual/global export authorisation with the MPO Licensing Authority – count lead times in weeks.",
+          "Screen end users against sanctions lists and keep documentation (record-keeping obligations).",
+          "Set up an Internal Compliance Programme (ICP) – the Commission has a recommendation for it; it is usually expected for global authorisations.",
+          "Note: “export” includes transfers of technology or software – an e-mail, a cloud share, a talk for a foreign team.",
+          "The Defence Hub will connect you with export-control experts."
+        ]
+      },
+      zatrideni: {
+        nazev: "Needs an expert classification",
+        text: "Without comparing against the exact technical thresholds of Annex I this cannot be decided – for technology companies this is the most common situation and nothing to worry about.",
+        dalsiKroky: [
+          "Write up the product's technical parameters (performance, accuracy, sensitivity, cryptography…) in one document.",
+          "Compare them with the Annex I text for the categories you selected – or hand it to an expert straight away.",
+          "Ask the MPO Licensing Authority for a classification opinion – a standard, free procedure. [VERIFY the filing form]",
+          "Until the classification is clear, be careful about sending technical details outside the EU.",
+          "The Defence Hub will connect you with export-control experts."
+        ]
+      },
+      unlisted: {
+        nazev: "Likely outside the control lists",
+        text: "Based on your answers the product does not reach the parameters of controlled items. The catch-all clause (Art. 4 of the Regulation) still applies.",
+        dalsiKroky: [
+          "Keep a record of the assessment (why the product is not listed) – useful for banks, investors and customs.",
+          "Screen unusual enquiries: suspicious end use, embargoed countries, a customer refusing to say what the product is for.",
+          "If in doubt about end use, contact the MPO Licensing Authority – an authorisation can be required even for a non-listed item (catch-all).",
+          "Repeat the classification with every major product change – new features can cross controlled thresholds."
+        ]
+      }
     },
+    dalsiKrokyNadpis: "What next – step by step",
     rezimy: [
-      { id: "dualuse-narizeni", nazev: "EU dual-use export control", kdy: "Technology in a controlled category + export outside the EU", akce: "Check classification against the EU control list (Regulation 2021/821) and apply for an export authorisation with the Czech Licensing Authority (MPO) if needed.", podminky: { kategorie: true, export: "ano" } },
-      { id: "vojmat", nazev: "Military material trade licence", kdy: "Product designed/modified for military use", akce: "Trading in military material requires permits and licences (in Czechia via the MPO Licensing Authority). Handle before the first business talks with a foreign partner.", podminky: { vojenske: "ano" } },
+      { id: "vojmat", nazev: "Military material trade licence", kdy: "Item on the EU Common Military List (ML1–ML22)", akce: "Trading in military material requires permits and licences (in Czechia via the MPO Licensing Authority). Handle before the first business talks with a foreign partner.", podminky: { vojenske: "ano" } },
+      { id: "dualuse-narizeni", nazev: "Export authorisation for dual-use items", kdy: "Annex I item + export outside the EU", akce: "Determine the exact item number under Annex I and apply for an export authorisation with the MPO Licensing Authority. Check whether the item is also in Annex IV (then an authorisation is needed even for intra-EU transfers).", podminky: { katAno: true, export: "ano" } },
+      { id: "zatrideni", nazev: "Expert item classification", kdy: "Uncertainty whether the product reaches controlled parameters", akce: "Request a binding classification from the MPO Licensing Authority or an export-control expert's opinion. The Defence Hub will connect you.", podminky: { katNevim: true } },
+      { id: "catchall", nazev: "Catch-all clause (Art. 4 of Regulation 2021/821)", kdy: "Exports outside the EU – even for non-listed items", akce: "Screen end use and end users; if military use in an embargoed country or a WMD link is suspected, contact the MPO Licensing Authority.", podminky: { export: "ano" } },
       { id: "itar", nazev: "US ITAR/EAR rules", kdy: "US components or technology in the product", akce: "Map which components fall under US jurisdiction – it restricts who you may sell to, even without exporting from the US.", podminky: { usa: "ano" } },
       { id: "nbu", nazev: "Classified information and clearances (NSA)", kdy: "Contracts involving classified information", akce: "Facility and personnel clearances (in Czechia via NBÚ) take months – start well in advance.", podminky: { utajeni: "ano" } },
-      { id: "stanag", nazev: "Military standards and NATO codification", kdy: "Supplying armed forces", akce: "Expect requirements for military standards (STANAG, MIL-STD), resilience testing and NATO codification (NCAGE code).", podminky: { armadni: "ano" } },
+      { id: "stanag", nazev: "Military standards and NATO codification", kdy: "Supplying armed forces", akce: "Expect requirements for military standards (STANAG, MIL-STD), resilience testing and NATO codification (NCAGE code).", podminky: { vojenske: "ano" } },
       { id: "ce", nazev: "Civilian certification (CE and sector norms)", kdy: "Selling to civilian customers in the EU", akce: "Check which directives and harmonised standards apply to the product (CE marking, sector certifications).", podminky: { civilni: "ano" } },
-      { id: "gdpr", nazev: "GDPR and the EU AI regulation", kdy: "Product processes personal data or uses AI", akce: "Assess the impact of GDPR and the AI Act on civilian deployment.", podminky: { kategorieAI: true } }
+      { id: "gdpr", nazev: "GDPR and the EU AI regulation", kdy: "Product processes personal data or uses AI", akce: "Assess the impact of GDPR and the AI Act on the product's deployment.", podminky: { dataai: "ano" } }
     ],
-    disclaimer: "An indicative guide, not legal advice. Always verify the classification of your technology with export-control experts – the Defence Hub will connect you."
+    odkazy: [
+      { t: "Regulation (EU) 2021/821 incl. Annex I (dual-use control list)", url: "https://eur-lex.europa.eu/eli/reg/2021/821/oj" },
+      { t: "European Commission – dual-use export controls", url: "https://policy.trade.ec.europa.eu/help-exporters-and-importers/exporting-dual-use-items_en" },
+      { t: "MPO Licensing Authority (classification, authorisations, licences)", url: "https://www.mpo.gov.cz" }
+    ],
+    disclaimer: "A preliminary guide, not legal advice or a binding classification. The category examples are illustrative – what decides is the exact text of Annex I and the Common Military List as currently in force. Always verify the classification with the MPO Licensing Authority or an export-control expert – the Defence Hub will connect you."
   },
 
   dualUse: {

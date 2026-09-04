@@ -389,52 +389,112 @@ window.DH_KB = {
   },
 
   // -------------------------------------------------------------------
-  // DUAL-USE TEST – orientační vyhodnocení profilu a regulačních režimů.
-  // NENÍ to právní posouzení; app to všude říká (pole disclaimer).
-  // Podmínky režimů: {otazka:"odpoved"} = musí platit všechny;
-  // kategorie:true = vybrána aspoň jedna kontrolovaná kategorie;
-  // kategorieAI:true = vybrána kategorie "ai".
+  // DUAL-USE TEST – předběžné zatřídění podle kontrolních seznamů:
+  //  1) Společný vojenský seznam EU (vojenský materiál)
+  //  2) Příloha I nařízení (EU) 2021/821 – kategorie 0–9 dual-use položek
+  // U každé kategorie jsou PŘÍKLADY typicky kontrolovaných položek –
+  // přesné technické prahy definuje příloha I (pole priklady jsou
+  // ilustrace, ne úplný výčet; před spuštěním projít s odborníkem na
+  // exportní kontrolu). NENÍ to právní posouzení (pole disclaimer).
+  // Podmínky režimů: {otazka:"odpoved"} = musí platit všechny; speciální
+  // klíče: katAno (aspoň 1 kategorie s "ano"), katNevim (aspoň 1 "nevím").
   // -------------------------------------------------------------------
   dualUseTest: {
+    uvod: "Zatřídění se dělá podle dvou kontrolních seznamů: Společného vojenského seznamu EU a přílohy I nařízení (EU) 2021/821 (dual-use). Test vás jimi provede a řekne, co ověřit dál. Nic se nikam neodesílá.",
     otazky: [
-      { id: "vojenske", text: "Je produkt navržen nebo speciálně upraven pro vojenské použití?", napoveda: "Např. integrace do zbraňového systému nebo vývoj podle vojenské specifikace zadavatele." },
-      { id: "civilni", text: "Má produkt reálné civilní využití a zákazníky?", napoveda: "" },
-      { id: "armadni", text: "Mohly by produkt využít ozbrojené nebo bezpečnostní složky?", napoveda: "Armáda, policie, zpravodajské služby, civilní ochrana." },
-      { id: "export", text: "Plánujete prodej mimo EU?", napoveda: "Exportní kontrola se řeší hlavně při vývozu do třetích zemí." },
+      { id: "vojenske", text: "Je produkt navržen, vyvinut nebo speciálně upraven pro vojenské použití?", napoveda: "Klíčové kritérium Společného vojenského seznamu EU (kategorie ML1–ML22): zbraně, munice, vojenská vozidla a letouny, systémy řízení palby, zobrazovací technika pro vojenské použití, ale i software a technologie k nim. Rozhoduje účel návrhu, ne kdo nakupuje." },
+      { id: "civilni", text: "Budete prodávat i civilním zákazníkům v EU?", napoveda: "Kvůli civilním certifikacím (CE a oborové normy)." },
+      { id: "dataai", text: "Zpracovává produkt osobní údaje nebo využívá AI?", napoveda: "Kvůli GDPR a evropské regulaci AI (AI Act)." },
+      { id: "export", text: "Plánujete prodej mimo EU?", napoveda: "Vývozní povolení se u dual-use položek řeší při vývozu do třetích zemí; u citlivé podmnožiny (příloha IV nařízení) i uvnitř EU." },
       { id: "usa", text: "Obsahuje produkt americké komponenty, software nebo technologie?", napoveda: "Kvůli americkým pravidlům ITAR/EAR – platí i bez vývozu z USA." },
       { id: "utajeni", text: "Očekáváte práci s utajovanými informacemi?", napoveda: "Např. zakázky pro ministerstva obrany." }
     ],
-    kategorie: {
-      text: "Spadá vaše technologie do některé z těchto oblastí?",
-      napoveda: "Oblasti typicky sledované kontrolními seznamy EU pro export. Lze vybrat víc možností.",
-      moznosti: [
-        { v: "krypto", t: "Šifrování a kybernetika" },
-        { v: "senzory", t: "Senzory a lasery" },
-        { v: "navigace", t: "Navigace a avionika" },
-        { v: "letectvi", t: "Letectví a kosmos" },
-        { v: "elektronika", t: "Elektronika a výpočetní technika" },
-        { v: "materialy", t: "Speciální materiály a chemie" },
-        { v: "jaderne", t: "Jaderné technologie" },
-        { v: "ai", t: "AI a zpracování dat" },
-        { v: "zadna", t: "Žádná z uvedených" }
+    kategorieAnnex: {
+      text: "Do kterých kategorií přílohy I nařízení (EU) 2021/821 může váš produkt spadat?",
+      napoveda: "Vyberte všechny relevantní kategorie (0–9). Každá kategorie kontroluje položky, které dosahují stanovených technických parametrů – u vybraných kategorií se vás test zeptá, jestli je váš produkt překračuje.",
+      otazkaParametry: "Dosahuje nebo překračuje váš produkt technické parametry kontrolovaných položek v této kategorii?",
+      napovedaParametry: "Přesné prahy (výkon, přesnost, citlivost, délka klíče…) definuje příloha I u konkrétních položek. Porovnejte svůj produkt s textem přílohy, nebo odpovězte „nevím“ – pak je potřeba odborné zatřídění.",
+      zadna: "Žádná z kategorií",
+      polozky: [
+        { kod: "0", nazev: "Jaderné materiály, zařízení a příslušenství", priklady: ["štěpné a zvláštní štěpné materiály", "reaktory a jejich komponenty", "zařízení pro obohacování a přepracování"] },
+        { kod: "1", nazev: "Zvláštní materiály a související příslušenství", priklady: ["speciální slitiny a kompozitní materiály", "prekurzory chemických látek", "ochranné a detekční prostředky proti chemickým a biologickým látkám"] },
+        { kod: "2", nazev: "Zpracování materiálů", priklady: ["přesné CNC obráběcí stroje", "izostatické lisy", "ložiska a výrobní zařízení zvláštních parametrů"] },
+        { kod: "3", nazev: "Elektronika", priklady: ["radiačně odolné integrované obvody", "vysokofrekvenční a mikrovlnné součástky", "rychlé A/D převodníky s vysokým rozlišením"] },
+        { kod: "4", nazev: "Počítače", priklady: ["vysoce výkonné výpočetní systémy nad stanovený výkonový práh", "počítače odolné proti extrémním podmínkám"] },
+        { kod: "5", nazev: "Telekomunikace a „bezpečnost informací“", priklady: ["rádiové systémy s frekvenčním skákáním a adaptivními technikami", "systémy odolné proti odposlechu a rušení", "kryptografie nad stanovené parametry (typ algoritmu, délka klíče)"] },
+        { kod: "6", nazev: "Snímače a lasery", priklady: ["termovizní a noktovizní kamery nad stanovenou citlivost/rozlišení", "akustické a podvodní senzory (hydrofony)", "radary, gravimetry, lasery nad stanovený výkon či vlnové délky"] },
+        { kod: "7", nazev: "Navigace a letecká elektronika", priklady: ["inerciální navigační systémy a gyroskopy s driftem pod stanovenou mez", "GNSS přijímače odolné proti rušení pro vysoké rychlosti a výšky"] },
+        { kod: "8", nazev: "Námořní technika", priklady: ["ponorná a bezosádková podvodní plavidla", "tiché pohony", "senzory pro podvodní použití"] },
+        { kod: "9", nazev: "Letecká a kosmická technika, pohonné systémy", priklady: ["raketové a proudové motory a jejich komponenty", "bezpilotní prostředky se stanoveným doletem/nosností", "kosmické technologie"] }
       ]
     },
     verdikty: {
-      vojensky: { nazev: "Pravděpodobně vojenský materiál", text: "Produkt navržený speciálně pro vojenské použití zpravidla spadá pod režim obchodu s vojenským materiálem – přísnější než dual-use. O to důležitější je poradit se dřív, než začnete jednat se zahraničními partnery." },
-      dual: { nazev: "Pravděpodobně dual-use", text: "Kombinace civilního využití a potenciálu pro ozbrojené složky je typický dual-use profil. Otevírá vám programy jako DIANA, EUDIS nebo EIC – a zároveň může znamenat exportní kontrolu." },
-      civil: { nazev: "Pravděpodobně čistě civilní", text: "Bez využití pro ozbrojené složky jde nejspíš o civilní technologii. Pozor: exportní kontrola se může týkat i civilních produktů, pokud spadají do kontrolovaných kategorií." },
-      nejasny: { nazev: "Nejednoznačné – doporučujeme konzultaci", text: "Z odpovědí nejde profil jednoznačně určit. Ozvěte se Defence Hubu, projdeme to s vámi." }
+      vojensky: {
+        nazev: "Pravděpodobně vojenský materiál (Společný vojenský seznam EU)",
+        text: "Produkt navržený nebo speciálně upravený pro vojenské použití zpravidla spadá na Společný vojenský seznam EU – režim obchodu s vojenským materiálem, přísnější než dual-use. Konkrétní kategorii ML a povinnosti ověřte dřív, než začnete jednat se zahraničními partnery.",
+        dalsiKroky: [
+          "Určete kategorii ML (1–22) na Společném vojenském seznamu EU – s odborníkem nebo Licenční správou MPO.",
+          "Před jakýmkoli obchodem se zahraničím vyřiďte povolení k obchodu s vojenským materiálem (Licenční správa MPO) – bez něj nesmíte ani jednat o kontraktu se zahraničním partnerem. [OVĚŘIT přesný rozsah s právníkem]",
+          "Na každý konkrétní obchod pak žádejte licenci; počítejte s vyjádřeními dalších resortů a s lhůtami v řádu týdnů až měsíců.",
+          "Prověřujte koncové uživatele a vyžadujte doklad o koncovém užití (end-user certificate).",
+          "Nastavte interní compliance: kdo ve firmě hlídá, co se komu smí poslat – včetně technických dat a ukázek na veletrzích.",
+          "Ozvěte se Defence Hubu – propojíme vás s odborníky i s firmami, které tím prošly."
+        ]
+      },
+      listed: {
+        nazev: "Pravděpodobně kontrolovaná dual-use položka (příloha I)",
+        text: "Podle odpovědí váš produkt dosahuje parametrů kontrolovaných položek přílohy I nařízení (EU) 2021/821. Pro vývoz mimo EU budete potřebovat vývozní povolení.",
+        dalsiKroky: [
+          "Určete přesné číslo položky v příloze I (např. 5A002) – podle něj se odvíjí všechno další. Při nejistotě požádejte o zatřídění Licenční správu MPO.",
+          "Zkontrolujte, zda položka není i v příloze IV – pak je povolení potřeba i pro přepravu uvnitř EU.",
+          "Zjistěte, jestli pro vaše cílové země platí obecné vývozní povolení EU (EU001 a další) – vývoz do řady spojeneckých zemí je pak administrativně jednodušší. [OVĚŘIT aktuální seznam povolení]",
+          "Pro ostatní země žádejte o individuální/souhrnné vývozní povolení u Licenční správy MPO – lhůty počítejte v týdnech.",
+          "Prověřujte koncové uživatele proti sankčním seznamům a schovávejte dokumentaci (povinnost uchovávat záznamy).",
+          "Zaveďte interní compliance program (ICP) – Komise k němu má doporučení; u souhrnných povolení se zpravidla očekává.",
+          "Pozor: „vývozem“ je i předání technologie nebo softwaru – e-mail, cloud, přednáška pro zahraniční tým.",
+          "Defence Hub vás propojí s odborníky na exportní kontrolu."
+        ]
+      },
+      zatrideni: {
+        nazev: "Potřebuje odborné zatřídění",
+        text: "Bez porovnání s přesnými technickými prahy přílohy I nejde rozhodnout – to je u technologických firem nejčastější situace a nic špatného to neznamená.",
+        dalsiKroky: [
+          "Sepište technické parametry produktu (výkon, přesnost, citlivost, kryptografie…) do jednoho dokumentu.",
+          "Porovnejte je s textem přílohy I u kategorií, které jste vybrali – nebo to rovnou svěřte odborníkovi.",
+          "Požádejte Licenční správu MPO o stanovisko k zatřídění – je to standardní a bezplatný postup. [OVĚŘIT formu podání]",
+          "Do vyjasnění zatřídění opatrně s posíláním technických detailů mimo EU.",
+          "Defence Hub vás propojí s odborníky na exportní kontrolu."
+        ]
+      },
+      unlisted: {
+        nazev: "Pravděpodobně mimo kontrolní seznamy",
+        text: "Podle odpovědí produkt nedosahuje parametrů kontrolovaných položek. I tak platí doložka catch-all (čl. 4 nařízení).",
+        dalsiKroky: [
+          "Uchovejte si výsledek posouzení (proč produkt nespadá na seznamy) – hodí se pro banky, investory i celníky.",
+          "Prověřujte neobvyklé poptávky: podezřelé koncové užití, embargované země, zákazník odmítající uvést, k čemu produkt potřebuje.",
+          "Při pochybnostech o koncovém užití kontaktujte Licenční správu MPO – povolení může být vyžadováno i pro neuvedenou položku (catch-all).",
+          "Zatřídění zopakujte při každé větší změně produktu – nové funkce mohou překročit kontrolované prahy."
+        ]
+      }
     },
+    dalsiKrokyNadpis: "Co dál – postup krok za krokem",
     rezimy: [
-      { id: "dualuse-narizeni", nazev: "Exportní kontrola dual-use zboží (EU)", kdy: "Technologie v kontrolované kategorii + vývoz mimo EU", akce: "Ověřit zařazení podle kontrolního seznamu EU (nařízení 2021/821) a případně žádat o vývozní povolení u Licenční správy MPO.", podminky: { kategorie: true, export: "ano" } },
-      { id: "vojmat", nazev: "Licence pro obchod s vojenským materiálem", kdy: "Produkt navržený/upravený pro vojenské použití", akce: "Obchod s vojenským materiálem vyžaduje povolení a licence (v ČR Licenční správa MPO). Řešit před prvním obchodním jednáním se zahraničním partnerem.", podminky: { vojenske: "ano" } },
+      { id: "vojmat", nazev: "Licence pro obchod s vojenským materiálem", kdy: "Položka na Společném vojenském seznamu EU (ML1–ML22)", akce: "Obchod s vojenským materiálem vyžaduje povolení a licence (v ČR Licenční správa MPO). Řešit před prvním obchodním jednáním se zahraničním partnerem.", podminky: { vojenske: "ano" } },
+      { id: "dualuse-narizeni", nazev: "Vývozní povolení pro dual-use položky", kdy: "Položka přílohy I + vývoz mimo EU", akce: "Určit přesné číslo položky podle přílohy I a žádat o vývozní povolení u Licenční správy MPO. Zkontrolovat, zda položka není i v příloze IV (pak je povolení potřeba i pro přepravu uvnitř EU).", podminky: { katAno: true, export: "ano" } },
+      { id: "zatrideni", nazev: "Odborné zatřídění položky", kdy: "Nejistota, zda produkt dosahuje kontrolovaných parametrů", akce: "Vyžádat závazné zatřídění u Licenční správy MPO nebo posudek odborníka na exportní kontrolu. Defence Hub propojí.", podminky: { katNevim: true } },
+      { id: "catchall", nazev: "Doložka catch-all (čl. 4 nařízení 2021/821)", kdy: "Vývoz mimo EU – i u položek mimo seznamy", akce: "Prověřovat koncové užití a koncového uživatele; při podezření na vojenské užití v embargované zemi nebo souvislost se zbraněmi hromadného ničení kontaktovat Licenční správu MPO.", podminky: { export: "ano" } },
       { id: "itar", nazev: "Americká pravidla ITAR/EAR", kdy: "Americké komponenty nebo technologie v produktu", akce: "Zmapovat, které komponenty podléhají americké jurisdikci – omezuje to, komu smíte prodávat, i když z USA nic nevyvážíte.", podminky: { usa: "ano" } },
       { id: "nbu", nazev: "Utajované informace a prověrky (NBÚ)", kdy: "Zakázky s utajovanými informacemi", akce: "Prověrka podnikatele i osob u NBÚ trvá měsíce – začít s velkým předstihem.", podminky: { utajeni: "ano" } },
-      { id: "stanag", nazev: "Vojenské standardy a kodifikace NATO", kdy: "Dodávky ozbrojeným složkám", akce: "Počítat s požadavky na vojenské standardy (STANAG, MIL-STD), odolnostní testy a kodifikaci NATO (kód NCAGE).", podminky: { armadni: "ano" } },
+      { id: "stanag", nazev: "Vojenské standardy a kodifikace NATO", kdy: "Dodávky ozbrojeným složkám", akce: "Počítat s požadavky na vojenské standardy (STANAG, MIL-STD), odolnostní testy a kodifikaci NATO (kód NCAGE).", podminky: { vojenske: "ano" } },
       { id: "ce", nazev: "Civilní certifikace (CE a oborové normy)", kdy: "Prodej civilním zákazníkům v EU", akce: "Ověřit, které směrnice a harmonizované normy se na produkt vztahují (CE značení, oborové certifikace).", podminky: { civilni: "ano" } },
-      { id: "gdpr", nazev: "GDPR a evropská regulace AI", kdy: "Produkt zpracovává osobní data nebo využívá AI", akce: "Posoudit dopady GDPR a AI Actu na civilní nasazení produktu.", podminky: { kategorieAI: true } }
+      { id: "gdpr", nazev: "GDPR a evropská regulace AI", kdy: "Produkt zpracovává osobní údaje nebo využívá AI", akce: "Posoudit dopady GDPR a AI Actu na nasazení produktu.", podminky: { dataai: "ano" } }
     ],
-    disclaimer: "Orientační vodítko, ne právní posouzení. Zařazení technologie do kontrolních režimů vždy ověřte s odborníky na exportní kontrolu – Defence Hub vás propojí."
+    odkazy: [
+      { t: "Nařízení (EU) 2021/821 vč. přílohy I (kontrolní seznam dual-use)", url: "https://eur-lex.europa.eu/eli/reg/2021/821/oj" },
+      { t: "Evropská komise – exportní kontrola dual-use", url: "https://policy.trade.ec.europa.eu/help-exporters-and-importers/exporting-dual-use-items_en" },
+      { t: "Licenční správa MPO (zatřídění, povolení, licence)", url: "https://www.mpo.gov.cz" }
+    ],
+    disclaimer: "Předběžné vodítko, ne právní posouzení ani závazné zatřídění. Příklady u kategorií jsou ilustrační – rozhoduje přesný text přílohy I a Společného vojenského seznamu v aktuálním znění. Zatřídění vždy ověřte s Licenční správou MPO nebo odborníkem na exportní kontrolu – Defence Hub vás propojí."
   },
 
   // -------------------------------------------------------------------

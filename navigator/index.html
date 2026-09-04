@@ -132,7 +132,7 @@ table.zmeny td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-ali
         <span style="flex:1" data-nav="dualuse"></span>
         <span class="mono" style="font-size:8px;letter-spacing:.08em;background:rgba(140,170,114,.2);color:#A8C48E;padding:2px 6px;border-radius:5px">BETA</span>
       </div>
-      <div class="navitem" data-view="kb" onclick="go('kb')">
+      <div class="navitem" data-view="kb" id="navKb" style="display:none" onclick="go('kb')">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg>
         <span style="flex:1" data-nav="kb"></span>
       </div>
@@ -214,8 +214,9 @@ cs: {
   duKicker:"Fáze 2 · Beta", duTitle:"Dual-use nástroje",
   duSub:"Dva nástroje: test, který orientačně vyhodnotí, jestli je vaše technologie dual-use a jaké regulace a certifikace vás čekají – a překladač, který ukáže zrcadlo vašeho use casu v druhém světě.",
   duTabTest:"Test: jste dual-use?", duTabPreklad:"Překladač use casů",
-  duTestUvod:"Odpovězte na otázky – vyhodnocení je orientační a nic se nikam neodesílá.",
-  duVerdikt:"Vyhodnocení profilu", duRezimy:"Regulace a certifikace, které se vás pravděpodobně týkají",
+  duVerdikt:"Předběžné zatřídění", duRezimy:"Regulace a certifikace, které se vás pravděpodobně týkají",
+  duKategorie:"Kategorie {k}", duPriklady:"Typicky kontrolované položky (příklady – přesné prahy jsou v příloze I):",
+  duOdkazy:"Oficiální seznamy a zdroje",
   duRezimyEmpty:"Z odpovědí zatím nevyplývá žádný specifický režim – ale projděte to s odborníkem.",
   duKdy:"Kdy se týká:", duAkce:"Co udělat:",
   duZnovu:"Vyplnit znovu", duTestNedokonceno:"Verdikt se zobrazí po zodpovězení všech otázek.",
@@ -289,8 +290,9 @@ en: {
   duKicker:"Phase 2 · Beta", duTitle:"Dual-use tools",
   duSub:"Two tools: a test that gives an indicative assessment of whether your technology is dual-use and which regulations and certifications await you – and a translator that mirrors your use case into the other world.",
   duTabTest:"Test: are you dual-use?", duTabPreklad:"Use case translator",
-  duTestUvod:"Answer the questions – the assessment is indicative and nothing is sent anywhere.",
-  duVerdikt:"Profile assessment", duRezimy:"Regulations and certifications that likely apply to you",
+  duVerdikt:"Preliminary classification", duRezimy:"Regulations and certifications that likely apply to you",
+  duKategorie:"Category {k}", duPriklady:"Typically controlled items (examples – exact thresholds are in Annex I):",
+  duOdkazy:"Official lists and sources",
   duRezimyEmpty:"The answers do not point to any specific regime yet – but do go through it with an expert.",
   duKdy:"When it applies:", duAkce:"What to do:",
   duZnovu:"Fill in again", duTestNedokonceno:"The verdict appears once all questions are answered.",
@@ -685,85 +687,132 @@ function vDualUse(el){
   if(state.duTab==="test") renderDuTest(el, kb); else renderPrekladac(el, kb);
 }
 
-// ---------- 4a) test „jste dual-use?" ----------
+// ---------- 4a) test „jste dual-use?" – podle kontrolních seznamů ----------
 function renderDuTest(el, kb){
   const test = kb.dualUseTest;
-  if(!test){ el.insertAdjacentHTML("beforeend", `<div class="card" style="color:var(--muted)">[KB: dualUseTest missing]</div>`); return; }
-  if(!state.duTest) state.duTest = { odpovedi:{}, kategorie:[] };
-  const s = state.duTest;
+  if(!test || !test.kategorieAnnex){ el.insertAdjacentHTML("beforeend", `<div class="card" style="color:var(--muted)">[KB: dualUseTest missing]</div>`); return; }
+  if(!state.duTest2) state.duTest2 = { odpovedi:{}, kategorie:[], katOdpovedi:{} };
+  const s = state.duTest2;
+  const a = s.odpovedi;
 
-  const card = document.createElement("div");
-  card.className = "card";
-  card.innerHTML = `<div style="color:var(--muted);font-size:12.5px;margin-bottom:14px">${esc(t("duTestUvod"))}</div>`;
-  test.otazky.forEach(o=>{
+  el.insertAdjacentHTML("beforeend", `<div class="card" style="color:var(--muted);font-size:12.5px;line-height:1.55">${esc(test.uvod)}</div>`);
+
+  function ynRow(container, val, onPick){
+    const yn = document.createElement("div");
+    yn.className = "ynrow";
+    [["ano",t("ano")],["ne",t("ne")],["nevim",t("nevim")]].forEach(([v,lbl])=>{
+      const b = document.createElement("button");
+      b.className = "opt" + (val===v?" sel":"");
+      b.textContent = lbl;
+      b.onclick = ()=>{ onPick(v); save(); go("dualuse"); };
+      yn.appendChild(b);
+    });
+    container.appendChild(yn);
+  }
+  function otazkaRow(card, o){
     const row = document.createElement("div");
     row.style.cssText = "padding:10px 0;border-bottom:1px solid var(--line)";
     row.innerHTML = `<div style="font-size:13.5px;font-weight:600;margin-bottom:${o.napoveda?"3":"8"}px">${esc(o.text)}</div>
-      ${o.napoveda?`<div style="color:var(--muted);font-size:12px;margin-bottom:8px">${esc(o.napoveda)}</div>`:""}
-      <div class="ynrow"></div>`;
-    const yn = row.querySelector(".ynrow");
-    [["ano",t("ano")],["ne",t("ne")],["nevim",t("nevim")]].forEach(([v,lbl])=>{
-      const b = document.createElement("button");
-      b.className = "opt" + (s.odpovedi[o.id]===v?" sel":"");
-      b.textContent = lbl;
-      b.onclick = ()=>{ s.odpovedi[o.id]=v; save(); go("dualuse"); };
-      yn.appendChild(b);
-    });
+      ${o.napoveda?`<div style="color:var(--muted);font-size:12px;margin-bottom:8px">${esc(o.napoveda)}</div>`:""}`;
+    ynRow(row, a[o.id], v=>{ a[o.id]=v; });
     card.appendChild(row);
-  });
-  // kategorie (multi-select)
-  const katDiv = document.createElement("div");
-  katDiv.style.cssText = "padding:12px 0 2px";
-  katDiv.innerHTML = `<div style="font-size:13.5px;font-weight:600;margin-bottom:3px">${esc(test.kategorie.text)}</div>
-    <div style="color:var(--muted);font-size:12px;margin-bottom:10px">${esc(test.kategorie.napoveda)}</div>`;
-  test.kategorie.moznosti.forEach(m=>{
+  }
+
+  // 1) vojenský seznam
+  const c1 = document.createElement("div");
+  c1.className = "card";
+  otazkaRow(c1, test.otazky[0]);
+  el.appendChild(c1);
+
+  // 2) kategorie přílohy I (multi-select) + parametry vybraných
+  const ka = test.kategorieAnnex;
+  const c2 = document.createElement("div");
+  c2.className = "card";
+  c2.innerHTML = `<div style="font-size:13.5px;font-weight:600;margin-bottom:3px">${esc(ka.text)}</div>
+    <div style="color:var(--muted);font-size:12px;margin-bottom:10px">${esc(ka.napoveda)}</div>`;
+  ka.polozky.forEach(p=>{
     const c = document.createElement("span");
-    c.className = "chip" + (s.kategorie.includes(m.v)?" sel":"");
-    c.textContent = m.t;
+    c.className = "chip" + (s.kategorie.includes(p.kod)?" sel":"");
+    c.textContent = p.kod+" · "+p.nazev;
     c.onclick = ()=>{
-      if(m.v==="zadna"){ s.kategorie = s.kategorie.includes("zadna") ? [] : ["zadna"]; }
-      else {
-        s.kategorie = s.kategorie.filter(x=>x!=="zadna");
-        s.kategorie.includes(m.v) ? s.kategorie = s.kategorie.filter(x=>x!==m.v) : s.kategorie.push(m.v);
-      }
+      s.kategorie = s.kategorie.filter(x=>x!=="zadna");
+      if(s.kategorie.includes(p.kod)){ s.kategorie = s.kategorie.filter(x=>x!==p.kod); delete s.katOdpovedi[p.kod]; }
+      else s.kategorie.push(p.kod);
       save(); go("dualuse");
     };
-    katDiv.appendChild(c);
+    c2.appendChild(c);
   });
-  card.appendChild(katDiv);
-  el.appendChild(card);
+  const cz = document.createElement("span");
+  cz.className = "chip" + (s.kategorie.includes("zadna")?" sel":"");
+  cz.textContent = ka.zadna;
+  cz.onclick = ()=>{ s.kategorie = s.kategorie.includes("zadna") ? [] : ["zadna"]; s.katOdpovedi = {}; save(); go("dualuse"); };
+  c2.appendChild(cz);
 
-  const hotovo = test.otazky.every(o=>s.odpovedi[o.id]) && s.kategorie.length>0;
+  s.kategorie.filter(k=>k!=="zadna").forEach(kod=>{
+    const p = ka.polozky.find(x=>x.kod===kod);
+    if(!p) return;
+    const box = document.createElement("div");
+    box.style.cssText = "margin-top:14px;padding:14px 16px;background:var(--mist);border-radius:12px";
+    box.innerHTML = `<div class="kicker" style="margin-bottom:4px">${esc(t("duKategorie",{k:p.kod}))}</div>
+      <div style="font-size:13.5px;font-weight:600;margin-bottom:8px">${esc(p.nazev)}</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:4px">${esc(t("duPriklady"))}</div>
+      ${p.priklady.map(x=>`<div style="display:flex;gap:8px;font-size:12.5px;padding:2px 0"><span style="color:var(--blue)">›</span><span>${esc(x)}</span></div>`).join("")}
+      <div style="font-size:13px;font-weight:600;margin:10px 0 3px">${esc(ka.otazkaParametry)}</div>
+      <div style="color:var(--muted);font-size:11.5px;margin-bottom:8px">${esc(ka.napovedaParametry)}</div>`;
+    ynRow(box, s.katOdpovedi[kod], v=>{ s.katOdpovedi[kod]=v; });
+    c2.appendChild(box);
+  });
+  el.appendChild(c2);
+
+  // 3) ostatní otázky
+  const c3 = document.createElement("div");
+  c3.className = "card";
+  test.otazky.slice(1).forEach(o=>otazkaRow(c3, o));
+  el.appendChild(c3);
+
+  // hotovo?
+  const vybrane = s.kategorie.filter(k=>k!=="zadna");
+  const katHotovo = s.kategorie.includes("zadna") || (vybrane.length>0 && vybrane.every(k=>s.katOdpovedi[k]));
+  const hotovo = test.otazky.every(o=>a[o.id]) && katHotovo;
   if(!hotovo){
     el.insertAdjacentHTML("beforeend", `<div class="card" style="color:var(--muted)">${esc(t("duTestNedokonceno"))}</div>`);
     return;
   }
 
-  // verdikt
-  const a = s.odpovedi;
+  // verdikt podle seznamů
+  const katAno = vybrane.some(k=>s.katOdpovedi[k]==="ano");
+  const katNevim = vybrane.some(k=>s.katOdpovedi[k]==="nevim");
   let vId;
   if(a.vojenske==="ano") vId = "vojensky";
-  else if(a.civilni==="ano" && a.armadni==="ano") vId = "dual";
-  else if(a.armadni==="ne") vId = "civil";
-  else vId = "nejasny";
+  else if(katAno) vId = "listed";
+  else if(a.vojenske==="nevim" || katNevim) vId = "zatrideni";
+  else vId = "unlisted";
   const v = test.verdikty[vId];
-  const barvy = { vojensky:["var(--clay)","var(--claySoft)","#EBD9CE"], dual:["var(--green)","var(--greenSoft)","#DCE5D0"], civil:["var(--steel)","var(--blueSoft)","#C9D8F2"], nejasny:["var(--muted)","var(--mist)","var(--line)"] };
+  const barvy = { vojensky:["var(--clay)","var(--claySoft)","#EBD9CE"], listed:["var(--green)","var(--greenSoft)","#DCE5D0"], zatrideni:["#9A7B1E","#FDF3DC","#EAD9A8"], unlisted:["var(--steel)","var(--blueSoft)","#C9D8F2"] };
   const [bc,bg,bb] = barvy[vId];
   el.insertAdjacentHTML("beforeend",
     `<div class="card" style="background:${bg};border-color:${bb}">
        <div class="kicker" style="margin-bottom:6px;color:${bc}">${esc(t("duVerdikt"))}</div>
        <h2 style="font-size:19px;margin:0 0 8px;color:${bc}">${esc(v.nazev)}</h2>
        <div style="line-height:1.55;font-size:13.5px">${esc(v.text)}</div>
-       <button class="btn ghost" style="margin-top:12px;padding:7px 14px;font-size:12px;background:#fff" onclick="state.duTest={odpovedi:{},kategorie:[]};save();go('dualuse')">${esc(t("duZnovu"))}</button>
+       <button class="btn ghost" style="margin-top:12px;padding:7px 14px;font-size:12px;background:#fff" onclick="state.duTest2={odpovedi:{},kategorie:[],katOdpovedi:{}};save();go('dualuse')">${esc(t("duZnovu"))}</button>
      </div>`);
 
+  // co dál – kroky podle verdiktu
+  if(v.dalsiKroky && v.dalsiKroky.length){
+    el.insertAdjacentHTML("beforeend",
+      `<div class="card">
+         <div class="kicker" style="margin-bottom:10px">${esc(test.dalsiKrokyNadpis||"")}</div>
+         ${v.dalsiKroky.map((k,i)=>`<div style="display:flex;gap:12px;padding:6px 0;line-height:1.5"><span class="mono" style="flex:none;width:24px;height:24px;border-radius:50%;background:var(--blueSoft);color:var(--blue);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600">${i+1}</span><span style="font-size:13px">${esc(k)}</span></div>`).join("")}
+       </div>`);
+  }
+
   // režimy
-  const maKategorii = s.kategorie.some(k=>k!=="zadna");
   const aktivni = (test.rezimy||[]).filter(r=>{
     const pod = r.podminky||{};
     for(const k in pod){
-      if(k==="kategorie"){ if(!maKategorii) return false; }
-      else if(k==="kategorieAI"){ if(!s.kategorie.includes("ai")) return false; }
+      if(k==="katAno"){ if(!katAno) return false; }
+      else if(k==="katNevim"){ if(!katNevim) return false; }
       else if(a[k]!==pod[k]) return false;
     }
     return true;
@@ -781,6 +830,15 @@ function renderDuTest(el, kb){
        </div>`);
   });
   el.appendChild(rez);
+
+  // oficiální zdroje
+  if(test.odkazy && test.odkazy.length){
+    el.insertAdjacentHTML("beforeend",
+      `<div class="card" style="background:var(--blueSoft);border-color:#C9D8F2">
+         <div class="kicker" style="margin-bottom:8px;color:var(--blue)">${esc(t("duOdkazy"))}</div>
+         ${test.odkazy.map(o=>`<div style="padding:3px 0;font-size:13px"><a href="${esc(o.url)}" target="_blank" rel="noopener">${esc(o.t)} ↗</a></div>`).join("")}
+       </div>`);
+  }
 
   el.insertAdjacentHTML("beforeend",
     `<div class="card" style="background:#FDF3DC;border-color:#EAD9A8;color:#9A7B1E;font-size:12.5px;line-height:1.55">⚠ ${esc(test.disclaimer)}</div>`);
@@ -913,6 +971,19 @@ function exportKB(){
 }
 
 // ---------------- start ----------------
+// Admin režim: záložka Knowledge base je pro tým DH, ne pro startupy.
+// Zapíná se otevřením adresy s #admin, vypíná s #noadmin. Je to jen
+// skrytí v menu (obsah KB je stejně veřejný v kb.js) – skutečná správa
+// obsahu se dělá v repozitáři.
+function aplikujAdmin(){
+  if(location.hash === "#admin"){ state.admin = true; save(); }
+  if(location.hash === "#noadmin"){ state.admin = false; save(); }
+  document.getElementById("navKb").style.display = state.admin ? "" : "none";
+  if(!state.admin && state.view === "kb"){ state.view = "wizard"; save(); go("wizard"); }
+}
+window.addEventListener("hashchange", aplikujAdmin);
+aplikujAdmin();
+if(!state.admin && state.view === "kb") state.view = "wizard";
 applyChrome();
 go(state.view && views[state.view] ? state.view : "wizard", state.viewParam);
 </script>
