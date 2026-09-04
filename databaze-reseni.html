@@ -113,8 +113,11 @@ main{padding:20px 0 60px}
 .tile .desc{font-size:13px;line-height:1.5;color:var(--muted);flex:1;
   display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
 .tile .foot{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:2px}
-.trl{font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:600;color:var(--green);
-  background:var(--greenSoft);border-radius:6px;padding:3px 7px;letter-spacing:.04em}
+.trl{display:inline-flex;align-items:center;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:600;color:var(--green);
+  background:var(--greenSoft);border-radius:6px;padding:3px 8px;letter-spacing:.04em;cursor:default}
+.trlscale{display:inline-flex;gap:2px;align-items:center}
+.trlscale i{width:4px;height:9px;border-radius:1px;background:color-mix(in srgb,var(--green) 22%,transparent)}
+.trlscale i.on{background:var(--green)}
 .tag{font-size:11px;color:var(--muted);background:var(--mist);border:1px solid var(--line);border-radius:6px;padding:3px 8px}
 .tile a.link{margin-top:2px;font-size:12.5px;font-weight:600;color:var(--accent);text-decoration:none;display:inline-flex;align-items:center;gap:5px;align-self:flex-start}
 .tile a.link:hover{text-decoration:underline}
@@ -279,6 +282,19 @@ main{padding:20px 0 60px}
   function catColor(cat){
     var cats=state.cats||[]; var i=cats.indexOf(cat); if(i<0)i=0; return CATCOLORS[i%CATCOLORS.length];
   }
+  // ---- TRL: učesání jakéhokoli zápisu na jednotný tvar ----
+  var TRL_MEANING={
+    1:'Pozorován základní princip',2:'Formulace technologického konceptu',3:'Experimentální ověření konceptu',
+    4:'Ověřeno v laboratoři',5:'Ověřeno v relevantním prostředí',6:'Demonstrováno v relevantním prostředí',
+    7:'Prototyp v provozním prostředí',8:'Systém dokončen a kvalifikován',9:'Ověřeno v reálném provozu'
+  };
+  function normalizeTRL(raw){
+    if(raw==null)return null;
+    var s=String(raw).trim(); if(!s)return null;
+    var m=s.match(/(\d{1,2})/); if(!m)return null;   // vytáhne první číslo (z „TRL 9", „9/9", „úroveň 9"…)
+    var n=parseInt(m[1],10); if(n<1||n>9)return null;
+    return {num:n,label:TRL_MEANING[n]};
+  }
   function buildRows(){
     var m=state.map;
     var get=function(row,key){var h=m[key];return h?String(row[h]==null?'':row[h]).trim():'';};
@@ -290,6 +306,7 @@ main{padding:20px 0 60px}
         category:get(row,'category')||'Bez kategorie',
         description:get(row,'description'),
         trl:get(row,'trl'),
+        trlN:normalizeTRL(get(row,'trl')),
         tags:tagsRaw?tagsRaw.split(/[;,\n|]+/).map(function(x){return x.trim();}).filter(Boolean):[],
         url:get(row,'url'),
         country:get(row,'country')
@@ -301,6 +318,7 @@ main{padding:20px 0 60px}
     save();
   }
   function esc(s){return (s==null?'':String(s)).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function trlScale(n){var out='<span class="trlscale">';for(var i=1;i<=9;i++){out+='<i class="'+(i<=n?'on':'')+'"></i>';}return out+'</span>';}
   function normalizeUrl(u){if(!u)return '';if(/^https?:\/\//i.test(u))return u;return 'https://'+u;}
 
   function render(){
@@ -322,7 +340,8 @@ main{padding:20px 0 60px}
         (r.supplier?'<div class="supplier">'+esc(r.supplier)+'</div>':'')+
         (r.description?'<p class="desc">'+esc(r.description)+'</p>':'<p class="desc" style="color:var(--faint)">—</p>')+
         '<div class="foot">'+
-          (r.trl?'<span class="trl">'+(/^\d+$/.test(r.trl)?'TRL '+r.trl:esc(r.trl))+'</span>':'')+
+          (r.trlN?'<span class="trl" title="TRL '+r.trlN.num+' — '+esc(r.trlN.label)+'">TRL '+r.trlN.num+trlScale(r.trlN.num)+'</span>'
+                 :(r.trl?'<span class="trl">'+esc(r.trl)+'</span>':''))+
           r.tags.slice(0,3).map(function(t){return '<span class="tag">'+esc(t)+'</span>';}).join('')+
         '</div>'+
         (url?'<a class="link" href="'+esc(url)+'" target="_blank" rel="noopener">Detail řešení →</a>':'')+
@@ -418,7 +437,16 @@ main{padding:20px 0 60px}
   $('#q').addEventListener('input',function(e){state.q=e.target.value;render();});
   $('#sampleBtn').addEventListener('click',function(){ingest(sample(),true);});
   $('#exportBtn').addEventListener('click',function(){
-    var data=JSON.stringify(state.rows,null,2);
+    var clean=state.rows.map(function(r){
+      return {
+        name:r.name, supplier:r.supplier, category:r.category,
+        description:r.description,
+        trl:r.trlN?r.trlN.num:null,                 // učesané: číslo 1–9, nebo null
+        trl_label:r.trlN?r.trlN.label:'',           // standardní český význam
+        tags:r.tags, url:normalizeUrl(r.url), country:r.country
+      };
+    });
+    var data=JSON.stringify(clean,null,2);
     $('#jsonArea').value=data;
     $('#modal').hidden=false;
     // try direct download too (works in a standalone file / WordPress; harmless if blocked)
