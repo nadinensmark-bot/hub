@@ -1,0 +1,456 @@
+<title>Databáze řešení</title>
+<meta name="description" content="Nahraj Excel a databáze řešení Defence Hubu se sama vyplní do dlaždic.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0B1530; --navy:#13234E; --navy2:#1C2F63; --blue:#2B5CC4;
+  --paper:#FBFBFC; --mist:#F3F5F9; --panel:#FFFFFF; --line:#E2E7F0;
+  --text:#13234E; --muted:#5C6886; --faint:#8A96B2;
+  --accent:#2B5CC4; --accentSoft:#E8EEFA; --green:#6E9152; --greenSoft:#ECF1E5;
+  --shadow:0 1px 2px rgba(11,21,48,.04),0 8px 24px rgba(11,21,48,.06);
+  --shadowCard:0 1px 2px rgba(11,21,48,.05);
+  --c1:#2B5CC4; --c2:#6E9152; --c3:#BD6B4B; --c4:#3E7CA8; --c5:#B08A2E; --c6:#7A63C0;
+}
+:root:not([data-theme="light"]){}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ink:#060C1C; --navy:#0B1530; --navy2:#16224a; --blue:#5B8CE8;
+    --paper:#0B1530; --mist:#0E1932; --panel:#131F3D; --line:#26335A;
+    --text:#E7ECF7; --muted:#9AA7C6; --faint:#6E7CA0;
+    --accent:#6D9BF2; --accentSoft:#1B2A50; --green:#9CC17C; --greenSoft:#1B2A1E;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.35);
+    --shadowCard:0 1px 2px rgba(0,0,0,.3);
+    --c1:#6D9BF2; --c2:#9CC17C; --c3:#DB8B6A; --c4:#66A9D6; --c5:#D4AC4E; --c6:#A48EE0;
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#060C1C; --navy:#0B1530; --navy2:#16224a; --blue:#5B8CE8;
+  --paper:#0B1530; --mist:#0E1932; --panel:#131F3D; --line:#26335A;
+  --text:#E7ECF7; --muted:#9AA7C6; --faint:#6E7CA0;
+  --accent:#6D9BF2; --accentSoft:#1B2A50; --green:#9CC17C; --greenSoft:#1B2A1E;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.35);
+  --shadowCard:0 1px 2px rgba(0,0,0,.3);
+  --c1:#6D9BF2; --c2:#9CC17C; --c3:#DB8B6A; --c4:#66A9D6; --c5:#D4AC4E; --c6:#A48EE0;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--mist);color:var(--text);
+  font-family:'IBM Plex Sans',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1200px;margin:0 auto;padding:0 20px}
+.mono{font-family:'IBM Plex Mono',ui-monospace,monospace}
+.disp{font-family:'Space Grotesk',system-ui,sans-serif}
+h1,h2,h3{margin:0}
+
+/* ---------- header ---------- */
+header{background:radial-gradient(120% 140% at 12% -20%,#1B2D5E 0%,#0E1B3C 58%,#0B1530 100%);color:#fff}
+.hd{display:flex;align-items:center;gap:16px;padding:22px 0 24px}
+.mark{width:38px;height:38px;position:relative;flex:none}
+.mark span{position:absolute;inset:0}
+.mark .a{clip-path:polygon(50% 0,100% 25%,50% 50%,0 25%);background:#2B5CC4}
+.mark .b{clip-path:polygon(0 25%,50% 50%,50% 100%,0 75%);background:#1C2F63}
+.mark .c{clip-path:polygon(100% 25%,50% 50%,50% 100%,100% 75%);background:#8CAA72}
+.brand .kick{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;color:#8298C4}
+.brand h1{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:22px;letter-spacing:-.01em;line-height:1.1;margin-top:3px}
+.hd .spacer{flex:1}
+.theme-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);color:#cdd8f0;
+  width:38px;height:38px;border-radius:10px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center}
+.theme-btn:hover{background:rgba(255,255,255,.14)}
+
+/* ---------- toolbar ---------- */
+.toolbar{background:var(--panel);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20;box-shadow:var(--shadowCard)}
+.tb{display:flex;align-items:center;gap:12px;padding:14px 0;flex-wrap:wrap}
+.search{flex:1;min-width:200px;display:flex;align-items:center;gap:9px;background:var(--mist);
+  border:1px solid var(--line);border-radius:11px;padding:0 13px;height:42px}
+.search input{border:0;background:none;outline:none;flex:1;font-size:14px;color:var(--text);font-family:inherit}
+.search input::placeholder{color:var(--faint)}
+.search svg{flex:none;color:var(--faint)}
+.btn{display:inline-flex;align-items:center;gap:8px;height:42px;padding:0 16px;border-radius:11px;
+  font-size:13.5px;font-weight:600;font-family:inherit;cursor:pointer;border:1px solid var(--line);
+  background:var(--panel);color:var(--text);white-space:nowrap}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn.primary{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:var(--shadow)}
+.btn.primary:hover{filter:brightness(1.06);color:#fff}
+.btn.ghost{background:transparent}
+.btn svg{flex:none}
+.count{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted);white-space:nowrap}
+
+/* ---------- filter chips ---------- */
+.chips{display:flex;gap:8px;flex-wrap:wrap;padding:16px 0 4px}
+.chip{display:inline-flex;align-items:center;gap:7px;height:32px;padding:0 13px;border-radius:999px;
+  border:1px solid var(--line);background:var(--panel);color:var(--muted);font-size:12.5px;font-weight:500;
+  cursor:pointer;font-family:inherit}
+.chip:hover{border-color:var(--accent)}
+.chip.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+:root[data-theme="dark"] .chip.on,:root:not([data-theme="light"]) .chip.on{background:var(--accent);border-color:var(--accent);color:#08122b}
+.chip .dot{width:8px;height:8px;border-radius:50%;flex:none}
+.chip.on .dot{box-shadow:0 0 0 2px rgba(255,255,255,.25)}
+
+/* ---------- mapping panel ---------- */
+.mapper{background:var(--panel);border:1px solid var(--line);border-radius:14px;margin-top:16px;overflow:hidden;box-shadow:var(--shadowCard)}
+.mapper summary{list-style:none;cursor:pointer;padding:14px 18px;display:flex;align-items:center;gap:10px;font-weight:600;font-size:13.5px}
+.mapper summary::-webkit-details-marker{display:none}
+.mapper summary .tag{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.mapper[open] summary{border-bottom:1px solid var(--line)}
+.mapgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;padding:16px 18px}
+.mapfield label{display:block;font-size:11px;font-weight:600;color:var(--muted);margin-bottom:5px}
+.mapfield select{width:100%;height:38px;border:1px solid var(--line);background:var(--mist);color:var(--text);
+  border-radius:9px;padding:0 10px;font-family:inherit;font-size:13px;outline:none}
+.mapfield select:focus{border-color:var(--accent)}
+
+/* ---------- tiles ---------- */
+main{padding:20px 0 60px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(288px,1fr));gap:16px;margin-top:18px}
+.tile{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px 18px 16px;
+  box-shadow:var(--shadowCard);display:flex;flex-direction:column;gap:11px;position:relative;overflow:hidden;
+  transition:transform .13s ease,box-shadow .13s ease,border-color .13s ease}
+.tile:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:color-mix(in srgb,var(--accent) 45%,var(--line))}
+.tile .cat{display:inline-flex;align-items:center;gap:7px;font-family:'IBM Plex Mono',monospace;
+  font-size:10px;letter-spacing:.11em;text-transform:uppercase;font-weight:600;color:var(--muted)}
+.tile .cat .dot{width:9px;height:9px;border-radius:50%;flex:none}
+.tile h3{font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:600;line-height:1.25;color:var(--text);text-wrap:balance}
+.tile .supplier{font-size:12.5px;color:var(--accent);font-weight:600;margin-top:-4px}
+.tile .desc{font-size:13px;line-height:1.5;color:var(--muted);flex:1;
+  display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.tile .foot{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:2px}
+.trl{font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:600;color:var(--green);
+  background:var(--greenSoft);border-radius:6px;padding:3px 7px;letter-spacing:.04em}
+.tag{font-size:11px;color:var(--muted);background:var(--mist);border:1px solid var(--line);border-radius:6px;padding:3px 8px}
+.tile a.link{margin-top:2px;font-size:12.5px;font-weight:600;color:var(--accent);text-decoration:none;display:inline-flex;align-items:center;gap:5px;align-self:flex-start}
+.tile a.link:hover{text-decoration:underline}
+.tile .accentbar{position:absolute;left:0;top:0;bottom:0;width:4px}
+
+/* ---------- empty / drop ---------- */
+.empty{border:2px dashed var(--line);border-radius:20px;padding:56px 28px;text-align:center;
+  background:var(--panel);margin-top:22px;transition:border-color .15s,background .15s}
+.empty.drag{border-color:var(--accent);background:var(--accentSoft)}
+.empty .ico{width:56px;height:56px;border-radius:15px;background:var(--accentSoft);color:var(--accent);
+  display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
+.empty h2{font-family:'Space Grotesk',sans-serif;font-size:19px;font-weight:600;color:var(--text)}
+.empty p{color:var(--muted);font-size:14px;line-height:1.55;max-width:440px;margin:9px auto 20px}
+.empty .row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.hint{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--faint);margin-top:18px;letter-spacing:.02em}
+.err{background:#f7ece6;border:1px solid #ecd5c9;color:#a0522d;border-radius:11px;padding:11px 14px;font-size:13px;margin-top:14px}
+:root[data-theme="dark"] .err,:root:not([data-theme="light"]) .err{background:#3a241c;border-color:#5a3a2c;color:#e0a583}
+
+/* ---------- wp note ---------- */
+.note{margin-top:34px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 20px;box-shadow:var(--shadowCard)}
+.note .tag{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:600}
+.note h3{font-family:'Space Grotesk',sans-serif;font-size:15px;margin:8px 0 6px;color:var(--text)}
+.note p,.note li{font-size:13px;color:var(--muted);line-height:1.6}
+.note ol{margin:8px 0 0;padding-left:20px}
+.note code{font-family:'IBM Plex Mono',monospace;font-size:12px;background:var(--mist);border:1px solid var(--line);border-radius:5px;padding:1px 5px;color:var(--text)}
+.sample-badge{display:inline-flex;align-items:center;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:11px;
+  color:var(--muted);background:var(--mist);border:1px solid var(--line);border-radius:8px;padding:5px 10px}
+[hidden]{display:none!important}
+@media (max-width:560px){.hd{padding:18px 0}.brand h1{font-size:19px}}
+</style>
+
+<header>
+  <div class="wrap hd">
+    <div class="mark"><span class="a"></span><span class="b"></span><span class="c"></span></div>
+    <div class="brand">
+      <div class="kick">Defence Hub · CzechInvest</div>
+      <h1 class="disp">Databáze řešení</h1>
+    </div>
+    <div class="spacer"></div>
+    <button class="theme-btn" id="themeBtn" title="Přepnout režim" aria-label="Přepnout světlý/tmavý režim">◐</button>
+  </div>
+</header>
+
+<div class="toolbar">
+  <div class="wrap tb">
+    <label class="btn primary" for="file" title="Nahraj .xlsx, .xls nebo .csv">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
+      Nahrát Excel
+    </label>
+    <input id="file" type="file" accept=".xlsx,.xls,.csv" hidden>
+    <div class="search">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      <input id="q" type="search" placeholder="Hledat řešení, dodavatele, klíčové slovo…">
+    </div>
+    <span class="count" id="count"></span>
+    <button class="btn ghost" id="exportBtn" hidden title="Stáhnout data jako JSON pro web">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+      JSON pro web
+    </button>
+  </div>
+</div>
+
+<div class="wrap">
+  <div id="chips" class="chips" hidden></div>
+
+  <details class="mapper" id="mapper" hidden>
+    <summary><span class="tag">Napárování sloupců</span> <span id="mapSummary" style="color:var(--muted);font-weight:500"></span></summary>
+    <div class="mapgrid" id="mapgrid"></div>
+  </details>
+
+  <div id="err" class="err" hidden></div>
+
+  <main>
+    <div id="grid" class="grid" hidden></div>
+
+    <div id="empty" class="empty">
+      <div class="ico">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/></svg>
+      </div>
+      <h2 class="disp">Nahraj Excel a dlaždice se vyplní samy</h2>
+      <p>Přetáhni sem soubor <b>.xlsx</b>, <b>.xls</b> nebo <b>.csv</b>, nebo klikni na <b>Nahrát Excel</b> nahoře. Sloupce (název řešení, dodavatel, kategorie, popis, TRL, odkaz…) se napárují automaticky — a když to netrefí, přepíšeš to ručně.</p>
+      <div class="row">
+        <label class="btn primary" for="file">Vybrat soubor</label>
+        <button class="btn" id="sampleBtn">Zkusit s ukázkovými daty</button>
+      </div>
+      <div class="hint">Vše běží v prohlížeči — soubor se nikam neposílá.</div>
+    </div>
+
+    <div class="note">
+      <span class="tag">Jak to dostat na defencehub.gov.cz</span>
+      <h3>Z téhle ukázky na živý web ve 3 krocích</h3>
+      <p>Nahrávání v prohlížeči ukáže dlaždice jen tobě. Aby je viděli návštěvníci webu natrvalo, data se uloží k webu:</p>
+      <ol>
+        <li>Nahraj svůj Excel sem → zkontroluj dlaždice → klikni <b>JSON pro web</b> (stáhne se <code>solutions.json</code>).</li>
+        <li>Ve WordPressu nahraj <code>solutions.json</code> do <b>Média</b> (nebo do složky tématu <code>defence-hub</code>).</li>
+        <li>Do stránky <code>pages/_prerendered/solutions-database.html</code> se vloží tenhle stejný kód dlaždic, který si JSON načte a vykreslí. Příště stačí vyměnit <code>solutions.json</code> — dlaždice se přepíšou samy.</li>
+      </ol>
+    </div>
+  </main>
+</div>
+
+<div id="modal" class="modal" hidden>
+  <div class="modal-box">
+    <div class="modal-hd">
+      <div>
+        <div class="tag mono">solutions.json</div>
+        <h3 class="disp">Data pro web</h3>
+      </div>
+      <button class="modal-x" id="modalClose" aria-label="Zavřít">✕</button>
+    </div>
+    <p class="modal-p">Tohle jsou tvoje dlaždice jako data. Zkopíruj je (nebo použij stažený <code>solutions.json</code>) a nahraj na web — dlaždice se z nich vykreslí návštěvníkům.</p>
+    <textarea id="jsonArea" class="jsonarea mono" readonly spellcheck="false"></textarea>
+    <div class="modal-row">
+      <button class="btn primary" id="copyBtn">Kopírovat JSON</button>
+      <button class="btn ghost" id="modalClose2" onclick="document.getElementById('modal').hidden=true">Zavřít</button>
+    </div>
+  </div>
+</div>
+<style>
+.modal{position:fixed;inset:0;background:rgba(6,12,28,.55);z-index:60;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal-box{background:var(--panel);border:1px solid var(--line);border-radius:18px;max-width:640px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.35);padding:22px;max-height:88vh;display:flex;flex-direction:column}
+.modal-hd{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.modal-hd .tag{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:600}
+.modal-hd h3{font-size:18px;margin-top:4px;color:var(--text)}
+.modal-x{background:var(--mist);border:1px solid var(--line);color:var(--muted);width:34px;height:34px;border-radius:10px;cursor:pointer;font-size:14px;flex:none}
+.modal-x:hover{border-color:var(--accent);color:var(--accent)}
+.modal-p{font-size:13px;color:var(--muted);line-height:1.55;margin:12px 0}
+.modal-p code{font-family:'IBM Plex Mono',monospace;font-size:12px;background:var(--mist);border:1px solid var(--line);border-radius:5px;padding:1px 5px;color:var(--text)}
+.jsonarea{flex:1;min-height:220px;width:100%;resize:vertical;border:1px solid var(--line);background:var(--mist);color:var(--text);border-radius:12px;padding:12px 14px;font-size:12px;line-height:1.5;outline:none}
+.jsonarea:focus{border-color:var(--accent)}
+.modal-row{display:flex;gap:10px;margin-top:14px}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+(function(){
+  "use strict";
+  var CATCOLORS=['var(--c1)','var(--c2)','var(--c3)','var(--c4)','var(--c5)','var(--c6)'];
+  var FIELDS=[
+    {key:'name',label:'Název řešení',syn:['nazev','název','reseni','řešení','solution','produkt','product','name','title','nazevreseni']},
+    {key:'supplier',label:'Dodavatel / firma',syn:['firma','spolecnost','společnost','dodavatel','vendor','company','organizace','subjekt','vyrobce','výrobce','provider']},
+    {key:'category',label:'Kategorie / oblast',syn:['kategorie','category','oblast','domena','doména','segment','zamereni','zaměření','obor','odvetvi','odvětví','area','typ']},
+    {key:'description',label:'Popis',syn:['popis','description','anotace','summary','shrnuti','shrnutí','desc','detail','oreseni','charakteristika']},
+    {key:'trl',label:'TRL',syn:['trl','readiness','uroven','úroveň','zralost','technologyreadiness']},
+    {key:'tags',label:'Tagy / klíčová slova',syn:['tagy','tags','klicovaslova','klíčováslova','keywords','stitky','štítky','labels']},
+    {key:'url',label:'Odkaz / web',syn:['web','url','odkaz','link','stranky','stránky','www','website']},
+    {key:'country',label:'Země / region',syn:['zeme','země','country','stat','stát','region','lokalita','mesto','město','location']}
+  ];
+  var state={raw:[],headers:[],map:{},rows:[],cat:null,q:'',sample:false};
+
+  var $=function(s){return document.querySelector(s);};
+  function norm(k){return (k==null?'':k.toString()).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'').trim();}
+  function autoMap(headers){
+    var map={},used={};
+    FIELDS.forEach(function(f){
+      for(var i=0;i<headers.length;i++){
+        var n=norm(headers[i]); if(used[headers[i]])continue;
+        if(f.syn.some(function(s){return n===s||n.indexOf(s)!==-1||s.indexOf(n)!==-1&&n.length>3;})){map[f.key]=headers[i];used[headers[i]]=1;break;}
+      }
+    });
+    return map;
+  }
+  function catColor(cat){
+    var cats=state.cats||[]; var i=cats.indexOf(cat); if(i<0)i=0; return CATCOLORS[i%CATCOLORS.length];
+  }
+  function buildRows(){
+    var m=state.map;
+    var get=function(row,key){var h=m[key];return h?String(row[h]==null?'':row[h]).trim():'';};
+    state.rows=state.raw.map(function(row){
+      var tagsRaw=get(row,'tags');
+      return {
+        name:get(row,'name'),
+        supplier:get(row,'supplier'),
+        category:get(row,'category')||'Bez kategorie',
+        description:get(row,'description'),
+        trl:get(row,'trl'),
+        tags:tagsRaw?tagsRaw.split(/[;,\n|]+/).map(function(x){return x.trim();}).filter(Boolean):[],
+        url:get(row,'url'),
+        country:get(row,'country')
+      };
+    }).filter(function(r){return r.name;});
+    var seen={}; state.cats=[];
+    state.rows.forEach(function(r){if(!seen[r.category]){seen[r.category]=1;state.cats.push(r.category);}});
+    state.cats.sort();
+    save();
+  }
+  function esc(s){return (s==null?'':String(s)).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function normalizeUrl(u){if(!u)return '';if(/^https?:\/\//i.test(u))return u;return 'https://'+u;}
+
+  function render(){
+    var q=norm(state.q);
+    var list=state.rows.filter(function(r){
+      if(state.cat&&r.category!==state.cat)return false;
+      if(!q)return true;
+      var hay=norm(r.name+' '+r.supplier+' '+r.category+' '+r.description+' '+r.tags.join(' ')+' '+r.country);
+      return hay.indexOf(q)!==-1;
+    });
+    var grid=$('#grid');
+    grid.innerHTML=list.map(function(r){
+      var col=catColor(r.category);
+      var url=normalizeUrl(r.url);
+      return '<article class="tile">'+
+        '<span class="accentbar" style="background:'+col+'"></span>'+
+        '<div class="cat"><span class="dot" style="background:'+col+'"></span>'+esc(r.category)+(r.country?' · '+esc(r.country):'')+'</div>'+
+        '<h3>'+esc(r.name)+'</h3>'+
+        (r.supplier?'<div class="supplier">'+esc(r.supplier)+'</div>':'')+
+        (r.description?'<p class="desc">'+esc(r.description)+'</p>':'<p class="desc" style="color:var(--faint)">—</p>')+
+        '<div class="foot">'+
+          (r.trl?'<span class="trl">'+(/^\d+$/.test(r.trl)?'TRL '+r.trl:esc(r.trl))+'</span>':'')+
+          r.tags.slice(0,3).map(function(t){return '<span class="tag">'+esc(t)+'</span>';}).join('')+
+        '</div>'+
+        (url?'<a class="link" href="'+esc(url)+'" target="_blank" rel="noopener">Detail řešení →</a>':'')+
+      '</article>';
+    }).join('');
+    grid.hidden=list.length===0 && !state.rows.length;
+    $('#empty').hidden=state.rows.length>0;
+    grid.hidden=state.rows.length===0;
+    if(state.rows.length && list.length===0){
+      grid.hidden=false;
+      grid.innerHTML='<div style="grid-column:1/-1;text-align:center;color:var(--muted);padding:40px;font-size:14px">Nic neodpovídá filtru. <button class="btn ghost" id="clr" style="height:34px;margin-left:6px">Zrušit filtr</button></div>';
+      var clr=$('#clr'); if(clr)clr.onclick=function(){state.q='';state.cat=null;$('#q').value='';renderChips();render();};
+    }
+    $('#count').textContent=state.rows.length? (list.length===state.rows.length?state.rows.length+' řešení':list.length+' z '+state.rows.length):'';
+    $('#exportBtn').hidden=state.rows.length===0;
+  }
+  function renderChips(){
+    var c=$('#chips'); if(!state.rows.length){c.hidden=true;return;} c.hidden=false;
+    var html='<button class="chip'+(state.cat?'':' on')+'" data-cat="">Vše</button>';
+    state.cats.forEach(function(cat){
+      html+='<button class="chip'+(state.cat===cat?' on':'')+'" data-cat="'+esc(cat)+'"><span class="dot" style="background:'+catColor(cat)+'"></span>'+esc(cat)+'</button>';
+    });
+    c.innerHTML=html;
+    Array.prototype.forEach.call(c.querySelectorAll('.chip'),function(b){
+      b.onclick=function(){state.cat=b.getAttribute('data-cat')||null;renderChips();render();};
+    });
+  }
+  function renderMapper(){
+    var mp=$('#mapper'); if(!state.headers.length){mp.hidden=true;return;} mp.hidden=false;
+    var opts=function(sel){return '<option value="">— nepoužít —</option>'+state.headers.map(function(h){return '<option value="'+esc(h)+'"'+(sel===h?' selected':'')+'>'+esc(h)+'</option>';}).join('');};
+    $('#mapgrid').innerHTML=FIELDS.map(function(f){
+      return '<div class="mapfield"><label>'+esc(f.label)+'</label><select data-field="'+f.key+'">'+opts(state.map[f.key])+'</select></div>';
+    }).join('');
+    Array.prototype.forEach.call($('#mapgrid').querySelectorAll('select'),function(s){
+      s.onchange=function(){var k=s.getAttribute('data-field');var v=s.value;if(v)state.map[k]=v;else delete state.map[k];buildRows();renderChips();render();updateMapSummary();};
+    });
+    updateMapSummary();
+  }
+  function updateMapSummary(){
+    var n=Object.keys(state.map).length;
+    $('#mapSummary').textContent='· '+n+' z '+FIELDS.length+' polí napárováno'+(state.sample?' · ukázková data':'');
+  }
+
+  function ingest(json,fromSample){
+    if(!json.length){showErr('Soubor je prázdný nebo nemá hlavičku sloupců.');return;}
+    state.raw=json; state.headers=Object.keys(json[0]); state.map=autoMap(state.headers);
+    state.sample=!!fromSample; state.cat=null; state.q=''; $('#q').value='';
+    if(!state.map.name){ // fall back: first column as name
+      state.map.name=state.headers[0];
+    }
+    buildRows(); showErr(''); renderMapper(); renderChips(); render();
+    if(!fromSample) window.scrollTo({top:$('#chips').offsetTop-70,behavior:'smooth'});
+  }
+  function showErr(m){var e=$('#err');if(m){e.textContent=m;e.hidden=false;}else{e.hidden=true;}}
+
+  function readFile(file){
+    if(!file)return;
+    if(!window.XLSX){showErr('Načítám knihovnu pro Excel, zkus to prosím za vteřinu znovu.');return;}
+    var r=new FileReader();
+    r.onload=function(ev){
+      try{
+        var wb=XLSX.read(new Uint8Array(ev.target.result),{type:'array'});
+        var ws=wb.Sheets[wb.SheetNames[0]];
+        var json=XLSX.utils.sheet_to_json(ws,{defval:''});
+        ingest(json,false);
+      }catch(err){showErr('Soubor se nepodařilo načíst: '+err.message);}
+    };
+    r.readAsArrayBuffer(file);
+  }
+
+  /* ---------- persistence (per-browser convenience) ---------- */
+  function save(){try{localStorage.setItem('dh_reseni',JSON.stringify({raw:state.raw,map:state.map,sample:state.sample}));}catch(e){}}
+  function load(){try{var s=JSON.parse(localStorage.getItem('dh_reseni')||'null');if(s&&s.raw&&s.raw.length){state.raw=s.raw;state.headers=Object.keys(s.raw[0]);state.map=s.map||autoMap(state.headers);state.sample=!!s.sample;buildRows();return true;}}catch(e){}return false;}
+
+  /* ---------- sample data ---------- */
+  function sample(){
+    return [
+      {"Název řešení":"Taktický průzkumný UAV","Dodavatel":"AeroRecon Systems","Kategorie":"Bezpilotní systémy","Popis":"Malý bezpilotní letoun pro průzkum a monitoring v reálném čase s odolností proti rušení GPS a šifrovaným datovým spojem.","TRL":"9","Tagy":"UAV; ISR; průzkum","Web":"example.com","Země":"CZ"},
+      {"Název řešení":"Modulární balistická ochrana","Dodavatel":"ProtectMat","Kategorie":"Ochrana & materiály","Popis":"Kompozitní panely a vesty s certifikací dle STANAG, nižší hmotnost při zachování stupně ochrany.","TRL":"8","Tagy":"balistika; STANAG; kompozity","Web":"example.com","Země":"CZ"},
+      {"Název řešení":"Pasivní radiolokační senzor","Dodavatel":"Retisense","Kategorie":"Senzory & radary","Popis":"Systém pasivní detekce a sledování vzdušných cílů bez vlastního vyzařování, obtížně zaměřitelný protistranou.","TRL":"7","Tagy":"radar; detekce; pasivní","Web":"example.com","Země":"CZ"},
+      {"Název řešení":"Platforma kybernetické obrany","Dodavatel":"CyberShield CZ","Kategorie":"Kybernetika","Popis":"SOC platforma pro detekci průniků, threat intelligence a automatickou reakci na incidenty v kritické infrastruktuře.","TRL":"6","Tagy":"SOC; threat intel; SIEM","Web":"example.com","Země":"CZ"},
+      {"Název řešení":"VR simulátor výcviku","Dodavatel":"TrainSim","Kategorie":"Výcvik & simulace","Popis":"Imerzivní simulátor pro nácvik taktických scénářů družstva s hodnocením výkonu a přehráváním situací.","TRL":"8","Tagy":"VR; výcvik; simulace","Web":"example.com","Země":"CZ"},
+      {"Název řešení":"Systém detekce dronů C-UAS","Dodavatel":"SkyGuard","Kategorie":"Protivzdušná obrana","Popis":"Multisenzorová detekce a klasifikace malých bezpilotních prostředků s možností řízeného rušení.","TRL":"8","Tagy":"C-UAS; anti-drone; RF","Web":"example.com","Země":"CZ"},
+      {"Název řešení":"Polní zdravotnický modul","Dodavatel":"MediField","Kategorie":"Zdravotnictví","Popis":"Přenosná jednotka pro první ošetření a telemedicínu v terénu s napájením nezávislým na síti.","TRL":"6","Tagy":"medevac; telemedicína","Web":"example.com","Země":"CZ"},
+      {"Název řešení":"Mobilní energetické úložiště","Dodavatel":"PowerCore","Kategorie":"Energetika","Popis":"Robustní bateriové úložiště pro polní podmínky, tiché napájení velitelských a senzorových stanovišť.","TRL":"5","Tagy":"baterie; napájení; field","Web":"example.com","Země":"CZ"},
+      {"Název řešení":"Šifrovaná taktická komunikace","Dodavatel":"SecureLink","Kategorie":"Komunikace","Popis":"Rádiová a satelitní komunikace s koncovým šifrováním, odolná proti rušení a odposlechu.","TRL":"7","Tagy":"comms; šifrování; SATCOM","Web":"example.com","Země":"CZ"},
+      {"Název řešení":"Autonomní pozemní robot","Dodavatel":"GroundBot","Kategorie":"Bezpilotní systémy","Popis":"Pásové UGV pro logistiku, průzkum a odminování s dálkovým i autonomním režimem.","TRL":"6","Tagy":"UGV; logistika; autonomie","Web":"example.com","Země":"CZ"}
+    ];
+  }
+
+  /* ---------- events ---------- */
+  $('#file').addEventListener('change',function(e){var f=e.target.files&&e.target.files[0];readFile(f);e.target.value='';});
+  $('#q').addEventListener('input',function(e){state.q=e.target.value;render();});
+  $('#sampleBtn').addEventListener('click',function(){ingest(sample(),true);});
+  $('#exportBtn').addEventListener('click',function(){
+    var data=JSON.stringify(state.rows,null,2);
+    $('#jsonArea').value=data;
+    $('#modal').hidden=false;
+    // try direct download too (works in a standalone file / WordPress; harmless if blocked)
+    try{var blob=new Blob([data],{type:'application/json'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='solutions.json';document.body.appendChild(a);a.click();setTimeout(function(){a.remove();},0);}catch(e){}
+    $('#jsonArea').focus();$('#jsonArea').select();
+  });
+  $('#modalClose').addEventListener('click',function(){$('#modal').hidden=true;});
+  $('#modal').addEventListener('click',function(e){if(e.target===$('#modal'))$('#modal').hidden=true;});
+  $('#copyBtn').addEventListener('click',function(){
+    var ta=$('#jsonArea');ta.focus();ta.select();
+    var done=function(){var b=$('#copyBtn');b.textContent='Zkopírováno ✓';setTimeout(function(){b.textContent='Kopírovat JSON';},1600);};
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(ta.value).then(done,function(){try{document.execCommand('copy');done();}catch(e){}});}
+    else{try{document.execCommand('copy');done();}catch(e){}}
+  });
+  // drag & drop on empty state
+  var emp=$('#empty');
+  ['dragenter','dragover'].forEach(function(ev){emp.addEventListener(ev,function(e){e.preventDefault();emp.classList.add('drag');});});
+  ['dragleave','drop'].forEach(function(ev){emp.addEventListener(ev,function(e){e.preventDefault();emp.classList.remove('drag');});});
+  emp.addEventListener('drop',function(e){var f=e.dataTransfer.files&&e.dataTransfer.files[0];readFile(f);});
+
+  // theme toggle
+  (function(){
+    var root=document.documentElement;
+    try{var t=localStorage.getItem('dh_theme');if(t)root.setAttribute('data-theme',t);}catch(e){}
+    $('#themeBtn').onclick=function(){
+      var cur=root.getAttribute('data-theme');
+      var next=cur==='dark'?'light':(cur==='light'?'dark':(matchMedia('(prefers-color-scheme:dark)').matches?'light':'dark'));
+      root.setAttribute('data-theme',next);try{localStorage.setItem('dh_theme',next);}catch(e){}
+    };
+  })();
+
+  // boot
+  if(load()){renderMapper();renderChips();render();} else {render();}
+})();
+</script>
