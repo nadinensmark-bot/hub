@@ -56,6 +56,10 @@ header{background:radial-gradient(120% 140% at 12% -20%,#1B2D5E 0%,#0E1B3C 58%,#
 .theme-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);color:#cdd8f0;
   width:38px;height:38px;border-radius:10px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center}
 .theme-btn:hover{background:rgba(255,255,255,.14)}
+.lang-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);color:#e6ecfa;
+  height:38px;padding:0 12px;border-radius:10px;cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;letter-spacing:.04em}
+.lang-btn span{color:#7E8FB8}
+.lang-btn:hover{background:rgba(255,255,255,.14)}
 
 /* ---------- toolbar ---------- */
 .toolbar{background:var(--panel);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20;box-shadow:var(--shadowCard)}
@@ -136,6 +140,10 @@ main{padding:20px 0 60px}
 .trlscale i{width:4px;height:9px;border-radius:1px;background:color-mix(in srgb,var(--green) 22%,transparent)}
 .trlscale i.on{background:var(--green)}
 .tag{font-size:11px;color:var(--muted);background:var(--mist);border:1px solid var(--line);border-radius:6px;padding:3px 8px}
+.tile{cursor:pointer}
+.tile:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.tile .detailhint{margin-top:2px;font-size:12px;font-weight:600;color:var(--accent);opacity:0;transition:opacity .13s;align-self:flex-start}
+.tile:hover .detailhint,.tile:focus-visible .detailhint{opacity:1}
 .tile a.link{margin-top:2px;font-size:12.5px;font-weight:600;color:var(--accent);text-decoration:none;display:inline-flex;align-items:center;gap:5px;align-self:flex-start}
 .tile a.link:hover{text-decoration:underline}
 .tile .accentbar{position:absolute;left:0;top:0;bottom:0;width:4px}
@@ -174,28 +182,29 @@ main{padding:20px 0 60px}
       <h1 class="disp">Databáze řešení</h1>
     </div>
     <div class="spacer"></div>
+    <button class="lang-btn" id="langBtn" title="Language / Jazyk" aria-label="Přepnout jazyk">CS<span>/EN</span></button>
     <button class="theme-btn" id="themeBtn" title="Přepnout režim" aria-label="Přepnout světlý/tmavý režim">◐</button>
   </div>
 </header>
 
 <div class="toolbar">
   <div class="wrap tb">
-    <label class="btn primary" for="file" title="Nahraj .xlsx, .xls nebo .csv">
+    <label class="btn primary" for="file" data-i18n-title="uploadHint">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
-      Nahrát Excel
+      <span data-i18n="upload">Nahrát Excel</span>
     </label>
     <input id="file" type="file" accept=".xlsx,.xls,.csv" hidden>
     <div class="search">
       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-      <input id="q" type="search" placeholder="Hledat řešení, dodavatele, klíčové slovo…">
+      <input id="q" type="search" data-i18n-ph="search" placeholder="Hledat firmu, oblast, klíčové slovo…">
     </div>
     <span class="count" id="count"></span>
-    <label class="switch" id="autoCatWrap" hidden title="Zařadí řešení do jedné z 12 kategorií podle názvu a popisu. Prázdné kategorie se doplní vždy; tímto přepínačem se určí z popisu i tam, kde už kategorie je.">
-      <input type="checkbox" id="autoCat"><span class="track"><span class="knob"></span></span>Kategorii z popisu
+    <label class="switch" id="autoCatWrap" hidden data-i18n-title="autoCatHint">
+      <input type="checkbox" id="autoCat"><span class="track"><span class="knob"></span></span><span data-i18n="autoCat">Oblast z popisu</span>
     </label>
-    <button class="btn ghost" id="exportBtn" hidden title="Stáhnout data jako JSON pro web">
+    <button class="btn ghost" id="exportBtn" hidden data-i18n-title="exportHint">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
-      JSON pro web
+      <span data-i18n="export">JSON pro web</span>
     </button>
   </div>
 </div>
@@ -204,7 +213,7 @@ main{padding:20px 0 60px}
   <div id="chips" class="chips" hidden></div>
 
   <details class="mapper" id="mapper" hidden>
-    <summary><span class="tag">Napárování sloupců</span> <span id="mapSummary" style="color:var(--muted);font-weight:500"></span></summary>
+    <summary><span class="tag" data-i18n="mapping">Napárování sloupců</span> <span id="mapSummary" style="color:var(--muted);font-weight:500"></span></summary>
     <div class="mapgrid" id="mapgrid"></div>
   </details>
 
@@ -217,23 +226,23 @@ main{padding:20px 0 60px}
       <div class="ico">
         <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/></svg>
       </div>
-      <h2 class="disp">Nahraj Excel a dlaždice se vyplní samy</h2>
-      <p>Přetáhni sem soubor <b>.xlsx</b>, <b>.xls</b> nebo <b>.csv</b>, nebo klikni na <b>Nahrát Excel</b> nahoře. Sloupce se napárují automaticky, <b>TRL</b> se sjednotí (z „9", „trl 9", „9/9"…) a chybějící <b>kategorie</b> se rozpozná z popisu — zařadí řešení do jedné z 12 kategorií.</p>
+      <h2 class="disp" data-i18n="emptyTitle">Nahraj Excel a dlaždice se vyplní samy</h2>
+      <p data-i18n-html="emptyBody">Přetáhni sem soubor <b>.xlsx</b>, <b>.xls</b> nebo <b>.csv</b>, nebo klikni na <b>Nahrát Excel</b> nahoře. Sloupce se napárují automaticky, <b>TRL</b> se sjednotí a chybějící <b>oblast</b> se rozpozná z medailonku — zařadí řešení do jedné z 12 oblastí DIANA.</p>
       <div class="row">
-        <label class="btn primary" for="file">Vybrat soubor</label>
-        <button class="btn" id="sampleBtn">Zkusit s ukázkovými daty</button>
+        <label class="btn primary" for="file" data-i18n="choose">Vybrat soubor</label>
+        <button class="btn" id="sampleBtn" data-i18n="sample">Zkusit s ukázkovými daty</button>
       </div>
-      <div class="hint">Vše běží v prohlížeči — soubor se nikam neposílá.</div>
+      <div class="hint" data-i18n="privacy">Vše běží v prohlížeči — soubor se nikam neposílá.</div>
     </div>
 
     <div class="note">
-      <span class="tag">Jak to dostat na defencehub.gov.cz</span>
-      <h3>Z téhle ukázky na živý web ve 3 krocích</h3>
-      <p>Nahrávání v prohlížeči ukáže dlaždice jen tobě. Aby je viděli návštěvníci webu natrvalo, data se uloží k webu:</p>
-      <ol>
-        <li>Nahraj svůj Excel sem → zkontroluj dlaždice → klikni <b>JSON pro web</b> (stáhne se <code>solutions.json</code>).</li>
+      <span class="tag" data-i18n="deployTag">Jak to dostat na defencehub.gov.cz</span>
+      <h3 data-i18n="deployTitle">Z téhle ukázky na živý web ve 3 krocích</h3>
+      <p data-i18n="deployIntro">Nahrávání v prohlížeči ukáže dlaždice jen tobě. Aby je viděli návštěvníci webu natrvalo, data se uloží k webu:</p>
+      <ol data-i18n-html="deploySteps">
+        <li>Nahraj svůj Excel sem → zkontroluj dlaždice a oblasti → klikni <b>JSON pro web</b> (stáhne se <code>solutions.json</code>).</li>
         <li>Ve WordPressu nahraj <code>solutions.json</code> do <b>Média</b> (nebo do složky tématu <code>defence-hub</code>).</li>
-        <li>Do stránky <code>pages/_prerendered/solutions-database.html</code> se vloží tenhle stejný kód dlaždic, který si JSON načte a vykreslí. Příště stačí vyměnit <code>solutions.json</code> — dlaždice se přepíšou samy.</li>
+        <li>Do stránky <code>pages/_prerendered/solutions-database.html</code> se vloží kód dlaždic, který si JSON načte a vykreslí. Příště stačí vyměnit <code>solutions.json</code> — dlaždice se přepíšou samy.</li>
       </ol>
     </div>
   </main>
@@ -244,15 +253,35 @@ main{padding:20px 0 60px}
     <div class="modal-hd">
       <div>
         <div class="tag mono">solutions.json</div>
-        <h3 class="disp">Data pro web</h3>
+        <h3 class="disp" data-i18n="dataTitle">Data pro web</h3>
       </div>
       <button class="modal-x" id="modalClose" aria-label="Zavřít">✕</button>
     </div>
-    <p class="modal-p">Tohle jsou tvoje dlaždice jako data. Zkopíruj je (nebo použij stažený <code>solutions.json</code>) a nahraj na web — dlaždice se z nich vykreslí návštěvníkům.</p>
+    <p class="modal-p" data-i18n-html="dataBody">Tohle jsou tvoje dlaždice jako data. Zkopíruj je (nebo použij stažený <code>solutions.json</code>) a nahraj na web — dlaždice se z nich vykreslí návštěvníkům.</p>
     <textarea id="jsonArea" class="jsonarea mono" readonly spellcheck="false"></textarea>
     <div class="modal-row">
-      <button class="btn primary" id="copyBtn">Kopírovat JSON</button>
-      <button class="btn ghost" id="modalClose2" onclick="document.getElementById('modal').hidden=true">Zavřít</button>
+      <button class="btn primary" id="copyBtn" data-i18n="copy">Kopírovat JSON</button>
+      <button class="btn ghost" id="modalClose2" data-i18n="close">Zavřít</button>
+    </div>
+  </div>
+</div>
+
+<div id="detail" class="modal" hidden>
+  <div class="modal-box detail-box">
+    <div class="modal-hd">
+      <div style="min-width:0">
+        <div class="detail-meta" id="dMeta"></div>
+        <h3 class="disp" id="dName"></h3>
+      </div>
+      <button class="modal-x" id="detailClose" aria-label="Zavřít">✕</button>
+    </div>
+    <p class="detail-desc" id="dDesc"></p>
+    <div class="detail-cta" id="dCtaWrap" hidden>
+      <div class="detail-label" data-i18n="ctaLabel">Výzva / co firma hledá</div>
+      <div id="dCta"></div>
+    </div>
+    <div class="modal-row" id="dLinkRow" hidden>
+      <a class="btn primary" id="dLink" href="#" target="_blank" rel="noopener" data-i18n="visitWeb">Web řešení →</a>
     </div>
   </div>
 </div>
@@ -267,6 +296,16 @@ main{padding:20px 0 60px}
 .modal-p{font-size:13px;color:var(--muted);line-height:1.55;margin:12px 0}
 .modal-p code{font-family:'IBM Plex Mono',monospace;font-size:12px;background:var(--mist);border:1px solid var(--line);border-radius:5px;padding:1px 5px;color:var(--text)}
 .jsonarea{flex:1;min-height:220px;width:100%;resize:vertical;border:1px solid var(--line);background:var(--mist);color:var(--text);border-radius:12px;padding:12px 14px;font-size:12px;line-height:1.5;outline:none}
+.detail-box{max-width:600px}
+.detail-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;font-weight:600;color:var(--muted)}
+.detail-meta .dot{width:9px;height:9px;border-radius:50%;flex:none}
+.detail-meta .cty{color:var(--faint);font-weight:500}
+.detail-hd-name{font-size:20px}
+#dName{font-size:20px;margin-top:6px;color:var(--text);text-wrap:balance}
+.detail-desc{font-size:14px;line-height:1.65;color:var(--text);white-space:pre-wrap;margin:14px 0 0;max-height:44vh;overflow:auto}
+.detail-cta{margin-top:16px;background:var(--accentSoft);border:1px solid color-mix(in srgb,var(--accent) 22%,transparent);border-radius:12px;padding:13px 15px}
+.detail-label{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:5px}
+#dCta{font-size:13.5px;line-height:1.55;color:var(--text)}
 .jsonarea:focus{border-color:var(--accent)}
 .modal-row{display:flex;gap:10px;margin-top:14px}
 </style>
@@ -286,7 +325,7 @@ main{padding:20px 0 60px}
     {key:'url',label:'Odkaz / web',syn:['web','url','odkaz','link','stranky','stránky','www','website']},
     {key:'country',label:'Země / region',syn:['zeme','země','country','stat','stát','region','lokalita','mesto','město','location']}
   ];
-  var state={raw:[],headers:[],map:{},rows:[],cat:null,q:'',sample:false};
+  var state={raw:[],headers:[],map:{},rows:[],cat:null,q:'',sample:false,autoCat:false,overrides:{},lang:'cs'};
 
   var $=function(s){return document.querySelector(s);};
   function norm(k){return (k==null?'':k.toString()).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'').trim();}
@@ -384,12 +423,97 @@ main{padding:20px 0 60px}
     });
     return bestScore>0?best:'';
   }
+
+  // ---- Dvojjazyčné názvy oblastí (DIANA) ----
+  var CAT_EN={
+    'Odolné kosmické operace':'Resilient space operations',
+    'Energie a energetika':'Energy and power',
+    'Pokročilé komunikační technologie':'Advanced communications',
+    'Sporná elektromagnetická prostředí':'Contested electromagnetic environments',
+    'Kritická infrastruktura a logistika':'Critical infrastructure and logistics',
+    'Lidská odolnost a biotechnologie':'Human resilience and biotechnology',
+    'Rozhodování podporované daty':'Data-driven decision-making',
+    'Námořní operace':'Maritime operations',
+    'Operace v extrémních prostředích':'Operations in extreme environments',
+    'Autonomie a bezosádkové systémy':'Autonomy and uncrewed systems',
+    'Kvantové a nastupující technologie':'Quantum and emerging technologies',
+    'Senzory a sledování':'Sensing and surveillance',
+    'Nezařazeno':'Uncategorized'
+  };
+  function catLabel(name){return state.lang==='en'&&CAT_EN[name]?CAT_EN[name]:name;}
+
+  // ---- Překlady rozhraní ----
+  var I18N={
+    cs:{
+      upload:'Nahrát Excel', uploadHint:'Nahraj .xlsx, .xls nebo .csv',
+      search:'Hledat firmu, oblast, klíčové slovo…', autoCat:'Oblast z popisu',
+      autoCatHint:'Zařadí řešení do jedné z 12 oblastí DIANA podle názvu a medailonku. Prázdné se doplní vždy; přepínačem se určí i tam, kde oblast už je.',
+      export:'JSON pro web', exportHint:'Data jako JSON pro vložení na web',
+      mapping:'Napárování sloupců', mapped:'polí napárováno', sampleData:'ukázková data',
+      emptyTitle:'Nahraj Excel a dlaždice se vyplní samy',
+      emptyBody:'Přetáhni sem soubor <b>.xlsx</b>, <b>.xls</b> nebo <b>.csv</b>, nebo klikni na <b>Nahrát Excel</b>. Sloupce se napárují automaticky, <b>TRL</b> se sjednotí a chybějící <b>oblast</b> se rozpozná z medailonku — zařadí řešení do jedné z 12 oblastí DIANA.',
+      choose:'Vybrat soubor', sample:'Zkusit s ukázkovými daty', privacy:'Vše běží v prohlížeči — soubor se nikam neposílá.',
+      deployTag:'Jak to dostat na defencehub.gov.cz', deployTitle:'Z téhle ukázky na živý web ve 3 krocích',
+      deployIntro:'Nahrávání v prohlížeči ukáže dlaždice jen tobě. Aby je viděli návštěvníci webu natrvalo, data se uloží k webu:',
+      deploySteps:'<li>Nahraj Excel → zkontroluj dlaždice a oblasti → klikni <b>JSON pro web</b> (<code>solutions.json</code>).</li><li>Ve WordPressu nahraj <code>solutions.json</code> do <b>Média</b> (nebo do tématu <code>defence-hub</code>).</li><li>Do <code>pages/_prerendered/solutions-database.html</code> se vloží kód dlaždic, který JSON načte. Příště stačí vyměnit <code>solutions.json</code>.</li>',
+      dataTitle:'Data pro web', dataBody:'Tohle jsou tvoje dlaždice jako data. Zkopíruj je (nebo použij stažený <code>solutions.json</code>) a nahraj na web — dlaždice se z nich vykreslí návštěvníkům.',
+      copy:'Kopírovat JSON', copied:'Zkopírováno ✓', close:'Zavřít',
+      all:'Vše', solutions:'řešení', of:'z', noMatch:'Nic neodpovídá filtru.', clearFilter:'Zrušit filtr',
+      changeArea:'Změnit oblast', autoTip:'Oblast rozpoznána z medailonku', detailHint:'Zobrazit detail →',
+      ctaLabel:'Výzva / co firma hledá', visitWeb:'Web řešení →',
+      errEmpty:'Soubor je prázdný nebo nemá hlavičku sloupců.', errLib:'Načítám knihovnu pro Excel, zkus to prosím za vteřinu znovu.', errRead:'Soubor se nepodařilo načíst: '
+    },
+    en:{
+      upload:'Upload Excel', uploadHint:'Upload .xlsx, .xls or .csv',
+      search:'Search company, area, keyword…', autoCat:'Area from text',
+      autoCatHint:'Assigns each solution to one of the 12 DIANA areas from its name and description. Empty ones are always filled; the toggle re-derives area even where it already exists.',
+      export:'JSON for web', exportHint:'Data as JSON to embed on the site',
+      mapping:'Column mapping', mapped:'fields mapped', sampleData:'sample data',
+      emptyTitle:'Upload an Excel and the tiles fill themselves',
+      emptyBody:'Drag a <b>.xlsx</b>, <b>.xls</b> or <b>.csv</b> file here, or click <b>Upload Excel</b>. Columns are mapped automatically, <b>TRL</b> is normalized and a missing <b>area</b> is detected from the description — sorting each solution into one of the 12 DIANA areas.',
+      choose:'Choose file', sample:'Try with sample data', privacy:'Everything runs in your browser — the file is never uploaded.',
+      deployTag:'How to get it onto defencehub.gov.cz', deployTitle:'From this demo to the live site in 3 steps',
+      deployIntro:'Uploading in the browser only shows the tiles to you. For visitors to see them permanently, the data is saved with the site:',
+      deploySteps:'<li>Upload Excel → check tiles and areas → click <b>JSON for web</b> (<code>solutions.json</code>).</li><li>In WordPress upload <code>solutions.json</code> to <b>Media</b> (or the <code>defence-hub</code> theme).</li><li>Into <code>pages/_prerendered/solutions-database.html</code> goes the tile code that loads the JSON. Next time just replace <code>solutions.json</code>.</li>',
+      dataTitle:'Data for the web', dataBody:'These are your tiles as data. Copy them (or use the downloaded <code>solutions.json</code>) and upload to the site — the tiles render from them for visitors.',
+      copy:'Copy JSON', copied:'Copied ✓', close:'Close',
+      all:'All', solutions:'solutions', of:'of', noMatch:'Nothing matches the filter.', clearFilter:'Clear filter',
+      changeArea:'Change area', autoTip:'Area detected from description', detailHint:'View detail →',
+      ctaLabel:'Call to action / what they seek', visitWeb:'Visit website →',
+      errEmpty:'The file is empty or has no header row.', errLib:'Loading the Excel library, please try again in a second.', errRead:'Could not read the file: '
+    }
+  };
+  function t(k){var d=I18N[state.lang]||I18N.cs;return (d[k]!=null?d[k]:(I18N.cs[k]!=null?I18N.cs[k]:k));}
+  function applyLang(){
+    var root=document.documentElement; root.setAttribute('lang',state.lang);
+    var L=$('#langBtn'); if(L)L.innerHTML=state.lang==='cs'?'CS<span>/EN</span>':'EN<span>/CS</span>';
+    document.querySelectorAll('[data-i18n]').forEach(function(el){el.textContent=t(el.getAttribute('data-i18n'));});
+    document.querySelectorAll('[data-i18n-html]').forEach(function(el){el.innerHTML=t(el.getAttribute('data-i18n-html'));});
+    document.querySelectorAll('[data-i18n-ph]').forEach(function(el){el.setAttribute('placeholder',t(el.getAttribute('data-i18n-ph')));});
+    document.querySelectorAll('[data-i18n-title]').forEach(function(el){el.setAttribute('title',t(el.getAttribute('data-i18n-title')));});
+  }
+
+  function openDetail(key){
+    var r=null; for(var i=0;i<state.rows.length;i++){if(state.rows[i].key===key){r=state.rows[i];break;}}
+    if(!r)return;
+    var col=catColor(r.category);
+    var meta='<span class="dot" style="background:'+col+'"></span>'+esc(catLabel(r.category));
+    if(r.trlN)meta+=' <span style="color:var(--faint)">·</span> TRL '+r.trlN.num;
+    if(r.country)meta+=' <span class="cty">· '+esc(r.country)+'</span>';
+    $('#dMeta').innerHTML=meta;
+    $('#dName').textContent=r.name;
+    $('#dDesc').textContent=r.description||'—';
+    if(r.cta){$('#dCta').textContent=r.cta;$('#dCtaWrap').hidden=false;}else{$('#dCtaWrap').hidden=true;}
+    var url=normalizeUrl(r.url);
+    if(url){$('#dLink').href=url;$('#dLinkRow').hidden=false;}else{$('#dLinkRow').hidden=true;}
+    $('#detail').hidden=false;
+  }
   function trlScale(n){var out='<span class="trlscale">';for(var i=1;i<=9;i++){out+='<i class="'+(i<=n?'on':'')+'"></i>';}return out+'</span>';}
   function catOptions(current){
     var names=CATEGORIES.map(function(c){return c.name;});
     if(current && names.indexOf(current)===-1)names=[current].concat(names); // hodnota mimo 12 (např. Nezařazeno) ať je vidět
     if(names.indexOf('Nezařazeno')===-1)names.push('Nezařazeno');
-    return names.map(function(n){return '<option'+(n===current?' selected':'')+'>'+esc(n)+'</option>';}).join('');
+    return names.map(function(n){return '<option value="'+esc(n)+'"'+(n===current?' selected':'')+'>'+esc(catLabel(n))+'</option>';}).join('');
   }
   function normalizeUrl(u){if(!u)return '';if(/^https?:\/\//i.test(u))return u;return 'https://'+u;}
 
@@ -405,23 +529,20 @@ main{padding:20px 0 60px}
     grid.innerHTML=list.map(function(r){
       var col=catColor(r.category);
       var url=normalizeUrl(r.url);
-      return '<article class="tile">'+
+      return '<article class="tile" data-key="'+esc(r.key)+'" tabindex="0" role="button">'+
         '<span class="accentbar" style="background:'+col+'"></span>'+
         '<div class="cat"><span class="dot" style="background:'+col+'"></span>'+
-          '<select class="catsel" data-key="'+esc(r.key)+'" title="Změnit kategorii">'+catOptions(r.category)+'</select>'+
-          (r.categoryAuto?'<span class="autobadge" title="Kategorie rozpoznána z popisu">✦&nbsp;auto</span>':'')+
-          (r.country?'<span class="cty">'+esc(r.country)+'</span>':'')+
+          '<select class="catsel" data-key="'+esc(r.key)+'" title="'+t('changeArea')+'">'+catOptions(r.category)+'</select>'+
+          (r.categoryAuto?'<span class="autobadge" title="'+t('autoTip')+'">✦&nbsp;auto</span>':'')+
         '</div>'+
         '<h3>'+esc(r.name)+'</h3>'+
-        (r.supplier?'<div class="supplier">'+esc(r.supplier)+'</div>':'')+
-        (r.description?'<p class="desc">'+esc(r.description)+'</p>':'<p class="desc" style="color:var(--faint)">—</p>')+
-        (r.cta?'<div class="cta">'+esc(r.cta)+'</div>':'')+
         '<div class="foot">'+
           (r.trlN?'<span class="trl" title="TRL '+r.trlN.num+' — '+esc(r.trlN.label)+'">TRL '+r.trlN.num+trlScale(r.trlN.num)+'</span>'
                  :(r.trl?'<span class="trl">'+esc(r.trl)+'</span>':''))+
-          r.tags.slice(0,3).map(function(t){return '<span class="tag">'+esc(t)+'</span>';}).join('')+
+          (r.country?'<span class="cty">'+esc(r.country)+'</span>':'')+
         '</div>'+
-        (url?'<a class="link" href="'+esc(url)+'" target="_blank" rel="noopener">Detail řešení →</a>':'')+
+        (r.description?'<p class="desc">'+esc(r.description)+'</p>':'<p class="desc" style="color:var(--faint)">—</p>')+
+        '<div class="detailhint">'+t('detailHint')+'</div>'+
       '</article>';
     }).join('');
     grid.hidden=list.length===0 && !state.rows.length;
@@ -429,22 +550,28 @@ main{padding:20px 0 60px}
     grid.hidden=state.rows.length===0;
     if(state.rows.length && list.length===0){
       grid.hidden=false;
-      grid.innerHTML='<div style="grid-column:1/-1;text-align:center;color:var(--muted);padding:40px;font-size:14px">Nic neodpovídá filtru. <button class="btn ghost" id="clr" style="height:34px;margin-left:6px">Zrušit filtr</button></div>';
+      grid.innerHTML='<div style="grid-column:1/-1;text-align:center;color:var(--muted);padding:40px;font-size:14px">'+t('noMatch')+' <button class="btn ghost" id="clr" style="height:34px;margin-left:6px">'+t('clearFilter')+'</button></div>';
       var clr=$('#clr'); if(clr)clr.onclick=function(){state.q='';state.cat=null;$('#q').value='';renderChips();render();};
     }
     Array.prototype.forEach.call(grid.querySelectorAll('.catsel'),function(s){
-      s.onchange=function(){var k=s.getAttribute('data-key');state.overrides=state.overrides||{};state.overrides[k]=s.value;buildRows();renderChips();render();};
+      s.onchange=function(e){var k=s.getAttribute('data-key');state.overrides=state.overrides||{};state.overrides[k]=s.value;buildRows();renderChips();render();};
+      s.onclick=function(e){e.stopPropagation();};
+      s.onkeydown=function(e){e.stopPropagation();};
     });
-    $('#count').textContent=state.rows.length? (list.length===state.rows.length?state.rows.length+' řešení':list.length+' z '+state.rows.length):'';
+    Array.prototype.forEach.call(grid.querySelectorAll('.tile'),function(el){
+      el.onclick=function(){openDetail(el.getAttribute('data-key'));};
+      el.onkeydown=function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();openDetail(el.getAttribute('data-key'));}};
+    });
+    $('#count').textContent=state.rows.length? (list.length===state.rows.length?state.rows.length+' '+t('solutions'):list.length+' '+t('of')+' '+state.rows.length):'';
     $('#exportBtn').hidden=state.rows.length===0;
     $('#autoCatWrap').hidden=state.rows.length===0;
     $('#autoCat').checked=!!state.autoCat;
   }
   function renderChips(){
     var c=$('#chips'); if(!state.rows.length){c.hidden=true;return;} c.hidden=false;
-    var html='<button class="chip'+(state.cat?'':' on')+'" data-cat="">Vše</button>';
+    var html='<button class="chip'+(state.cat?'':' on')+'" data-cat="">'+t('all')+'</button>';
     state.cats.forEach(function(cat){
-      html+='<button class="chip'+(state.cat===cat?' on':'')+'" data-cat="'+esc(cat)+'"><span class="dot" style="background:'+catColor(cat)+'"></span>'+esc(cat)+'</button>';
+      html+='<button class="chip'+(state.cat===cat?' on':'')+'" data-cat="'+esc(cat)+'"><span class="dot" style="background:'+catColor(cat)+'"></span>'+esc(catLabel(cat))+'</button>';
     });
     c.innerHTML=html;
     Array.prototype.forEach.call(c.querySelectorAll('.chip'),function(b){
@@ -464,11 +591,11 @@ main{padding:20px 0 60px}
   }
   function updateMapSummary(){
     var n=Object.keys(state.map).length;
-    $('#mapSummary').textContent='· '+n+' z '+FIELDS.length+' polí napárováno'+(state.sample?' · ukázková data':'');
+    $('#mapSummary').textContent='· '+n+'/'+FIELDS.length+' '+t('mapped')+(state.sample?' · '+t('sampleData'):'');
   }
 
   function ingest(json,fromSample){
-    if(!json.length){showErr('Soubor je prázdný nebo nemá hlavičku sloupců.');return;}
+    if(!json.length){showErr(t('errEmpty'));return;}
     state.raw=json; state.headers=Object.keys(json[0]); state.map=autoMap(state.headers);
     state.sample=!!fromSample; state.cat=null; state.q=''; $('#q').value='';
     if(!state.map.name){ // fall back: first column as name
@@ -481,7 +608,7 @@ main{padding:20px 0 60px}
 
   function readFile(file){
     if(!file)return;
-    if(!window.XLSX){showErr('Načítám knihovnu pro Excel, zkus to prosím za vteřinu znovu.');return;}
+    if(!window.XLSX){showErr(t('errLib'));return;}
     var r=new FileReader();
     r.onload=function(ev){
       try{
@@ -489,7 +616,7 @@ main{padding:20px 0 60px}
         var ws=wb.Sheets[wb.SheetNames[0]];
         var json=XLSX.utils.sheet_to_json(ws,{defval:''});
         ingest(json,false);
-      }catch(err){showErr('Soubor se nepodařilo načíst: '+err.message);}
+      }catch(err){showErr(t('errRead')+err.message);}
     };
     r.readAsArrayBuffer(file);
   }
@@ -524,7 +651,8 @@ main{padding:20px 0 60px}
   $('#exportBtn').addEventListener('click',function(){
     var clean=state.rows.map(function(r){
       return {
-        name:r.name, supplier:r.supplier, category:r.category, category_auto:!!r.categoryAuto,
+        name:r.name, supplier:r.supplier,
+        category:r.category, category_en:(CAT_EN[r.category]||r.category), category_auto:!!r.categoryAuto,
         description:r.description, cta:r.cta,
         trl:r.trlN?r.trlN.num:null,                 // učesané: číslo 1–9, nebo null
         trl_label:r.trlN?r.trlN.label:'',           // standardní český význam
@@ -539,10 +667,14 @@ main{padding:20px 0 60px}
     $('#jsonArea').focus();$('#jsonArea').select();
   });
   $('#modalClose').addEventListener('click',function(){$('#modal').hidden=true;});
+  $('#modalClose2').addEventListener('click',function(){$('#modal').hidden=true;});
   $('#modal').addEventListener('click',function(e){if(e.target===$('#modal'))$('#modal').hidden=true;});
+  $('#detailClose').addEventListener('click',function(){$('#detail').hidden=true;});
+  $('#detail').addEventListener('click',function(e){if(e.target===$('#detail'))$('#detail').hidden=true;});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'){$('#detail').hidden=true;$('#modal').hidden=true;}});
   $('#copyBtn').addEventListener('click',function(){
     var ta=$('#jsonArea');ta.focus();ta.select();
-    var done=function(){var b=$('#copyBtn');b.textContent='Zkopírováno ✓';setTimeout(function(){b.textContent='Kopírovat JSON';},1600);};
+    var done=function(){var b=$('#copyBtn');b.textContent=t('copied');setTimeout(function(){b.textContent=t('copy');},1600);};
     if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(ta.value).then(done,function(){try{document.execCommand('copy');done();}catch(e){}});}
     else{try{document.execCommand('copy');done();}catch(e){}}
   });
@@ -555,7 +687,7 @@ main{padding:20px 0 60px}
   // theme toggle
   (function(){
     var root=document.documentElement;
-    try{var t=localStorage.getItem('dh_theme');if(t)root.setAttribute('data-theme',t);}catch(e){}
+    try{var th=localStorage.getItem('dh_theme');if(th)root.setAttribute('data-theme',th);}catch(e){}
     $('#themeBtn').onclick=function(){
       var cur=root.getAttribute('data-theme');
       var next=cur==='dark'?'light':(cur==='light'?'dark':(matchMedia('(prefers-color-scheme:dark)').matches?'light':'dark'));
@@ -563,7 +695,17 @@ main{padding:20px 0 60px}
     };
   })();
 
+  // language toggle
+  try{var lg=localStorage.getItem('dh_lang');if(lg==='cs'||lg==='en')state.lang=lg;}catch(e){}
+  $('#langBtn').addEventListener('click',function(){
+    state.lang=state.lang==='cs'?'en':'cs';
+    try{localStorage.setItem('dh_lang',state.lang);}catch(e){}
+    applyLang();
+    if(state.rows.length){renderChips();render();updateMapSummary();}
+  });
+
   // boot
+  applyLang();
   if(load()){renderMapper();renderChips();render();} else {render();}
 })();
 </script>
