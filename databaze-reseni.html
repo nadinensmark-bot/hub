@@ -74,6 +74,14 @@ header{background:radial-gradient(120% 140% at 12% -20%,#1B2D5E 0%,#0E1B3C 58%,#
 .btn.ghost{background:transparent}
 .btn svg{flex:none}
 .count{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted);white-space:nowrap}
+.switch{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:500;color:var(--muted);cursor:pointer;white-space:nowrap;user-select:none}
+.switch input{position:absolute;opacity:0;width:0;height:0}
+.switch .track{width:34px;height:20px;border-radius:999px;background:var(--line);position:relative;transition:background .15s;flex:none}
+.switch .knob{position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.25);transition:transform .15s}
+.switch input:checked+.track{background:var(--accent)}
+.switch input:checked+.track .knob{transform:translateX(14px)}
+.switch input:focus-visible+.track{outline:2px solid var(--accent);outline-offset:2px}
+.autobadge{display:inline-flex;align-items:center;gap:3px;font-size:9px;letter-spacing:.06em;color:var(--accent);font-weight:600;text-transform:none}
 
 /* ---------- filter chips ---------- */
 .chips{display:flex;gap:8px;flex-wrap:wrap;padding:16px 0 4px}
@@ -173,6 +181,9 @@ main{padding:20px 0 60px}
       <input id="q" type="search" placeholder="Hledat řešení, dodavatele, klíčové slovo…">
     </div>
     <span class="count" id="count"></span>
+    <label class="switch" id="autoCatWrap" hidden title="Zařadí řešení do jedné z 12 kategorií podle názvu a popisu. Prázdné kategorie se doplní vždy; tímto přepínačem se určí z popisu i tam, kde už kategorie je.">
+      <input type="checkbox" id="autoCat"><span class="track"><span class="knob"></span></span>Kategorii z popisu
+    </label>
     <button class="btn ghost" id="exportBtn" hidden title="Stáhnout data jako JSON pro web">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
       JSON pro web
@@ -198,7 +209,7 @@ main{padding:20px 0 60px}
         <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/></svg>
       </div>
       <h2 class="disp">Nahraj Excel a dlaždice se vyplní samy</h2>
-      <p>Přetáhni sem soubor <b>.xlsx</b>, <b>.xls</b> nebo <b>.csv</b>, nebo klikni na <b>Nahrát Excel</b> nahoře. Sloupce (název řešení, dodavatel, kategorie, popis, TRL, odkaz…) se napárují automaticky — a když to netrefí, přepíšeš to ručně.</p>
+      <p>Přetáhni sem soubor <b>.xlsx</b>, <b>.xls</b> nebo <b>.csv</b>, nebo klikni na <b>Nahrát Excel</b> nahoře. Sloupce se napárují automaticky, <b>TRL</b> se sjednotí (z „9", „trl 9", „9/9"…) a chybějící <b>kategorie</b> se rozpozná z popisu — zařadí řešení do jedné z 12 kategorií.</p>
       <div class="row">
         <label class="btn primary" for="file">Vybrat soubor</label>
         <button class="btn" id="sampleBtn">Zkusit s ukázkovými daty</button>
@@ -300,14 +311,23 @@ main{padding:20px 0 60px}
     var get=function(row,key){var h=m[key];return h?String(row[h]==null?'':row[h]).trim():'';};
     state.rows=state.raw.map(function(row){
       var tagsRaw=get(row,'tags');
+      var tags=tagsRaw?tagsRaw.split(/[;,\n|]+/).map(function(x){return x.trim();}).filter(Boolean):[];
+      var name=get(row,'name'), desc=get(row,'description');
+      var explicit=get(row,'category'), cat=explicit, auto=false;
+      if(!cat || state.autoCat){                       // prázdné pole → vždy; nebo když je zapnuté „vždy z popisu"
+        var d=classifyCategory(desc+' '+tags.join(' '),name);
+        if(d){cat=d;auto=true;}
+      }
+      if(!cat)cat='Nezařazeno';
       return {
-        name:get(row,'name'),
+        name:name,
         supplier:get(row,'supplier'),
-        category:get(row,'category')||'Bez kategorie',
-        description:get(row,'description'),
+        category:cat,
+        categoryAuto:auto,
+        description:desc,
         trl:get(row,'trl'),
         trlN:normalizeTRL(get(row,'trl')),
-        tags:tagsRaw?tagsRaw.split(/[;,\n|]+/).map(function(x){return x.trim();}).filter(Boolean):[],
+        tags:tags,
         url:get(row,'url'),
         country:get(row,'country')
       };
@@ -318,6 +338,38 @@ main{padding:20px 0 60px}
     save();
   }
   function esc(s){return (s==null?'':String(s)).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+
+  // ---- Auto-rozpoznání kategorie z popisu (jedna z 12) ----
+  // TODO: nahradit PŘESNÝMI 12 kategoriemi z defencehub.gov.cz + doladit klíčová slova.
+  var CATEGORIES=[
+    {name:'Bezpilotní systémy',           kw:['bezpilot','dron','uav','ugv','usv','autonomni','robot','kvadrokopter']},
+    {name:'Kybernetická bezpečnost',      kw:['kyber','cyber','soc','siem','malware','sifr','penetr','zranitel','firewall','sitova bezpecnost','hrozb']},
+    {name:'Senzory a radary',             kw:['senzor','radar','detekc','sledovani','optik','infracerv','lidar','kamera','zamer','snimac']},
+    {name:'Komunikace a konektivita',     kw:['komunik','radio','satcom','satelit','spojeni','datove spojeni','5g','antena','prenos dat','vysilac']},
+    {name:'Umělá inteligence a data',     kw:['umela inteligence','strojove uceni','analyza dat','algoritm','prediktiv','machine learning','neuronov','big data']},
+    {name:'Ochrana a materiály',          kw:['balist','ochran','pancir','kompozit','material','helma','vesta','odolnost','maskovani','stit']},
+    {name:'Munice a zbraňové systémy',    kw:['munice','raze','zbran','strelivo','delo','raketa','projektil','naboj','vybusn']},
+    {name:'Výcvik a simulace',            kw:['vycvik','simulac','simulator','trenink','virtualni realita','rozsirena realita',' vr ',' ar ']},
+    {name:'Zdravotnictví a přežití',      kw:['zdravot','medevac','medic','prvni pomoc','preziti','osetr','triaz','zachran']},
+    {name:'Energetika a napájení',        kw:['energie','baterie','napajeni','palivo','generator','ulozist','akumulator','fotovolt','zdroj energie']},
+    {name:'Logistika a mobilita',         kw:['logistik','doprav','vozidlo','mobilit','zasob','preprav','sklad','tankov']},
+    {name:'Protivzdušná obrana a C-UAS',  kw:['protivzdus','c-uas','anti drone','antidrone','ruseni dron','jamming','obrana proti','protidron']}
+  ];
+  function normText(s){return (s==null?'':String(s)).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,' ').replace(/\s+/g,' ').trim();}
+  function classifyCategory(text,nameText){
+    var t=' '+normText(text)+' ', nt=' '+normText(nameText||'')+' ';
+    var best=null,bestScore=0;
+    CATEGORIES.forEach(function(c){
+      var score=0;
+      c.kw.forEach(function(k){
+        var kk=' '+k.trim()+' ', frag=k.trim();
+        if(t.indexOf(frag)!==-1)score+=1;
+        if(nt.indexOf(frag)!==-1)score+=2;   // shoda v názvu váží víc
+      });
+      if(score>bestScore){bestScore=score;best=c.name;}
+    });
+    return bestScore>0?best:'';
+  }
   function trlScale(n){var out='<span class="trlscale">';for(var i=1;i<=9;i++){out+='<i class="'+(i<=n?'on':'')+'"></i>';}return out+'</span>';}
   function normalizeUrl(u){if(!u)return '';if(/^https?:\/\//i.test(u))return u;return 'https://'+u;}
 
@@ -335,7 +387,7 @@ main{padding:20px 0 60px}
       var url=normalizeUrl(r.url);
       return '<article class="tile">'+
         '<span class="accentbar" style="background:'+col+'"></span>'+
-        '<div class="cat"><span class="dot" style="background:'+col+'"></span>'+esc(r.category)+(r.country?' · '+esc(r.country):'')+'</div>'+
+        '<div class="cat"><span class="dot" style="background:'+col+'"></span>'+esc(r.category)+(r.categoryAuto?' <span class="autobadge" title="Kategorie rozpoznána z popisu">✦&nbsp;auto</span>':'')+(r.country?' · '+esc(r.country):'')+'</div>'+
         '<h3>'+esc(r.name)+'</h3>'+
         (r.supplier?'<div class="supplier">'+esc(r.supplier)+'</div>':'')+
         (r.description?'<p class="desc">'+esc(r.description)+'</p>':'<p class="desc" style="color:var(--faint)">—</p>')+
@@ -357,6 +409,8 @@ main{padding:20px 0 60px}
     }
     $('#count').textContent=state.rows.length? (list.length===state.rows.length?state.rows.length+' řešení':list.length+' z '+state.rows.length):'';
     $('#exportBtn').hidden=state.rows.length===0;
+    $('#autoCatWrap').hidden=state.rows.length===0;
+    $('#autoCat').checked=!!state.autoCat;
   }
   function renderChips(){
     var c=$('#chips'); if(!state.rows.length){c.hidden=true;return;} c.hidden=false;
@@ -413,8 +467,8 @@ main{padding:20px 0 60px}
   }
 
   /* ---------- persistence (per-browser convenience) ---------- */
-  function save(){try{localStorage.setItem('dh_reseni',JSON.stringify({raw:state.raw,map:state.map,sample:state.sample}));}catch(e){}}
-  function load(){try{var s=JSON.parse(localStorage.getItem('dh_reseni')||'null');if(s&&s.raw&&s.raw.length){state.raw=s.raw;state.headers=Object.keys(s.raw[0]);state.map=s.map||autoMap(state.headers);state.sample=!!s.sample;buildRows();return true;}}catch(e){}return false;}
+  function save(){try{localStorage.setItem('dh_reseni',JSON.stringify({raw:state.raw,map:state.map,sample:state.sample,autoCat:state.autoCat}));}catch(e){}}
+  function load(){try{var s=JSON.parse(localStorage.getItem('dh_reseni')||'null');if(s&&s.raw&&s.raw.length){state.raw=s.raw;state.headers=Object.keys(s.raw[0]);state.map=s.map||autoMap(state.headers);state.sample=!!s.sample;state.autoCat=!!s.autoCat;buildRows();return true;}}catch(e){}return false;}
 
   /* ---------- sample data ---------- */
   function sample(){
@@ -435,11 +489,12 @@ main{padding:20px 0 60px}
   /* ---------- events ---------- */
   $('#file').addEventListener('change',function(e){var f=e.target.files&&e.target.files[0];readFile(f);e.target.value='';});
   $('#q').addEventListener('input',function(e){state.q=e.target.value;render();});
+  $('#autoCat').addEventListener('change',function(e){state.autoCat=e.target.checked;buildRows();renderChips();render();updateMapSummary();});
   $('#sampleBtn').addEventListener('click',function(){ingest(sample(),true);});
   $('#exportBtn').addEventListener('click',function(){
     var clean=state.rows.map(function(r){
       return {
-        name:r.name, supplier:r.supplier, category:r.category,
+        name:r.name, supplier:r.supplier, category:r.category, category_auto:!!r.categoryAuto,
         description:r.description,
         trl:r.trlN?r.trlN.num:null,                 // učesané: číslo 1–9, nebo null
         trl_label:r.trlN?r.trlN.label:'',           // standardní český význam
