@@ -103,6 +103,11 @@ table.zmeny td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-ali
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19.5V6a2 2 0 0 1 2-2h14v14H6.5a2.5 2.5 0 0 0 0 5H20"/></svg>
         <span style="flex:1">Programy</span>
       </div>
+      <div class="navitem" data-view="vyzvy" onclick="go('vyzvy')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>
+        <span style="flex:1">Výzvy</span>
+        <span id="vyzvyBadge" class="mono" style="display:none;background:#8CAA72;color:#0B1530;font-size:10px;font-weight:600;padding:1px 7px;border-radius:20px"></span>
+      </div>
       <div class="navitem" data-view="prihlaska" onclick="go('prihlaska')">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 15l2 2 4-4"/></svg>
         <span style="flex:1">Přihláška</span>
@@ -151,7 +156,38 @@ function KB(){
 function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 
 // ---------------- routing ----------------
-const views = { wizard: vWizard, programy: vProgramy, prihlaska: vPrihlaska, dualuse: vDualUse, kb: vKB, program: vProgramDetail };
+const views = { wizard: vWizard, programy: vProgramy, vyzvy: vVyzvy, prihlaska: vPrihlaska, dualuse: vDualUse, kb: vKB, program: vProgramDetail };
+
+// ---------------- výzvy: výpočet stavu z dat v KB ----------------
+function fmtDatum(iso){
+  const d = new Date(iso);
+  return isNaN(d) ? iso : d.getDate()+". "+(d.getMonth()+1)+". "+d.getFullYear();
+}
+function stavVyzvy(v){
+  // Vrací {rank, text, barva, bg}; rank řídí řazení (nejnaléhavější první)
+  if(v.stavRucne)
+    return { rank:1.5, text:v.stavRucne, barva:"var(--steel)", bg:"var(--blueSoft)" };
+  const od = Date.parse(v.otevreniOd), uz = Date.parse(v.uzaverka);
+  const dnes = Date.now();
+  if(!isNaN(od) && od > dnes)
+    return { rank:2, text:"plánovaná od "+fmtDatum(v.otevreniOd), barva:"var(--steel)", bg:"var(--blueSoft)" };
+  if(isNaN(uz))
+    return { rank:3, text:"termín doplní tým DH", barva:"#9A7B1E", bg:"#FDF3DC" };
+  const dny = Math.ceil((uz - dnes) / 86400000);
+  if(dny < 0)  return { rank:4, text:"po uzávěrce ("+fmtDatum(v.uzaverka)+")", barva:"var(--muted)", bg:"var(--mist)" };
+  if(dny <= 30) return { rank:0, text:"uzávěrka za "+dny+" dní – "+fmtDatum(v.uzaverka), barva:"var(--clay)", bg:"var(--claySoft)" };
+  return { rank:1, text:"otevřená do "+fmtDatum(v.uzaverka), barva:"var(--green)", bg:"var(--greenSoft)" };
+}
+function aktivniVyzvy(kb, programId){
+  return (kb.vyzvy||[])
+    .filter(v=>!programId || v.program===programId)
+    .map(v=>({v, s:stavVyzvy(v)}))
+    .sort((a,b)=>a.s.rank-b.s.rank);
+}
+function stariKB(kb){
+  const d = Date.parse(kb.meta.aktualizovano);
+  return isNaN(d) ? null : Math.floor((Date.now()-d)/86400000);
+}
 function go(view, param){
   state.view = view; state.viewParam = param; save();
   document.querySelectorAll(".navitem").forEach(n=>n.classList.toggle("active", n.dataset.view===view || (view==="program" && n.dataset.view==="programy")));
@@ -270,6 +306,7 @@ function renderVysledky(el, kb){
         <span class="mono" style="font-size:12px;font-weight:600;color:${c};width:38px;text-align:right">${v.skore}%</span>
       </div>
       <div style="color:var(--muted);font-size:13px;margin:8px 0 10px">${esc(v.p.kratce)}</div>
+      ${aktivniVyzvy(kb, v.p.id).filter(x=>x.s.rank<3).slice(0,1).map(x=>`<div style="display:inline-block;font-size:11.5px;font-weight:600;color:${x.s.barva};background:${x.s.bg};border-radius:8px;padding:4px 10px;margin-bottom:8px">◷ ${esc(x.s.text)}</div>`).join("")}
       ${v.plusy.slice(0,3).map(x=>`<div style="display:flex;gap:8px;font-size:12.5px;padding:2px 0"><span style="color:var(--green)">✓</span><span>${esc(x)}</span></div>`).join("")}
       ${v.minusy.slice(0,2).map(x=>`<div style="display:flex;gap:8px;font-size:12.5px;padding:2px 0"><span style="color:var(--clay)">✕</span><span style="color:var(--muted)">${esc(x)}</span></div>`).join("")}
       <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
@@ -322,6 +359,10 @@ function vProgramDetail(el, id){
         <div><strong>Kdo žádá</strong><br>${p.konsorcium?"Mezinárodní konsorcium":"Jedna firma"}</div>
         <div><strong>Termíny</strong><br>${esc(p.terminy)}${overitTag(p.terminyOverit)}</div>
       </div>
+      ${aktivniVyzvy(kb, p.id).length?`<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line)">
+        <div class="kicker" style="margin-bottom:8px">Výzvy tohoto programu</div>
+        ${aktivniVyzvy(kb, p.id).map(x=>`<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:4px 0;font-size:13px"><span>${esc(x.v.nazev)}</span><span class="tag" style="background:${x.s.bg};color:${x.s.barva}">${esc(x.s.text)}</span></div>`).join("")}
+      </div>`:""}
     </div>
     <div class="card"><div class="kicker" style="margin-bottom:8px">Pro koho</div><div style="line-height:1.55">${esc(p.proKoho)}</div></div>
     <div class="card"><div class="kicker" style="margin-bottom:8px">Jak to funguje</div>
@@ -345,6 +386,53 @@ function vProgramDetail(el, id){
         <button class="btn ghost" onclick="state.prihlaskaProgram='${esc(p.id)}';save();go('prihlaska')">Jak napsat přihlášku →</button>
       </div>
     </div>`);
+}
+
+// =====================================================================
+// 2b) AKTUÁLNÍ VÝZVY
+// =====================================================================
+function vVyzvy(el){
+  const kb = KB();
+  header(el, "Termíny", "Aktuální výzvy",
+    "Přehled výzev udržuje tým Defence Hubu ve znalostní bázi. Stav (otevřená / blíží se uzávěrka / po uzávěrce) počítá aplikace automaticky z dat uzávěrek.");
+
+  const stari = stariKB(kb);
+  if(stari !== null && stari > 60){
+    el.insertAdjacentHTML("beforeend",
+      `<div class="card" style="background:#FDF3DC;border-color:#EAD9A8;color:#9A7B1E">
+         ⚠ Znalostní báze nebyla aktualizována ${stari} dní (naposledy ${esc(fmtDatum(kb.meta.aktualizovano))}).
+         Termíny výzev nemusí být aktuální – ověřte u týmu DH.
+       </div>`);
+  }
+
+  const seznam = aktivniVyzvy(kb);
+  if(!seznam.length){
+    el.insertAdjacentHTML("beforeend", `<div class="card" style="color:var(--muted)">Ve znalostní bázi zatím nejsou žádné výzvy. Doplní tým DH (záložka Knowledge base → pole „vyzvy").</div>`);
+    return;
+  }
+  seznam.forEach(({v,s})=>{
+    const p = kb.programy.find(x=>x.id===v.program);
+    el.insertAdjacentHTML("beforeend",
+      `<div class="card" style="${s.rank===4?"opacity:.55;":""}">
+         <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+           <h3 style="font-size:15px;margin:0;flex:1;min-width:200px">${esc(v.nazev)}${v.priklad?` <span class="tag overit">ukázka</span>`:""}</h3>
+           <span class="tag" style="background:${s.bg};color:${s.barva}">${esc(s.text)}</span>
+         </div>
+         <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:8px;font-size:12.5px;color:var(--muted)">
+           ${p?`<a href="#" onclick="go('program','${esc(p.id)}');return false">${esc(p.nazev)}</a>`:""}
+           ${v.pozn?`<span>${esc(v.pozn)}</span>`:""}
+           <a href="${esc(v.odkaz)}" target="_blank" rel="noopener">oficiální zdroj ↗</a>
+         </div>
+       </div>`);
+  });
+
+  el.insertAdjacentHTML("beforeend",
+    `<div class="card" style="border-style:dashed;color:var(--muted);font-size:12.5px;line-height:1.55">
+       <strong style="color:var(--navy)">Jak se výzvy aktualizují:</strong> aplikace běží bez serveru, takže termíny
+       nestahuje sama z portálů EU – zapisuje je tým DH do znalostní báze (soubor kb.js, pole <span class="mono">vyzvy</span>).
+       Aplikace pak sama hlídá uzávěrky, zvýrazňuje blížící se termíny, skrývá naléhavost propadlých výzev
+       a upozorní, když je báze déle než 60 dní bez aktualizace. Automatické načítání z oficiálních zdrojů = další fáze (vyžaduje backend).
+     </div>`);
 }
 
 // =====================================================================
@@ -500,7 +588,7 @@ function vKB(el){
   header(el, "Správa obsahu", "Knowledge base",
     "Veškerý obsah aplikace (programy, checklisty, dual-use mapa, otázky průvodce) žije v jednom souboru. Tady ho lze prohlédnout, upravit a exportovat. Úpravy zde se ukládají jen do tohoto prohlížeče – trvalá změna = nahrát nový kb.js do repozitáře.");
 
-  const pocty = `${kb.programy.length} programů · ${kb.dualUse.domeny.length} dual-use domén · verze ${esc(kb.meta.verze)} · aktualizováno ${esc(kb.meta.aktualizovano)}`;
+  const pocty = `${kb.programy.length} programů · ${(kb.vyzvy||[]).length} výzev · ${kb.dualUse.domeny.length} dual-use domén · verze ${esc(kb.meta.verze)} · aktualizováno ${esc(kb.meta.aktualizovano)}`;
   const overitPocet = kb.programy.filter(p=>p.overit||p.terminyOverit).length;
 
   el.insertAdjacentHTML("beforeend", `
@@ -543,6 +631,12 @@ function exportKB(){
 
 // ---------------- start ----------------
 document.getElementById("kbVerze").textContent = "KB " + (KB().meta.verze||"");
+(function(){
+  // badge v menu: počet výzev, které jsou otevřené / se blížící uzávěrkou / s ručním stavem
+  const n = aktivniVyzvy(KB()).filter(x=>x.s.rank<3).length;
+  const b = document.getElementById("vyzvyBadge");
+  if(n){ b.textContent = n; b.style.display = "inline-block"; }
+})();
 go(state.view && views[state.view] ? state.view : "wizard", state.viewParam);
 </script>
 </body>

@@ -19,6 +19,55 @@ window.DH_KB = {
   },
 
   // -------------------------------------------------------------------
+  // AKTUÁLNÍ VÝZVY – jediné místo, kde se udržují termíny.
+  // Aplikace z dat sama počítá stav: plánovaná / otevřená / uzávěrka
+  // se blíží / po uzávěrce. Formát dat: "RRRR-MM-DD".
+  // Záznam s priklad:true je jen ukázka formátu – v aplikaci nese
+  // štítek UKÁZKA a před spuštěním se maže.
+  // -------------------------------------------------------------------
+  // Pole stavRucne přebije automatický výpočet – hodí se pro stavy typu
+  // „probíhá vyhodnocení", které z dat nejdou spočítat.
+  vyzvy: [
+    {
+      program: "diana",
+      nazev: "DIANA – výzva pro kohortu 2027",
+      otevreniOd: "",
+      uzaverka: "",
+      stavRucne: "probíhá vyhodnocení (výzva proběhla v červnu 2026)",
+      odkaz: "https://www.diana.nato.int",
+      pozn: "Výsledky vyhodnocení oznámí DIANA; sledujeme.",
+      priklad: false
+    },
+    {
+      program: "diana",
+      nazev: "DIANA – další výzva (spuštění červen 2027)",
+      otevreniOd: "2027-06-01",
+      uzaverka: "",
+      odkaz: "https://www.diana.nato.int",
+      pozn: "Přesný den spuštění a uzávěrku doplníme po vyhlášení.",
+      priklad: false
+    },
+    {
+      program: "edf",
+      nazev: "EDF výzvy [DOPLNIT ročník]",
+      otevreniOd: "[DOPLNIT]",
+      uzaverka: "[DOPLNIT]",
+      odkaz: "https://defence-industry-space.ec.europa.eu",
+      pozn: "Termíny doplní tým DH podle aktuálního pracovního programu.",
+      priklad: false
+    },
+    {
+      program: "eic-accelerator",
+      nazev: "EIC Accelerator – nejbližší cut-off [DOPLNIT]",
+      otevreniOd: "[DOPLNIT]",
+      uzaverka: "[DOPLNIT]",
+      odkaz: "https://eic.ec.europa.eu",
+      pozn: "Krátká žádost jde podat kdykoli; cut-off platí pro úplnou žádost.",
+      priklad: false
+    }
+  ],
+
+  // -------------------------------------------------------------------
   // PROGRAMY
   // Osy pro párování (wizard):
   //  zamereni: "defence" | "dual" | "civil"  (co program financuje)
@@ -38,8 +87,8 @@ window.DH_KB = {
       trl: [4, 7],
       konsorcium: false,
       velikost: ["startup", "sme"],
-      castka: "Grant 100 000 € ve fázi 1; vybrané firmy postupují do fáze 2 s vyšší podporou",
-      overit: true,
+      castka: "Grant 100 000 € ve fázi 1; vybrané firmy postupují do fáze 2 s grantem 300 000 €",
+      overit: false,
       proKoho: "Startupy z členských zemí NATO s technologií využitelnou civilně i obranně (dual-use). Žádá jedna firma, konsorcium není potřeba.",
       jakFunguje: [
         "Výzvy (challenges) se vypisují k tématům, která NATO definuje – např. senzorika, energie, bezpečná komunikace, autonomie.",
@@ -55,8 +104,8 @@ window.DH_KB = {
         "Technologie je čistě zbraňová (lethal) – DIANA se soustředí na dual-use.",
         "Jste ve fázi čistého výzkumu bez prototypu."
       ],
-      terminy: "Výzvy zpravidla jednou ročně; přesné datum aktuální výzvy doplní tým DH.",
-      terminyOverit: true,
+      terminy: "Výzvy zpravidla jednou ročně. Poslední výzva (kohorta 2027) proběhla v červnu 2026 a probíhá její vyhodnocení; další výzva se spustí v červnu 2027.",
+      terminyOverit: false,
       odkaz: "https://www.diana.nato.int",
       pomocDH: "Defence Hub hostí český akcelerátor DIANA – jsme přímo u zdroje. Ozvěte se nám před podáním přihlášky."
     },
