@@ -389,6 +389,55 @@ window.DH_KB = {
   },
 
   // -------------------------------------------------------------------
+  // DUAL-USE TEST – orientační vyhodnocení profilu a regulačních režimů.
+  // NENÍ to právní posouzení; app to všude říká (pole disclaimer).
+  // Podmínky režimů: {otazka:"odpoved"} = musí platit všechny;
+  // kategorie:true = vybrána aspoň jedna kontrolovaná kategorie;
+  // kategorieAI:true = vybrána kategorie "ai".
+  // -------------------------------------------------------------------
+  dualUseTest: {
+    otazky: [
+      { id: "vojenske", text: "Je produkt navržen nebo speciálně upraven pro vojenské použití?", napoveda: "Např. integrace do zbraňového systému nebo vývoj podle vojenské specifikace zadavatele." },
+      { id: "civilni", text: "Má produkt reálné civilní využití a zákazníky?", napoveda: "" },
+      { id: "armadni", text: "Mohly by produkt využít ozbrojené nebo bezpečnostní složky?", napoveda: "Armáda, policie, zpravodajské služby, civilní ochrana." },
+      { id: "export", text: "Plánujete prodej mimo EU?", napoveda: "Exportní kontrola se řeší hlavně při vývozu do třetích zemí." },
+      { id: "usa", text: "Obsahuje produkt americké komponenty, software nebo technologie?", napoveda: "Kvůli americkým pravidlům ITAR/EAR – platí i bez vývozu z USA." },
+      { id: "utajeni", text: "Očekáváte práci s utajovanými informacemi?", napoveda: "Např. zakázky pro ministerstva obrany." }
+    ],
+    kategorie: {
+      text: "Spadá vaše technologie do některé z těchto oblastí?",
+      napoveda: "Oblasti typicky sledované kontrolními seznamy EU pro export. Lze vybrat víc možností.",
+      moznosti: [
+        { v: "krypto", t: "Šifrování a kybernetika" },
+        { v: "senzory", t: "Senzory a lasery" },
+        { v: "navigace", t: "Navigace a avionika" },
+        { v: "letectvi", t: "Letectví a kosmos" },
+        { v: "elektronika", t: "Elektronika a výpočetní technika" },
+        { v: "materialy", t: "Speciální materiály a chemie" },
+        { v: "jaderne", t: "Jaderné technologie" },
+        { v: "ai", t: "AI a zpracování dat" },
+        { v: "zadna", t: "Žádná z uvedených" }
+      ]
+    },
+    verdikty: {
+      vojensky: { nazev: "Pravděpodobně vojenský materiál", text: "Produkt navržený speciálně pro vojenské použití zpravidla spadá pod režim obchodu s vojenským materiálem – přísnější než dual-use. O to důležitější je poradit se dřív, než začnete jednat se zahraničními partnery." },
+      dual: { nazev: "Pravděpodobně dual-use", text: "Kombinace civilního využití a potenciálu pro ozbrojené složky je typický dual-use profil. Otevírá vám programy jako DIANA, EUDIS nebo EIC – a zároveň může znamenat exportní kontrolu." },
+      civil: { nazev: "Pravděpodobně čistě civilní", text: "Bez využití pro ozbrojené složky jde nejspíš o civilní technologii. Pozor: exportní kontrola se může týkat i civilních produktů, pokud spadají do kontrolovaných kategorií." },
+      nejasny: { nazev: "Nejednoznačné – doporučujeme konzultaci", text: "Z odpovědí nejde profil jednoznačně určit. Ozvěte se Defence Hubu, projdeme to s vámi." }
+    },
+    rezimy: [
+      { id: "dualuse-narizeni", nazev: "Exportní kontrola dual-use zboží (EU)", kdy: "Technologie v kontrolované kategorii + vývoz mimo EU", akce: "Ověřit zařazení podle kontrolního seznamu EU (nařízení 2021/821) a případně žádat o vývozní povolení u Licenční správy MPO.", podminky: { kategorie: true, export: "ano" } },
+      { id: "vojmat", nazev: "Licence pro obchod s vojenským materiálem", kdy: "Produkt navržený/upravený pro vojenské použití", akce: "Obchod s vojenským materiálem vyžaduje povolení a licence (v ČR Licenční správa MPO). Řešit před prvním obchodním jednáním se zahraničním partnerem.", podminky: { vojenske: "ano" } },
+      { id: "itar", nazev: "Americká pravidla ITAR/EAR", kdy: "Americké komponenty nebo technologie v produktu", akce: "Zmapovat, které komponenty podléhají americké jurisdikci – omezuje to, komu smíte prodávat, i když z USA nic nevyvážíte.", podminky: { usa: "ano" } },
+      { id: "nbu", nazev: "Utajované informace a prověrky (NBÚ)", kdy: "Zakázky s utajovanými informacemi", akce: "Prověrka podnikatele i osob u NBÚ trvá měsíce – začít s velkým předstihem.", podminky: { utajeni: "ano" } },
+      { id: "stanag", nazev: "Vojenské standardy a kodifikace NATO", kdy: "Dodávky ozbrojeným složkám", akce: "Počítat s požadavky na vojenské standardy (STANAG, MIL-STD), odolnostní testy a kodifikaci NATO (kód NCAGE).", podminky: { armadni: "ano" } },
+      { id: "ce", nazev: "Civilní certifikace (CE a oborové normy)", kdy: "Prodej civilním zákazníkům v EU", akce: "Ověřit, které směrnice a harmonizované normy se na produkt vztahují (CE značení, oborové certifikace).", podminky: { civilni: "ano" } },
+      { id: "gdpr", nazev: "GDPR a evropská regulace AI", kdy: "Produkt zpracovává osobní data nebo využívá AI", akce: "Posoudit dopady GDPR a AI Actu na civilní nasazení produktu.", podminky: { kategorieAI: true } }
+    ],
+    disclaimer: "Orientační vodítko, ne právní posouzení. Zařazení technologie do kontrolních režimů vždy ověřte s odborníky na exportní kontrolu – Defence Hub vás propojí."
+  },
+
+  // -------------------------------------------------------------------
   // FÁZE 2: DUAL-USE PŘEKLADAČ – mapa domén
   // Pro každou doménu: obranné use casy <-> komerční sektory a use casy
   // + co se při „překladu" mění (zákazník, certifikace, prodejní cyklus)
