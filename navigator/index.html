@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DH Kompas – průvodce EU programy pro defence & dual-use startupy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="kb.js"></script>
+<style>
+:root{
+  --ink:#0B1530; --navy:#13234E; --navy2:#1C2F63; --blue:#2B5CC4; --blueSoft:#E8EEFA;
+  --steel:#3E7CA8; --green:#6E9152; --greenSoft:#ECF1E5; --clay:#BD6B4B; --claySoft:#F7ECE6;
+  --paper:#FBFBFC; --mist:#F3F5F9; --line:#E2E7F0; --muted:#5C6886;
+}
+*{box-sizing:border-box}
+::selection{background:var(--blue);color:#fff}
+html,body{margin:0;padding:0;height:100%}
+body{background:var(--mist);font-family:'IBM Plex Sans',sans-serif;-webkit-font-smoothing:antialiased;color:var(--navy);font-size:14px}
+h1,h2,h3{font-family:'Space Grotesk',sans-serif;letter-spacing:-.01em}
+a{color:var(--blue)}
+.mono{font-family:'IBM Plex Mono',monospace}
+.kicker{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+@keyframes cfade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.fade{animation:cfade .35s ease both}
+.cscroll::-webkit-scrollbar{width:8px;height:8px}
+.cscroll::-webkit-scrollbar-thumb{background:#d3dae8;border-radius:8px}
+.cscroll::-webkit-scrollbar-track{background:transparent}
+
+.layout{display:flex;height:100vh;overflow:hidden}
+aside{flex:none;width:252px;background:radial-gradient(120% 90% at 20% 0%,#1B2D5E 0%,#0E1B3C 60%,#0B1530 100%);display:flex;flex-direction:column;padding:22px 16px 16px;color:#fff}
+.navitem{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:11px;cursor:pointer;font-size:13.5px;font-weight:500;color:#C7D0E6}
+.navitem:hover{background:rgba(255,255,255,.06)}
+.navitem.active{background:rgba(43,92,196,.35);color:#fff}
+.navitem svg{flex:none}
+main{flex:1;overflow-y:auto;padding:34px 40px 60px}
+.wrap{max-width:880px;margin:0 auto}
+
+.card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin-bottom:14px}
+.btn{display:inline-flex;align-items:center;gap:8px;background:var(--blue);color:#fff;border:none;border-radius:11px;padding:11px 20px;font-family:'IBM Plex Sans',sans-serif;font-size:13.5px;font-weight:600;cursor:pointer}
+.btn:hover{background:#2450AC}
+.btn.ghost{background:transparent;color:var(--blue);border:1px solid var(--line)}
+.btn.ghost:hover{background:var(--blueSoft)}
+.btn:disabled{opacity:.45;cursor:default}
+.tag{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:20px;font-weight:600}
+.tag.grant{background:var(--greenSoft);color:var(--green)}
+.tag.equity{background:var(--claySoft);color:var(--clay)}
+.tag.akcelerator{background:var(--blueSoft);color:var(--blue)}
+.tag.mix{background:#EFEAF7;color:#6B4BAA}
+.tag.overit{background:#FDF3DC;color:#9A7B1E}
+.opt{display:block;width:100%;text-align:left;background:var(--paper);border:1.5px solid var(--line);border-radius:13px;padding:14px 16px;margin-bottom:9px;cursor:pointer;font-family:'IBM Plex Sans',sans-serif;font-size:14px;color:var(--navy)}
+.opt:hover{border-color:var(--blue);background:var(--blueSoft)}
+.opt.sel{border-color:var(--blue);background:var(--blueSoft);box-shadow:0 0 0 1px var(--blue) inset}
+.opt small{display:block;color:var(--muted);margin-top:3px;font-size:12px}
+.bar{height:6px;background:var(--line);border-radius:6px;overflow:hidden}
+.bar>div{height:100%;background:var(--blue);border-radius:6px;transition:width .3s}
+.check{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.check:last-child{border-bottom:none}
+.check input{margin-top:2px;accent-color:var(--green)}
+.check.done span{color:var(--muted);text-decoration:line-through}
+textarea,select,input[type=text]{width:100%;font-family:'IBM Plex Sans',sans-serif;font-size:13.5px;color:var(--navy);background:#fff;border:1.5px solid var(--line);border-radius:11px;padding:11px 13px}
+textarea:focus,select:focus,input:focus{outline:none;border-color:var(--blue)}
+table.zmeny{width:100%;border-collapse:collapse;font-size:13px}
+table.zmeny th{text-align:left;padding:8px 10px;font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line)}
+table.zmeny td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+.scorebar{flex:none;width:110px;height:7px;background:var(--line);border-radius:6px;overflow:hidden}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);background:var(--mist);border-radius:8px;padding:4px 10px;margin:2px 4px 2px 0}
+.tablewrap{overflow-x:auto}
+@media(max-width:760px){
+  .layout{flex-direction:column}
+  aside{width:100%;flex-direction:row;align-items:center;padding:12px 14px;overflow-x:auto}
+  aside nav{flex-direction:row!important}
+  main{padding:20px 16px 50px}
+  .hidemobile{display:none!important}
+}
+</style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside>
+    <div style="display:flex;align-items:center;gap:11px;padding:0 6px 22px" class="hidemobile">
+      <div style="width:30px;height:30px;position:relative;flex:none">
+        <div style="position:absolute;inset:0;clip-path:polygon(50% 0,100% 25%,50% 50%,0 25%);background:#2B5CC4"></div>
+        <div style="position:absolute;inset:0;clip-path:polygon(0 25%,50% 50%,50% 100%,0 75%);background:#1C2F63"></div>
+        <div style="position:absolute;inset:0;clip-path:polygon(100% 25%,50% 50%,50% 100%,100% 75%);background:#8CAA72"></div>
+      </div>
+      <div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15px;line-height:1">DH Kompas</div>
+        <div class="mono" style="font-size:8.5px;letter-spacing:.18em;text-transform:uppercase;color:#7E8FB8;margin-top:3px">Defence Hub</div>
+      </div>
+    </div>
+
+    <div class="mono hidemobile" style="font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:#5E6E96;padding:0 8px 8px">Pro startupy</div>
+    <nav style="display:flex;flex-direction:column;gap:2px">
+      <div class="navitem" data-view="wizard" onclick="go('wizard')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg>
+        <span style="flex:1">Průvodce</span>
+      </div>
+      <div class="navitem" data-view="programy" onclick="go('programy')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19.5V6a2 2 0 0 1 2-2h14v14H6.5a2.5 2.5 0 0 0 0 5H20"/></svg>
+        <span style="flex:1">Programy</span>
+      </div>
+      <div class="navitem" data-view="prihlaska" onclick="go('prihlaska')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 15l2 2 4-4"/></svg>
+        <span style="flex:1">Přihláška</span>
+      </div>
+      <div class="navitem" data-view="dualuse" onclick="go('dualuse')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h6M4 7l2.5-2.5M4 7l2.5 2.5"/><path d="M20 17h-6M20 17l-2.5-2.5M20 17l-2.5 2.5"/><circle cx="12" cy="12" r="2"/></svg>
+        <span style="flex:1">Dual-use překladač</span>
+        <span class="mono" style="font-size:8px;letter-spacing:.08em;background:rgba(140,170,114,.2);color:#A8C48E;padding:2px 6px;border-radius:5px">BETA</span>
+      </div>
+      <div class="navitem" data-view="kb" onclick="go('kb')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg>
+        <span style="flex:1">Knowledge base</span>
+      </div>
+    </nav>
+
+    <div class="hidemobile" style="margin-top:auto">
+      <div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:13px;padding:13px 14px;font-size:11.5px;color:#C7D0E6;line-height:1.5">
+        <div class="mono" style="font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:#7E8FB8;margin-bottom:6px">Kontakt</div>
+        Nevíte si rady? Tým Defence Hubu vám pomůže osobně – s výběrem programu i s přihláškou.
+      </div>
+      <div class="mono" id="kbVerze" style="font-size:9px;color:#5E6E96;padding:10px 8px 0"></div>
+    </div>
+  </aside>
+
+  <!-- ============ CONTENT ============ -->
+  <main class="cscroll"><div class="wrap" id="app"></div></main>
+</div>
+
+<script>
+"use strict";
+// =====================================================================
+// DH Kompas – aplikační logika. Obsah je výhradně v kb.js (window.DH_KB).
+// Stav (odpovědi, checklisty, editace KB) se ukládá do localStorage.
+// =====================================================================
+
+const LS = "dhkompas_v1";
+let state = load();
+function load(){ try{ return JSON.parse(localStorage.getItem(LS)) || {}; }catch(e){ return {}; } }
+function save(){ try{ localStorage.setItem(LS, JSON.stringify(state)); }catch(e){} }
+
+// KB: lokální úpravy (záložka Knowledge base) mají přednost před kb.js
+function KB(){
+  if(state.kbOverride){ try{ return JSON.parse(state.kbOverride); }catch(e){} }
+  return window.DH_KB;
+}
+function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+
+// ---------------- routing ----------------
+const views = { wizard: vWizard, programy: vProgramy, prihlaska: vPrihlaska, dualuse: vDualUse, kb: vKB, program: vProgramDetail };
+function go(view, param){
+  state.view = view; state.viewParam = param; save();
+  document.querySelectorAll(".navitem").forEach(n=>n.classList.toggle("active", n.dataset.view===view || (view==="program" && n.dataset.view==="programy")));
+  const el = document.getElementById("app");
+  el.innerHTML = ""; el.className = "wrap fade";
+  (views[view]||vWizard)(el, param);
+  document.querySelector("main").scrollTop = 0;
+  void el.offsetWidth;
+}
+
+function header(el, kicker, title, sub){
+  el.insertAdjacentHTML("beforeend",
+    `<div style="margin-bottom:22px">
+       <div class="kicker">${esc(kicker)}</div>
+       <h1 style="font-size:26px;margin:6px 0 4px">${esc(title)}</h1>
+       ${sub?`<div style="color:var(--muted);font-size:14px;max-width:640px;line-height:1.5">${esc(sub)}</div>`:""}
+     </div>`);
+}
+function overitTag(on){ return on?` <span class="tag overit" title="Částku/termín je potřeba ověřit proti oficiálnímu zdroji">ověřit</span>`:""; }
+
+// =====================================================================
+// 1) PRŮVODCE (wizard)
+// =====================================================================
+function vWizard(el){
+  const kb = KB();
+  const otazky = kb.wizard;
+  if(!state.odpovedi) state.odpovedi = {};
+  const zodpovezeno = otazky.filter(o=>state.odpovedi[o.id]).length;
+  const hotovo = zodpovezeno === otazky.length;
+
+  header(el, "Průvodce výběrem programu", "Který EU program je pro vás?",
+    "Odpovězte na " + otazky.length + " otázek. Průvodce porovná váš profil se znalostní bází Defence Hubu a seřadí programy podle vhodnosti. Nic se nikam neodesílá – vše zůstává ve vašem prohlížeči.");
+
+  el.insertAdjacentHTML("beforeend",
+    `<div style="display:flex;align-items:center;gap:14px;margin-bottom:18px">
+       <div class="bar" style="flex:1"><div style="width:${(zodpovezeno/otazky.length)*100}%"></div></div>
+       <div class="mono" style="font-size:11px;color:var(--muted)">${zodpovezeno}/${otazky.length}</div>
+       ${zodpovezeno?`<button class="btn ghost" style="padding:7px 14px;font-size:12px" onclick="state.odpovedi={};save();go('wizard')">Začít znovu</button>`:""}
+     </div>`);
+
+  otazky.forEach((o,i)=>{
+    const odp = state.odpovedi[o.id];
+    const prvniNezodpovezena = otazky.findIndex(q=>!state.odpovedi[q.id]);
+    if(!odp && i>prvniNezodpovezena && prvniNezodpovezena!==-1) return; // ukazuj postupně
+    const div = document.createElement("div");
+    div.className = "card";
+    div.innerHTML = `<div class="kicker" style="margin-bottom:4px">Otázka ${i+1}</div>
+      <h3 style="font-size:16px;margin:0 0 ${o.napoveda?"4":"12"}px">${esc(o.otazka)}</h3>
+      ${o.napoveda?`<div style="color:var(--muted);font-size:12.5px;margin-bottom:12px">${esc(o.napoveda)}</div>`:""}`;
+    o.moznosti.forEach(m=>{
+      const b = document.createElement("button");
+      b.className = "opt" + (odp===m.v ? " sel":"");
+      b.innerHTML = `<strong>${esc(m.t)}</strong>${m.p?`<small>${esc(m.p)}</small>`:""}`;
+      b.onclick = ()=>{ state.odpovedi[o.id]=m.v; save(); go("wizard"); };
+      div.appendChild(b);
+    });
+    el.appendChild(div);
+  });
+
+  if(hotovo) renderVysledky(el, kb);
+}
+
+function skoreProgramu(p, o){
+  // Vrací {skore 0-100, plusy[], minusy[]}
+  const plusy=[], minusy=[]; let s=0, max=0;
+
+  // zaměření (váha 3)
+  max+=3;
+  if(o.zamereni==="nevim"){ s+=2; }
+  else if(p.zamereni===o.zamereni){ s+=3; plusy.push("Zaměření programu odpovídá ("+({defence:"obranné",dual:"dual-use",civil:"civilní"})[p.zamereni]+")"); }
+  else if(p.zamereni==="dual" && o.zamereni!=="nevim"){ s+=2; plusy.push("Program bere dual-use technologie"); }
+  else { minusy.push("Program má jiné zaměření ("+({defence:"čistě obranné",dual:"dual-use",civil:"výhradně civilní"})[p.zamereni]+")"); }
+
+  // TRL (váha 3)
+  max+=3;
+  const [omin,omax] = o.trl.split("-").map(Number);
+  if(omax >= p.trl[0] && omin <= p.trl[1]){ s+=3; plusy.push("Vaše fáze (TRL "+o.trl+") spadá do rozsahu programu (TRL "+p.trl[0]+"–"+p.trl[1]+")"); }
+  else minusy.push("Program cílí na TRL "+p.trl[0]+"–"+p.trl[1]+", vy jste na TRL "+o.trl);
+
+  // typ podpory (váha 2)
+  max+=2;
+  if(o.typ==="vse"){ s+=2; }
+  else if(p.typ===o.typ || p.typ==="mix"){ s+=2; plusy.push("Nabízí formu podpory, kterou hledáte"); }
+  else minusy.push("Nabízí "+({grant:"grant",equity:"equity investici",akcelerator:"akceleraci"})[p.typ]+", vy hledáte "+({grant:"grant",equity:"investici",akcelerator:"akceleraci"})[o.typ]);
+
+  // konsorcium (váha 2)
+  max+=2;
+  if(p.konsorcium && o.konsorcium==="ne"){ minusy.push("Vyžaduje mezinárodní konsorcium"); }
+  else { s+=2; if(p.konsorcium) plusy.push("Konsorcium nevadí – jste na něj připraveni"); else plusy.push("Žádá jedna firma, konsorcium není potřeba"); }
+
+  // velikost (váha 1)
+  max+=1;
+  if(p.velikost.includes(o.velikost)){ s+=1; }
+  else minusy.push("Primárně cílí na jiný typ žadatele");
+
+  return { skore: Math.round((s/max)*100), plusy, minusy };
+}
+
+function renderVysledky(el, kb){
+  const o = state.odpovedi;
+  const vysledky = kb.programy.map(p=>({p, ...skoreProgramu(p,o)})).sort((a,b)=>b.skore-a.skore);
+  const div = document.createElement("div");
+  div.innerHTML = `<div style="display:flex;align-items:center;gap:10px;margin:26px 0 14px">
+    <h2 style="font-size:20px;margin:0">Doporučené programy</h2>
+    <span class="mono" style="font-size:10px;color:var(--muted)">seřazeno podle shody s vaším profilem</span></div>`;
+  vysledky.forEach((v,idx)=>{
+    const c = v.skore>=70 ? "var(--green)" : v.skore>=45 ? "var(--steel)" : "var(--clay)";
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+        <span class="mono" style="font-size:11px;color:var(--muted)">#${idx+1}</span>
+        <h3 style="font-size:16px;margin:0;flex:1;min-width:180px">${esc(v.p.nazev)}</h3>
+        <span class="tag ${esc(v.p.typ)}">${({grant:"Grant",equity:"Equity",akcelerator:"Akcelerátor",mix:"Grant + více"})[v.p.typ]||esc(v.p.typ)}</span>
+        <div class="scorebar"><div style="width:${v.skore}%;height:100%;background:${c}"></div></div>
+        <span class="mono" style="font-size:12px;font-weight:600;color:${c};width:38px;text-align:right">${v.skore}%</span>
+      </div>
+      <div style="color:var(--muted);font-size:13px;margin:8px 0 10px">${esc(v.p.kratce)}</div>
+      ${v.plusy.slice(0,3).map(x=>`<div style="display:flex;gap:8px;font-size:12.5px;padding:2px 0"><span style="color:var(--green)">✓</span><span>${esc(x)}</span></div>`).join("")}
+      ${v.minusy.slice(0,2).map(x=>`<div style="display:flex;gap:8px;font-size:12.5px;padding:2px 0"><span style="color:var(--clay)">✕</span><span style="color:var(--muted)">${esc(x)}</span></div>`).join("")}
+      <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn ghost" style="padding:8px 14px;font-size:12.5px" onclick="go('program','${esc(v.p.id)}')">Detail programu</button>
+        <button class="btn ghost" style="padding:8px 14px;font-size:12.5px" onclick="state.prihlaskaProgram='${esc(v.p.id)}';save();go('prihlaska')">Jak napsat přihlášku →</button>
+      </div>`;
+    div.appendChild(card);
+  });
+  div.insertAdjacentHTML("beforeend",
+    `<div class="card" style="background:var(--blueSoft);border-color:#C9D8F2">
+       <strong>Další krok:</strong> výsledek je orientační vodítko, ne rozhodnutí.
+       ${esc(kb.meta.kontakt)}
+     </div>`);
+  el.appendChild(div);
+}
+
+// =====================================================================
+// 2) KATALOG PROGRAMŮ + detail
+// =====================================================================
+function vProgramy(el){
+  const kb = KB();
+  header(el, "Katalog", "Programy ve znalostní bázi",
+    "Přehled evropských a NATO nástrojů pro defence a dual-use firmy. Obsah spravuje tým Defence Hubu.");
+  kb.programy.forEach(p=>{
+    el.insertAdjacentHTML("beforeend",
+      `<div class="card" style="cursor:pointer" onclick="go('program','${esc(p.id)}')">
+         <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+           <h3 style="font-size:16px;margin:0;flex:1;min-width:200px">${esc(p.nazev)}</h3>
+           <span class="tag ${esc(p.typ)}">${({grant:"Grant",equity:"Equity",akcelerator:"Akcelerátor",mix:"Grant + více"})[p.typ]||esc(p.typ)}</span>
+           <span class="pill">TRL ${p.trl[0]}–${p.trl[1]}</span>
+           <span class="pill">${p.konsorcium?"konsorcium":"jedna firma"}</span>
+         </div>
+         <div style="color:var(--muted);font-size:13px;margin-top:7px">${esc(p.kratce)}</div>
+       </div>`);
+  });
+}
+
+function vProgramDetail(el, id){
+  const kb = KB();
+  const p = kb.programy.find(x=>x.id===id);
+  if(!p){ go("programy"); return; }
+  el.insertAdjacentHTML("beforeend", `<button class="btn ghost" style="margin-bottom:16px;padding:7px 14px;font-size:12.5px" onclick="go('programy')">← Zpět na katalog</button>`);
+  header(el, ({grant:"Grant",equity:"Equity investice",akcelerator:"Akcelerátor",mix:"Grant a další nástroje"})[p.typ]||"", p.nazev, p.kratce);
+  el.insertAdjacentHTML("beforeend", `
+    <div class="card">
+      <div class="kicker" style="margin-bottom:8px">Základní parametry</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;font-size:13px">
+        <div><strong>Výše podpory</strong><br>${esc(p.castka)}${overitTag(p.overit)}</div>
+        <div><strong>Fáze technologie</strong><br>TRL ${p.trl[0]}–${p.trl[1]}</div>
+        <div><strong>Kdo žádá</strong><br>${p.konsorcium?"Mezinárodní konsorcium":"Jedna firma"}</div>
+        <div><strong>Termíny</strong><br>${esc(p.terminy)}${overitTag(p.terminyOverit)}</div>
+      </div>
+    </div>
+    <div class="card"><div class="kicker" style="margin-bottom:8px">Pro koho</div><div style="line-height:1.55">${esc(p.proKoho)}</div></div>
+    <div class="card"><div class="kicker" style="margin-bottom:8px">Jak to funguje</div>
+      ${p.jakFunguje.map(x=>`<div style="display:flex;gap:9px;padding:4px 0;line-height:1.5"><span style="color:var(--blue)">›</span><span>${esc(x)}</span></div>`).join("")}
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px" class="tablewrap">
+      <div class="card" style="margin:0;background:var(--greenSoft);border-color:#DCE5D0">
+        <div class="kicker" style="margin-bottom:8px;color:var(--green)">Hodí se, když…</div>
+        ${p.vhodnyKdyz.map(x=>`<div style="display:flex;gap:8px;padding:3px 0;font-size:13px;line-height:1.5"><span style="color:var(--green)">✓</span><span>${esc(x)}</span></div>`).join("")}
+      </div>
+      <div class="card" style="margin:0;background:var(--claySoft);border-color:#EBD9CE">
+        <div class="kicker" style="margin-bottom:8px;color:var(--clay)">Nehodí se, když…</div>
+        ${p.nevhodnyKdyz.map(x=>`<div style="display:flex;gap:8px;padding:3px 0;font-size:13px;line-height:1.5"><span style="color:var(--clay)">✕</span><span>${esc(x)}</span></div>`).join("")}
+      </div>
+    </div>
+    <div class="card" style="margin-top:14px;background:var(--blueSoft);border-color:#C9D8F2">
+      <div class="kicker" style="margin-bottom:6px;color:var(--blue)">Jak pomůže Defence Hub</div>
+      <div style="line-height:1.55">${esc(p.pomocDH)}</div>
+      <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
+        <a class="btn" style="text-decoration:none" href="${esc(p.odkaz)}" target="_blank" rel="noopener">Oficiální stránky ↗</a>
+        <button class="btn ghost" onclick="state.prihlaskaProgram='${esc(p.id)}';save();go('prihlaska')">Jak napsat přihlášku →</button>
+      </div>
+    </div>`);
+}
+
+// =====================================================================
+// 3) PRŮVODCE PŘIHLÁŠKOU
+// =====================================================================
+function vPrihlaska(el){
+  const kb = KB();
+  header(el, "Průvodce přihláškou", "Jak napsat přihlášku, která projde",
+    "Sedm zásad, které platí napříč programy, plus checklist na míru vybranému programu. Zaškrtnutý postup se ukládá ve vašem prohlížeči.");
+
+  // výběr programu
+  const sel = state.prihlaskaProgram || "";
+  el.insertAdjacentHTML("beforeend",
+    `<div class="card">
+       <div class="kicker" style="margin-bottom:8px">Pro který program se připravujete?</div>
+       <select onchange="state.prihlaskaProgram=this.value;save();go('prihlaska')">
+         <option value="">– obecná příprava –</option>
+         ${kb.programy.map(p=>`<option value="${esc(p.id)}" ${p.id===sel?"selected":""}>${esc(p.nazev)}</option>`).join("")}
+       </select>
+     </div>`);
+
+  // obecné kroky
+  const kroky = document.createElement("div");
+  kroky.className = "card";
+  kroky.innerHTML = `<div class="kicker" style="margin-bottom:10px">Sedm zásad dobré žádosti</div>`;
+  kb.prihlaska.obecneKroky.forEach((k,i)=>{
+    kroky.insertAdjacentHTML("beforeend",
+      `<div style="display:flex;gap:13px;padding:10px 0;border-bottom:1px solid var(--line)">
+         <span class="mono" style="flex:none;width:26px;height:26px;border-radius:50%;background:var(--blueSoft);color:var(--blue);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600">${i+1}</span>
+         <div><strong style="font-size:13.5px">${esc(k.krok)}</strong><div style="color:var(--muted);font-size:12.5px;margin-top:3px;line-height:1.5">${esc(k.popis)}</div></div>
+       </div>`);
+  });
+  el.appendChild(kroky);
+
+  // checklist
+  const items = kb.prihlaska.checklisty[sel] || kb.prihlaska.checklisty.default;
+  const ckey = "chk_" + (sel||"default");
+  if(!state[ckey]) state[ckey] = {};
+  const chk = document.createElement("div");
+  chk.className = "card";
+  const doneCount = items.filter((_,i)=>state[ckey][i]).length;
+  chk.innerHTML = `<div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+    <div class="kicker" style="flex:1">Checklist${sel?": "+esc((kb.programy.find(p=>p.id===sel)||{}).nazev||""):" (obecný)"}</div>
+    <span class="mono" style="font-size:11px;color:${doneCount===items.length?"var(--green)":"var(--muted)"}">${doneCount}/${items.length}</span></div>`;
+  items.forEach((it,i)=>{
+    const done = !!state[ckey][i];
+    const row = document.createElement("label");
+    row.className = "check"+(done?" done":"");
+    row.innerHTML = `<input type="checkbox" ${done?"checked":""}><span style="font-size:13px;line-height:1.5">${esc(it)}</span>`;
+    row.querySelector("input").onchange = e=>{ state[ckey][i]=e.target.checked; save(); go("prihlaska"); };
+    chk.appendChild(row);
+  });
+  el.appendChild(chk);
+
+  el.insertAdjacentHTML("beforeend",
+    `<div class="card" style="background:var(--blueSoft);border-color:#C9D8F2">
+       <strong>Než odešlete:</strong> ${esc(kb.meta.kontakt)} Umíme zprostředkovat zpětnou vazbu na draft žádosti.
+     </div>`);
+}
+
+// =====================================================================
+// 4) DUAL-USE PŘEKLADAČ (fáze 2 – beta)
+// =====================================================================
+function vDualUse(el){
+  const kb = KB();
+  const du = kb.dualUse;
+  if(!state.du) state.du = { smer:"d2k", domena:"", popis:"" };
+  const s = state.du;
+
+  header(el, "Fáze 2 · Beta", "Dual-use překladač",
+    "Popište svůj use case a překladač ukáže, jak vypadá jeho zrcadlo v druhém světě: relevantní sektory, analogické use casy a co konkrétně se při přechodu mění.");
+
+  el.insertAdjacentHTML("beforeend", `
+    <div class="card">
+      <div class="kicker" style="margin-bottom:10px">Směr překladu</div>
+      <div style="display:flex;gap:9px;flex-wrap:wrap">
+        <button class="opt" style="flex:1;min-width:220px;margin:0;${s.smer==='d2k'?'border-color:var(--blue);background:var(--blueSoft)':''}" onclick="state.du.smer='d2k';save();go('dualuse')">
+          <strong>Obranný → komerční</strong><small>Máme defence use case, hledáme civilní trh</small></button>
+        <button class="opt" style="flex:1;min-width:220px;margin:0;${s.smer==='k2d'?'border-color:var(--blue);background:var(--blueSoft)':''}" onclick="state.du.smer='k2d';save();go('dualuse')">
+          <strong>Komerční → obranný</strong><small>Máme civilní produkt, chceme do defence</small></button>
+      </div>
+      <div class="kicker" style="margin:16px 0 8px">Technologická doména</div>
+      <select onchange="state.du.domena=this.value;save();go('dualuse')">
+        <option value="">– vyberte doménu –</option>
+        ${du.domeny.map(d=>`<option value="${esc(d.id)}" ${d.id===s.domena?"selected":""}>${esc(d.nazev)}</option>`).join("")}
+      </select>
+      <div class="kicker" style="margin:16px 0 8px">Váš use case (volitelné)</div>
+      <textarea rows="3" placeholder="Např.: Akustický senzor pro detekci dronů kolem vojenských základen…" onchange="state.du.popis=this.value;save()">${esc(s.popis)}</textarea>
+    </div>`);
+
+  if(!s.domena) {
+    el.insertAdjacentHTML("beforeend", `<div class="card" style="color:var(--muted)">Vyberte doménu a překladač sestaví mapu.</div>`);
+    return;
+  }
+  const d = du.domeny.find(x=>x.id===s.domena);
+  if(!d) return;
+  const d2k = s.smer==="d2k";
+
+  // mapa use casů
+  el.insertAdjacentHTML("beforeend", `
+    <div class="card">
+      <div class="kicker" style="margin-bottom:10px">${esc(d.nazev)} – mapa ${d2k?"obranný → komerční":"komerční → obranný"}</div>
+      <div style="display:grid;grid-template-columns:1fr 28px 1fr;gap:10px;align-items:start">
+        <div>
+          <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:${d2k?"var(--navy)":"var(--muted)"};margin-bottom:8px">${d2k?"Odkud: obranné use casy":"Kam: obranné use casy"}</div>
+          ${d.defence.map(x=>`<div class="pill" style="display:flex;margin-bottom:6px">${esc(x)}</div>`).join("")}
+        </div>
+        <div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--blue);font-size:20px">${d2k?"→":"←"}</div>
+        <div>
+          <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:${d2k?"var(--muted)":"var(--navy)"};margin-bottom:8px">${d2k?"Kam: komerční sektory":"Odkud: komerční sektory"}</div>
+          ${d.komercni.map(x=>`<div style="background:var(--greenSoft);border-radius:8px;padding:7px 10px;margin-bottom:6px;font-size:12px;line-height:1.4"><strong>${esc(x.sektor)}</strong><br><span style="color:var(--muted)">${esc(x.useCase)}</span></div>`).join("")}
+        </div>
+      </div>
+    </div>`);
+
+  // co se mění
+  const zmeny = d2k ? du.zmenyDefenceKomercni : du.zmenyKomercniDefence;
+  el.insertAdjacentHTML("beforeend", `
+    <div class="card tablewrap">
+      <div class="kicker" style="margin-bottom:10px">Co se při přechodu mění</div>
+      <table class="zmeny">
+        <tr><th></th><th>${d2k?"Obranný svět":"Komerční svět"}</th><th>${d2k?"Komerční svět":"Obranný svět"}</th></tr>
+        ${zmeny.map(z=>`<tr><td><strong>${esc(z.co)}</strong></td><td>${esc(z.z)}</td><td>${esc(z.na)}</td></tr>`).join("")}
+      </table>
+    </div>`);
+
+  // doporučené kroky + relevantní programy
+  const kroky = d2k ? du.dalsiKroky.defenceKomercni : du.dalsiKroky.komercniDefence;
+  const cilZamereni = d2k ? ["civil","dual"] : ["defence","dual"];
+  const progs = kb.programy.filter(p=>cilZamereni.includes(p.zamereni)).slice(0,4);
+  el.insertAdjacentHTML("beforeend", `
+    <div class="card">
+      <div class="kicker" style="margin-bottom:10px">Doporučené kroky</div>
+      ${kroky.map((k,i)=>`<div style="display:flex;gap:12px;padding:6px 0;line-height:1.5"><span class="mono" style="flex:none;width:24px;height:24px;border-radius:50%;background:var(--blueSoft);color:var(--blue);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600">${i+1}</span><span style="font-size:13px">${esc(k)}</span></div>`).join("")}
+    </div>
+    <div class="card" style="background:var(--blueSoft);border-color:#C9D8F2">
+      <div class="kicker" style="margin-bottom:8px;color:var(--blue)">Programy pro cílový svět</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        ${progs.map(p=>`<button class="btn ghost" style="padding:8px 14px;font-size:12.5px;background:#fff" onclick="go('program','${esc(p.id)}')">${esc(p.nazev)}</button>`).join("")}
+      </div>
+    </div>
+    <div class="card" style="border-style:dashed;color:var(--muted);font-size:12.5px;line-height:1.55">
+      <strong style="color:var(--navy)">Poznámka k beta verzi:</strong> překladač zatím pracuje s obecnou mapou domén ze znalostní báze.
+      Další fáze počítá s AI vrstvou (přes server), která z vašeho popisu vygeneruje překlad na míru – včetně konkrétních zákaznických segmentů a pitch úprav.
+    </div>`);
+}
+
+// =====================================================================
+// 5) KNOWLEDGE BASE (správa obsahu)
+// =====================================================================
+function vKB(el){
+  const kb = KB();
+  header(el, "Správa obsahu", "Knowledge base",
+    "Veškerý obsah aplikace (programy, checklisty, dual-use mapa, otázky průvodce) žije v jednom souboru. Tady ho lze prohlédnout, upravit a exportovat. Úpravy zde se ukládají jen do tohoto prohlížeče – trvalá změna = nahrát nový kb.js do repozitáře.");
+
+  const pocty = `${kb.programy.length} programů · ${kb.dualUse.domeny.length} dual-use domén · verze ${esc(kb.meta.verze)} · aktualizováno ${esc(kb.meta.aktualizovano)}`;
+  const overitPocet = kb.programy.filter(p=>p.overit||p.terminyOverit).length;
+
+  el.insertAdjacentHTML("beforeend", `
+    <div class="card">
+      <div class="kicker" style="margin-bottom:6px">Stav</div>
+      <div style="font-size:13px">${pocty}</div>
+      ${overitPocet?`<div style="margin-top:8px;font-size:12.5px;color:#9A7B1E;background:#FDF3DC;border-radius:8px;padding:8px 12px">⚠ ${overitPocet} programů má částky/termíny označené <strong>ověřit</strong> – před ostrým spuštěním zkontrolovat proti oficiálním zdrojům.</div>`:""}
+      ${state.kbOverride?`<div style="margin-top:8px;font-size:12.5px;color:var(--blue);background:var(--blueSoft);border-radius:8px;padding:8px 12px">ℹ Používá se lokálně upravená verze KB (jen v tomto prohlížeči). <a href="#" onclick="delete state.kbOverride;save();go('kb');return false">Vrátit se k souboru kb.js</a></div>`:""}
+    </div>
+    <div class="card">
+      <div class="kicker" style="margin-bottom:10px">Editor (JSON)</div>
+      <textarea id="kbEditor" rows="18" class="mono cscroll" style="font-size:11.5px;white-space:pre" spellcheck="false">${esc(JSON.stringify(kb, null, 2))}</textarea>
+      <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">
+        <button class="btn" onclick="ulozKB()">Uložit do prohlížeče</button>
+        <button class="btn ghost" onclick="exportKB()">Exportovat kb.js</button>
+      </div>
+      <div id="kbMsg" style="margin-top:10px;font-size:12.5px"></div>
+    </div>`);
+}
+function ulozKB(){
+  const t = document.getElementById("kbEditor").value;
+  const msg = document.getElementById("kbMsg");
+  try{ JSON.parse(t); state.kbOverride = t; save(); msg.style.color="var(--green)"; msg.textContent="✓ Uloženo. Aplikace teď používá tuto verzi (jen v tomto prohlížeči)."; }
+  catch(e){ msg.style.color="var(--clay)"; msg.textContent="✕ Neplatný JSON: "+e.message; }
+}
+function exportKB(){
+  const t = document.getElementById("kbEditor").value;
+  try{
+    const obj = JSON.parse(t);
+    const src = "// DH Kompas – knowledge base (export z aplikace "+new Date().toISOString().slice(0,10)+")\nwindow.DH_KB = " + JSON.stringify(obj, null, 2) + ";\n";
+    const blob = new Blob([src], {type:"text/javascript"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob); a.download = "kb.js"; a.click();
+    URL.revokeObjectURL(a.href);
+  }catch(e){
+    const msg = document.getElementById("kbMsg");
+    msg.style.color="var(--clay)"; msg.textContent="✕ Neplatný JSON: "+e.message;
+  }
+}
+
+// ---------------- start ----------------
+document.getElementById("kbVerze").textContent = "KB " + (KB().meta.verze||"");
+go(state.view && views[state.view] ? state.view : "wizard", state.viewParam);
+</script>
+</body>
+</html>

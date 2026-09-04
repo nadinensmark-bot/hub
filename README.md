@@ -1,5 +1,10 @@
 # Hub Relay — Defence CRM
 
+> **Nové:** ve složce [`navigator/`](navigator/) je **DH Kompas** — průvodce EU programy
+> pro defence & dual-use startupy (výběr programu, jak napsat přihlášku, dual-use překladač).
+> Statický web bez serveru, obsah se spravuje v `navigator/kb.js`. Po nasazení na GitHub Pages
+> běží na adrese `…/navigator/`.
+
 Followupy, párování poptávek a nabídek, pipeline, kalendář z Microsoft Teams, import z Excelu a AI generování zpráv z pracovních cest. Pro **Defence Hub CzechInvest**.
 
 Aplikace běží jako statický web — **bez serveru** (ideální pro GitHub Pages).
