@@ -113,9 +113,18 @@ main{padding:20px 0 60px}
   box-shadow:var(--shadowCard);display:flex;flex-direction:column;gap:11px;position:relative;overflow:hidden;
   transition:transform .13s ease,box-shadow .13s ease,border-color .13s ease}
 .tile:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:color-mix(in srgb,var(--accent) 45%,var(--line))}
-.tile .cat{display:inline-flex;align-items:center;gap:7px;font-family:'IBM Plex Mono',monospace;
-  font-size:10px;letter-spacing:.11em;text-transform:uppercase;font-weight:600;color:var(--muted)}
+.tile .cat{display:flex;align-items:center;gap:7px;font-family:'IBM Plex Mono',monospace;
+  font-size:10px;letter-spacing:.09em;text-transform:uppercase;font-weight:600;color:var(--muted);flex-wrap:wrap}
 .tile .cat .dot{width:9px;height:9px;border-radius:50%;flex:none}
+.catsel{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.06em;text-transform:uppercase;font-weight:600;
+  color:var(--muted);background:transparent;border:1px solid transparent;border-radius:7px;padding:2px 20px 2px 6px;margin-left:-2px;
+  cursor:pointer;max-width:190px;appearance:none;-webkit-appearance:none;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%235C6886' stroke-width='3' stroke-linecap='round'><path d='M6 9l6 6 6-6'/></svg>");
+  background-repeat:no-repeat;background-position:right 5px center}
+.catsel:hover{border-color:var(--line);color:var(--text)}
+.catsel:focus{outline:none;border-color:var(--accent);color:var(--text)}
+.cty{color:var(--faint);font-weight:500}
+.tile .cta{font-size:12px;line-height:1.45;color:var(--accent);background:var(--accentSoft);border-radius:8px;padding:7px 10px;font-weight:500}
 .tile h3{font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:600;line-height:1.25;color:var(--text);text-wrap:balance}
 .tile .supplier{font-size:12.5px;color:var(--accent);font-weight:600;margin-top:-4px}
 .tile .desc{font-size:13px;line-height:1.5;color:var(--muted);flex:1;
@@ -270,8 +279,9 @@ main{padding:20px 0 60px}
     {key:'name',label:'Název řešení',syn:['nazev','název','reseni','řešení','solution','produkt','product','name','title','nazevreseni']},
     {key:'supplier',label:'Dodavatel / firma',syn:['firma','spolecnost','společnost','dodavatel','vendor','company','organizace','subjekt','vyrobce','výrobce','provider']},
     {key:'category',label:'Kategorie / oblast',syn:['kategorie','category','oblast','domena','doména','segment','zamereni','zaměření','obor','odvetvi','odvětví','area','typ']},
-    {key:'description',label:'Popis',syn:['popis','description','anotace','summary','shrnuti','shrnutí','desc','detail','oreseni','charakteristika']},
+    {key:'description',label:'Popis / medailonek',syn:['medailonek','medailon','popis','description','anotace','summary','shrnuti','shrnutí','desc','detail','oreseni','charakteristika']},
     {key:'trl',label:'TRL',syn:['trl','readiness','uroven','úroveň','zralost','technologyreadiness']},
+    {key:'cta',label:'Výzva / call to action',syn:['calltoaction','cta','vyzva','výzva']},
     {key:'tags',label:'Tagy / klíčová slova',syn:['tagy','tags','klicovaslova','klíčováslova','keywords','stitky','štítky','labels']},
     {key:'url',label:'Odkaz / web',syn:['web','url','odkaz','link','stranky','stránky','www','website']},
     {key:'country',label:'Země / region',syn:['zeme','země','country','stat','stát','region','lokalita','mesto','město','location']}
@@ -314,18 +324,22 @@ main{padding:20px 0 60px}
       var tagsRaw=get(row,'tags');
       var tags=tagsRaw?tagsRaw.split(/[;,\n|]+/).map(function(x){return x.trim();}).filter(Boolean):[];
       var name=get(row,'name'), desc=get(row,'description');
+      var key=normText(name)+'|'+normText(desc).slice(0,60);
       var explicit=get(row,'category'), cat=explicit, auto=false;
       if(!cat || state.autoCat){                       // prázdné pole → vždy; nebo když je zapnuté „vždy z popisu"
         var d=classifyCategory(desc+' '+tags.join(' '),name);
         if(d){cat=d;auto=true;}
       }
       if(!cat)cat='Nezařazeno';
+      if(state.overrides && state.overrides[key]){cat=state.overrides[key];auto=false;} // ruční oprava vyhrává
       return {
+        key:key,
         name:name,
         supplier:get(row,'supplier'),
         category:cat,
         categoryAuto:auto,
         description:desc,
+        cta:get(row,'cta'),
         trl:get(row,'trl'),
         trlN:normalizeTRL(get(row,'trl')),
         tags:tags,
@@ -342,18 +356,18 @@ main{padding:20px 0 60px}
 
   // ---- Auto-rozpoznání kategorie z popisu (jedna z 12 výzev NATO DIANA) ----
   var CATEGORIES=[
-    {name:'Odolné kosmické operace',            kw:['kosmick','vesmir','orbit','druzic','satelitn snimk','gnss','navigac bez','pnt','space','kosmos','suborbit']},
-    {name:'Energie a energetika',               kw:['energi','baterie','napajeni','palivo','generator','akumulator','fotovolt','vodik','jadern','ulozist energie','zdroj energie','nabijeni']},
-    {name:'Pokročilé komunikační technologie',  kw:['komunik','radiov','radio','satcom','spojeni','prenos dat','datove spojeni','5g','6g','antena','vysilac','mesh sit','telekomunik','datovy tok']},
-    {name:'Sporná elektromagnetická prostředí', kw:['elektromagn','elektronick boj','ruseni','jamming','spoofing','ew ','spektrum','sigint','odolnost vuci ruseni','protiopatreni','anti jamming']},
-    {name:'Kritická infrastruktura a logistika',kw:['logistik','infrastruktur','zasob','doprav','sklad','dodavatelsk retez','preprav','udrzb','tankov','zasobovani','kriticka infrastruktura']},
-    {name:'Lidská odolnost a biotechnologie',   kw:['biotech','bioteh','zdravot','medic','medevac','fyziolog','human','lidsk odolnost','vykon vojaka','ochrana zdravi','protetik','regenerac','stres','spanek','vyziva','nositeln']},
-    {name:'Rozhodování podporované daty',        kw:['umela inteligence','strojove uceni','analyza dat','algoritm','prediktiv','machine learning','data driven','datov analyt','big data','fuze dat','fuzn dat','vizualizace dat','podpora rozhodovani','velitelsk rozhodovani']},
-    {name:'Námořní operace',                     kw:['namorn','plavidl','ponork','pristav','podvodn','ocean','naval','hladinov','fregat','korveta','maritime']},
-    {name:'Operace v extrémních prostředích',    kw:['extremn','arktick','mraz','poust','pousti','vysokohorsk','polarn','tropick','dzungl','extremni teplo','extremni chlad','nizk teplot']},
-    {name:'Autonomie a bezosádkové systémy',     kw:['autonomn','autonomie','bezosadkov','bezpilotn','dron','uav','ugv','usv','robot','samorizen','bezobsluzn','kvadrokopter']},
-    {name:'Kvantové a nastupující technologie',  kw:['kvantov','quantum','nastupujic technolog','emerging','nanotech','nova technolog','kvantove pocitani','kvantova komunikace','kvantov senzor','pokrocil materialy']},
-    {name:'Senzory a sledování',                 kw:['senzor','sledovani','radar','radiolok','detekc','optik','infracerv','lidar','kamera','snimac','zamer','monitoring','pruzkum','isr','sonar']}
+    {name:'Odolné kosmické operace',            kw:['kosmick','vesmir','vesmirn','orbit','druzic','satelit','space','spacecraft','cubesat','nosic rakety','launch vehicle','raketov pohon','rocket propuls','rocket propell','propellant','pohonn hmot','tuh raketov','gnss','pnt','navigac bez gnss']},
+    {name:'Energie a energetika',               kw:['energ','energy','power','baterie','battery','napajeni','palivo','fuel','generator','akumulator','fotovolt','vodik','hydrogen','jadern','nuclear','ulozist','storage','nabijeni','charging','wireless power','power transmission','electric propuls','elektrick pohon','esc','bms','motor']},
+    {name:'Pokročilé komunikační technologie',  kw:['komunik','communicat','radio','radiov','rf ','satcom','spojeni','connectivity','konektiv','prenos','transmission','datov spoj','data link','datalink','5g','6g','antena','antenn','vysilac','waveform','network','mesh','telemetr','optical wireless','fso','free space optic']},
+    {name:'Sporná elektromagnetická prostředí', kw:['elektromagn','electromagnet','elektronick boj','electronic warfare',' ew ','ew-','jamming','jam-resist','jam resist','anti-jam','ruseni','spoofing','spektrum','spectrum','sigint','gps-denied','gps denied','rf interference','odoln vuci ruseni']},
+    {name:'Kritická infrastruktura a logistika',kw:['logistik','logistic','supply chain','dodavatel retez','infrastruktur','infrastructure','zasob','doprav','transport','sklad','warehouse','udrzb','maintenance','vyrob','manufactur','production','3d tisk','3d print','additive','digital twin','digitaln dvojce','foodtech','provision','krizov jidl','trvanlivost','logistick']},
+    {name:'Lidská odolnost a biotechnologie',   kw:['biotech','bioteh','zdravot','health','medic','medevac','medical','fyziolog','physiolog','human resil','lidsk odoln','vojak','soldier','cbrn','chemical warfare','chemick zbran','plasma','decontam','dekontam','triage','triaz','wound','krvac','bleed','vyziva','nutrition','food ','potravin']},
+    {name:'Rozhodování podporované daty',        kw:['umela inteligence','artificial intelligence',' ai ','ai-','ai driven','machine learning','strojov uceni','deep learning','neuronov','data analy','analyza dat','analytics','big data','osint','open source intelligence','nlp','porozumen prirozen','natural language','semant','decision','rozhodovani','prediktiv','predict','situational awareness','prehled o situ','intelligence analy']},
+    {name:'Námořní operace',                     kw:['namorn','maritime','naval','ship','warship','plavidl','vessel','ponork','submarine','podvodn','underwater','pristav','port','ocean','sea ','uuv','usv','hladinov']},
+    {name:'Operace v extrémních prostředích',    kw:['extremn','extreme','arktick','arctic','mraz','freez','cold weather','poust','desert','vysokohorsk','high altitude','polarn','polar','tropick','tropical','harsh environ','narocn prostred','rugged','survival','preziti','extreme temperat']},
+    {name:'Autonomie a bezosádkové systémy',     kw:['autonomn','autonom','unmanned','uncrewed','bezosadkov','bezpilotn','dron','drone','uav','uas','ugv','loitering','robot','self-driving','samorizen','counter-uas','counter-uxs','c-uas','c-uxs','protidron','anti-drone','fpv','interceptor','active protection','vtol']},
+    {name:'Kvantové a nastupující technologie',  kw:['kvantov','quantum','post-quantum','post quantum','pqc','kryptograf odoln','nanotech','nano ','nanomaterial','fotonik','photonic','emerging tech','nastupujic technolog','novel material','pokrocil material','novy material']},
+    {name:'Senzory a sledování',                 kw:['senzor','sensor','radar','radiolok','detekc','detection','sledovani','surveillance','tracking','optick','optical','electro-optic','elektro-optick',' eo ','termovi','thermal','infracerv','infrared','lidar','kamera','camera','imaging','zobrazovani','isr','pruzkum','reconnaissance','sonar','rentgen','x-ray','monitoring']}
   ];
   function normText(s){return (s==null?'':String(s)).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,' ').replace(/\s+/g,' ').trim();}
   function classifyCategory(text,nameText){
@@ -371,6 +385,12 @@ main{padding:20px 0 60px}
     return bestScore>0?best:'';
   }
   function trlScale(n){var out='<span class="trlscale">';for(var i=1;i<=9;i++){out+='<i class="'+(i<=n?'on':'')+'"></i>';}return out+'</span>';}
+  function catOptions(current){
+    var names=CATEGORIES.map(function(c){return c.name;});
+    if(current && names.indexOf(current)===-1)names=[current].concat(names); // hodnota mimo 12 (např. Nezařazeno) ať je vidět
+    if(names.indexOf('Nezařazeno')===-1)names.push('Nezařazeno');
+    return names.map(function(n){return '<option'+(n===current?' selected':'')+'>'+esc(n)+'</option>';}).join('');
+  }
   function normalizeUrl(u){if(!u)return '';if(/^https?:\/\//i.test(u))return u;return 'https://'+u;}
 
   function render(){
@@ -387,10 +407,15 @@ main{padding:20px 0 60px}
       var url=normalizeUrl(r.url);
       return '<article class="tile">'+
         '<span class="accentbar" style="background:'+col+'"></span>'+
-        '<div class="cat"><span class="dot" style="background:'+col+'"></span>'+esc(r.category)+(r.categoryAuto?' <span class="autobadge" title="Kategorie rozpoznána z popisu">✦&nbsp;auto</span>':'')+(r.country?' · '+esc(r.country):'')+'</div>'+
+        '<div class="cat"><span class="dot" style="background:'+col+'"></span>'+
+          '<select class="catsel" data-key="'+esc(r.key)+'" title="Změnit kategorii">'+catOptions(r.category)+'</select>'+
+          (r.categoryAuto?'<span class="autobadge" title="Kategorie rozpoznána z popisu">✦&nbsp;auto</span>':'')+
+          (r.country?'<span class="cty">'+esc(r.country)+'</span>':'')+
+        '</div>'+
         '<h3>'+esc(r.name)+'</h3>'+
         (r.supplier?'<div class="supplier">'+esc(r.supplier)+'</div>':'')+
         (r.description?'<p class="desc">'+esc(r.description)+'</p>':'<p class="desc" style="color:var(--faint)">—</p>')+
+        (r.cta?'<div class="cta">'+esc(r.cta)+'</div>':'')+
         '<div class="foot">'+
           (r.trlN?'<span class="trl" title="TRL '+r.trlN.num+' — '+esc(r.trlN.label)+'">TRL '+r.trlN.num+trlScale(r.trlN.num)+'</span>'
                  :(r.trl?'<span class="trl">'+esc(r.trl)+'</span>':''))+
@@ -407,6 +432,9 @@ main{padding:20px 0 60px}
       grid.innerHTML='<div style="grid-column:1/-1;text-align:center;color:var(--muted);padding:40px;font-size:14px">Nic neodpovídá filtru. <button class="btn ghost" id="clr" style="height:34px;margin-left:6px">Zrušit filtr</button></div>';
       var clr=$('#clr'); if(clr)clr.onclick=function(){state.q='';state.cat=null;$('#q').value='';renderChips();render();};
     }
+    Array.prototype.forEach.call(grid.querySelectorAll('.catsel'),function(s){
+      s.onchange=function(){var k=s.getAttribute('data-key');state.overrides=state.overrides||{};state.overrides[k]=s.value;buildRows();renderChips();render();};
+    });
     $('#count').textContent=state.rows.length? (list.length===state.rows.length?state.rows.length+' řešení':list.length+' z '+state.rows.length):'';
     $('#exportBtn').hidden=state.rows.length===0;
     $('#autoCatWrap').hidden=state.rows.length===0;
@@ -467,8 +495,8 @@ main{padding:20px 0 60px}
   }
 
   /* ---------- persistence (per-browser convenience) ---------- */
-  function save(){try{localStorage.setItem('dh_reseni_v2',JSON.stringify({raw:state.raw,map:state.map,sample:state.sample,autoCat:state.autoCat}));}catch(e){}}
-  function load(){try{var s=JSON.parse(localStorage.getItem('dh_reseni_v2')||'null');if(s&&s.raw&&s.raw.length){state.raw=s.raw;state.headers=Object.keys(s.raw[0]);state.map=s.map||autoMap(state.headers);state.sample=!!s.sample;state.autoCat=!!s.autoCat;buildRows();return true;}}catch(e){}return false;}
+  function save(){try{localStorage.setItem('dh_reseni_v2',JSON.stringify({raw:state.raw,map:state.map,sample:state.sample,autoCat:state.autoCat,overrides:state.overrides}));}catch(e){}}
+  function load(){try{var s=JSON.parse(localStorage.getItem('dh_reseni_v2')||'null');if(s&&s.raw&&s.raw.length){state.raw=s.raw;state.headers=Object.keys(s.raw[0]);state.map=s.map||autoMap(state.headers);state.sample=!!s.sample;state.autoCat=!!s.autoCat;state.overrides=s.overrides||{};buildRows();return true;}}catch(e){}return false;}
 
   /* ---------- sample data ---------- */
   function sample(){
@@ -497,7 +525,7 @@ main{padding:20px 0 60px}
     var clean=state.rows.map(function(r){
       return {
         name:r.name, supplier:r.supplier, category:r.category, category_auto:!!r.categoryAuto,
-        description:r.description,
+        description:r.description, cta:r.cta,
         trl:r.trlN?r.trlN.num:null,                 // učesané: číslo 1–9, nebo null
         trl_label:r.trlN?r.trlN.label:'',           // standardní český význam
         tags:r.tags, url:normalizeUrl(r.url), country:r.country
