@@ -265,7 +265,7 @@ main{padding:20px 0 60px}
 <script>
 (function(){
   "use strict";
-  var CATCOLORS=['var(--c1)','var(--c2)','var(--c3)','var(--c4)','var(--c5)','var(--c6)'];
+  var CATCOLORS=['#3B7DE0','#6E9152','#BD6B4B','#3E9AA8','#B08A2E','#7A63C0','#C0577F','#4FA06B','#8A6D3B','#5B6BE8','#A0993E','#C77A2E'];
   var FIELDS=[
     {key:'name',label:'Název řešení',syn:['nazev','název','reseni','řešení','solution','produkt','product','name','title','nazevreseni']},
     {key:'supplier',label:'Dodavatel / firma',syn:['firma','spolecnost','společnost','dodavatel','vendor','company','organizace','subjekt','vyrobce','výrobce','provider']},
@@ -291,7 +291,8 @@ main{padding:20px 0 60px}
     return map;
   }
   function catColor(cat){
-    var cats=state.cats||[]; var i=cats.indexOf(cat); if(i<0)i=0; return CATCOLORS[i%CATCOLORS.length];
+    for(var j=0;j<CATEGORIES.length;j++){if(CATEGORIES[j].name===cat)return CATCOLORS[j%CATCOLORS.length];}
+    var cats=state.cats||[]; var i=cats.indexOf(cat); if(i<0)i=0; return CATCOLORS[(i+CATEGORIES.length)%CATCOLORS.length];
   }
   // ---- TRL: učesání jakéhokoli zápisu na jednotný tvar ----
   var TRL_MEANING={
@@ -339,21 +340,20 @@ main{padding:20px 0 60px}
   }
   function esc(s){return (s==null?'':String(s)).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 
-  // ---- Auto-rozpoznání kategorie z popisu (jedna z 12) ----
-  // TODO: nahradit PŘESNÝMI 12 kategoriemi z defencehub.gov.cz + doladit klíčová slova.
+  // ---- Auto-rozpoznání kategorie z popisu (jedna z 12 výzev NATO DIANA) ----
   var CATEGORIES=[
-    {name:'Bezpilotní systémy',           kw:['bezpilot','dron','uav','ugv','usv','autonomni','robot','kvadrokopter']},
-    {name:'Kybernetická bezpečnost',      kw:['kyber','cyber','soc','siem','malware','sifr','penetr','zranitel','firewall','sitova bezpecnost','hrozb']},
-    {name:'Senzory a radary',             kw:['senzor','radar','detekc','sledovani','optik','infracerv','lidar','kamera','zamer','snimac']},
-    {name:'Komunikace a konektivita',     kw:['komunik','radio','satcom','satelit','spojeni','datove spojeni','5g','antena','prenos dat','vysilac']},
-    {name:'Umělá inteligence a data',     kw:['umela inteligence','strojove uceni','analyza dat','algoritm','prediktiv','machine learning','neuronov','big data']},
-    {name:'Ochrana a materiály',          kw:['balist','ochran','pancir','kompozit','material','helma','vesta','odolnost','maskovani','stit']},
-    {name:'Munice a zbraňové systémy',    kw:['munice','raze','zbran','strelivo','delo','raketa','projektil','naboj','vybusn']},
-    {name:'Výcvik a simulace',            kw:['vycvik','simulac','simulator','trenink','virtualni realita','rozsirena realita',' vr ',' ar ']},
-    {name:'Zdravotnictví a přežití',      kw:['zdravot','medevac','medic','prvni pomoc','preziti','osetr','triaz','zachran']},
-    {name:'Energetika a napájení',        kw:['energie','baterie','napajeni','palivo','generator','ulozist','akumulator','fotovolt','zdroj energie']},
-    {name:'Logistika a mobilita',         kw:['logistik','doprav','vozidlo','mobilit','zasob','preprav','sklad','tankov']},
-    {name:'Protivzdušná obrana a C-UAS',  kw:['protivzdus','c-uas','anti drone','antidrone','ruseni dron','jamming','obrana proti','protidron']}
+    {name:'Odolné kosmické operace',            kw:['kosmick','vesmir','orbit','druzic','satelitn snimk','gnss','navigac bez','pnt','space','kosmos','suborbit']},
+    {name:'Energie a energetika',               kw:['energi','baterie','napajeni','palivo','generator','akumulator','fotovolt','vodik','jadern','ulozist energie','zdroj energie','nabijeni']},
+    {name:'Pokročilé komunikační technologie',  kw:['komunik','radiov','radio','satcom','spojeni','prenos dat','datove spojeni','5g','6g','antena','vysilac','mesh sit','telekomunik','datovy tok']},
+    {name:'Sporná elektromagnetická prostředí', kw:['elektromagn','elektronick boj','ruseni','jamming','spoofing','ew ','spektrum','sigint','odolnost vuci ruseni','protiopatreni','anti jamming']},
+    {name:'Kritická infrastruktura a logistika',kw:['logistik','infrastruktur','zasob','doprav','sklad','dodavatelsk retez','preprav','udrzb','tankov','zasobovani','kriticka infrastruktura']},
+    {name:'Lidská odolnost a biotechnologie',   kw:['biotech','bioteh','zdravot','medic','medevac','fyziolog','human','lidsk odolnost','vykon vojaka','ochrana zdravi','protetik','regenerac','stres','spanek','vyziva','nositeln']},
+    {name:'Rozhodování podporované daty',        kw:['umela inteligence','strojove uceni','analyza dat','algoritm','prediktiv','machine learning','data driven','datov analyt','big data','fuze dat','fuzn dat','vizualizace dat','podpora rozhodovani','velitelsk rozhodovani']},
+    {name:'Námořní operace',                     kw:['namorn','plavidl','ponork','pristav','podvodn','ocean','naval','hladinov','fregat','korveta','maritime']},
+    {name:'Operace v extrémních prostředích',    kw:['extremn','arktick','mraz','poust','pousti','vysokohorsk','polarn','tropick','dzungl','extremni teplo','extremni chlad','nizk teplot']},
+    {name:'Autonomie a bezosádkové systémy',     kw:['autonomn','autonomie','bezosadkov','bezpilotn','dron','uav','ugv','usv','robot','samorizen','bezobsluzn','kvadrokopter']},
+    {name:'Kvantové a nastupující technologie',  kw:['kvantov','quantum','nastupujic technolog','emerging','nanotech','nova technolog','kvantove pocitani','kvantova komunikace','kvantov senzor','pokrocil materialy']},
+    {name:'Senzory a sledování',                 kw:['senzor','sledovani','radar','radiolok','detekc','optik','infracerv','lidar','kamera','snimac','zamer','monitoring','pruzkum','isr','sonar']}
   ];
   function normText(s){return (s==null?'':String(s)).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,' ').replace(/\s+/g,' ').trim();}
   function classifyCategory(text,nameText){
@@ -467,22 +467,24 @@ main{padding:20px 0 60px}
   }
 
   /* ---------- persistence (per-browser convenience) ---------- */
-  function save(){try{localStorage.setItem('dh_reseni',JSON.stringify({raw:state.raw,map:state.map,sample:state.sample,autoCat:state.autoCat}));}catch(e){}}
-  function load(){try{var s=JSON.parse(localStorage.getItem('dh_reseni')||'null');if(s&&s.raw&&s.raw.length){state.raw=s.raw;state.headers=Object.keys(s.raw[0]);state.map=s.map||autoMap(state.headers);state.sample=!!s.sample;state.autoCat=!!s.autoCat;buildRows();return true;}}catch(e){}return false;}
+  function save(){try{localStorage.setItem('dh_reseni_v2',JSON.stringify({raw:state.raw,map:state.map,sample:state.sample,autoCat:state.autoCat}));}catch(e){}}
+  function load(){try{var s=JSON.parse(localStorage.getItem('dh_reseni_v2')||'null');if(s&&s.raw&&s.raw.length){state.raw=s.raw;state.headers=Object.keys(s.raw[0]);state.map=s.map||autoMap(state.headers);state.sample=!!s.sample;state.autoCat=!!s.autoCat;buildRows();return true;}}catch(e){}return false;}
 
   /* ---------- sample data ---------- */
   function sample(){
     return [
-      {"Název řešení":"Taktický průzkumný UAV","Dodavatel":"AeroRecon Systems","Kategorie":"Bezpilotní systémy","Popis":"Malý bezpilotní letoun pro průzkum a monitoring v reálném čase s odolností proti rušení GPS a šifrovaným datovým spojem.","TRL":"9","Tagy":"UAV; ISR; průzkum","Web":"example.com","Země":"CZ"},
-      {"Název řešení":"Modulární balistická ochrana","Dodavatel":"ProtectMat","Kategorie":"Ochrana & materiály","Popis":"Kompozitní panely a vesty s certifikací dle STANAG, nižší hmotnost při zachování stupně ochrany.","TRL":"8","Tagy":"balistika; STANAG; kompozity","Web":"example.com","Země":"CZ"},
-      {"Název řešení":"Pasivní radiolokační senzor","Dodavatel":"Retisense","Kategorie":"Senzory & radary","Popis":"Systém pasivní detekce a sledování vzdušných cílů bez vlastního vyzařování, obtížně zaměřitelný protistranou.","TRL":"7","Tagy":"radar; detekce; pasivní","Web":"example.com","Země":"CZ"},
-      {"Název řešení":"Platforma kybernetické obrany","Dodavatel":"CyberShield CZ","Kategorie":"Kybernetika","Popis":"SOC platforma pro detekci průniků, threat intelligence a automatickou reakci na incidenty v kritické infrastruktuře.","TRL":"6","Tagy":"SOC; threat intel; SIEM","Web":"example.com","Země":"CZ"},
-      {"Název řešení":"VR simulátor výcviku","Dodavatel":"TrainSim","Kategorie":"Výcvik & simulace","Popis":"Imerzivní simulátor pro nácvik taktických scénářů družstva s hodnocením výkonu a přehráváním situací.","TRL":"8","Tagy":"VR; výcvik; simulace","Web":"example.com","Země":"CZ"},
-      {"Název řešení":"Systém detekce dronů C-UAS","Dodavatel":"SkyGuard","Kategorie":"Protivzdušná obrana","Popis":"Multisenzorová detekce a klasifikace malých bezpilotních prostředků s možností řízeného rušení.","TRL":"8","Tagy":"C-UAS; anti-drone; RF","Web":"example.com","Země":"CZ"},
-      {"Název řešení":"Polní zdravotnický modul","Dodavatel":"MediField","Kategorie":"Zdravotnictví","Popis":"Přenosná jednotka pro první ošetření a telemedicínu v terénu s napájením nezávislým na síti.","TRL":"6","Tagy":"medevac; telemedicína","Web":"example.com","Země":"CZ"},
-      {"Název řešení":"Mobilní energetické úložiště","Dodavatel":"PowerCore","Kategorie":"Energetika","Popis":"Robustní bateriové úložiště pro polní podmínky, tiché napájení velitelských a senzorových stanovišť.","TRL":"5","Tagy":"baterie; napájení; field","Web":"example.com","Země":"CZ"},
-      {"Název řešení":"Šifrovaná taktická komunikace","Dodavatel":"SecureLink","Kategorie":"Komunikace","Popis":"Rádiová a satelitní komunikace s koncovým šifrováním, odolná proti rušení a odposlechu.","TRL":"7","Tagy":"comms; šifrování; SATCOM","Web":"example.com","Země":"CZ"},
-      {"Název řešení":"Autonomní pozemní robot","Dodavatel":"GroundBot","Kategorie":"Bezpilotní systémy","Popis":"Pásové UGV pro logistiku, průzkum a odminování s dálkovým i autonomním režimem.","TRL":"6","Tagy":"UGV; logistika; autonomie","Web":"example.com","Země":"CZ"}
+      {"Název řešení":"Odolný družicový naváděcí modul","Dodavatel":"SpaceGuard","Kategorie":"Odolné kosmické operace","Popis":"Přijímač odolný proti rušení pro navigaci a přesné časování (GNSS/PNT) i při výpadku družicových signálů na orbitě.","TRL":"7","Tagy":"kosmos; GNSS; navigace","Web":"example.com","Země":"CZ"},
+      {"Název řešení":"Mobilní vodíkový generátor","Dodavatel":"PowerCore","Kategorie":"Energie a energetika","Popis":"Tiché polní napájení velitelských stanovišť s palivovými články a bateriovým úložištěm energie.","TRL":"6","Tagy":"vodík; baterie; napájení","Web":"example.com","Země":"CZ"},
+      {"Název řešení":"Šifrovaná mesh rádiová síť","Dodavatel":"SecureLink","Kategorie":"Pokročilé komunikační technologie","Popis":"Odolné datové spojení a přenos hlasu v terénu bez pevné infrastruktury, samoobnovitelná mesh síť.","TRL":"8","Tagy":"komunikace; mesh; šifrování","Web":"example.com","Země":"CZ"},
+      {"Název řešení":"Systém elektronického boje","Dodavatel":"SpectrumWorks","Kategorie":"Sporná elektromagnetická prostředí","Popis":"Detekce, rušení a ochrana proti rušení a spoofingu v hustém elektromagnetickém spektru.","TRL":"7","Tagy":"EW; jamming; spektrum","Web":"example.com","Země":"CZ"},
+      {"Název řešení":"Prediktivní údržba logistiky","Dodavatel":"LogiChain","Kategorie":"Kritická infrastruktura a logistika","Popis":"Sledování zásob a dopravy s předpovědí výpadků a ochranou kritické infrastruktury a dodavatelského řetězce.","TRL":"6","Tagy":"logistika; zásoby; údržba","Web":"example.com","Země":"CZ"},
+      {"Název řešení":"Nositelný monitoring vojáka","Dodavatel":"MediField","Kategorie":"Lidská odolnost a biotechnologie","Popis":"Nositelné sledování fyziologie, únavy a stresu vojáka v poli s telemedicínou a ochranou zdraví.","TRL":"6","Tagy":"biotech; fyziologie; zdraví","Web":"example.com","Země":"CZ"},
+      {"Název řešení":"Platforma pro fúzi dat a AI","Dodavatel":"DataFusion","Kategorie":"Rozhodování podporované daty","Popis":"Strojové učení a fúze dat pro vyhodnocení senzorových vstupů a podporu velitelského rozhodování.","TRL":"6","Tagy":"AI; fúze dat; analytika","Web":"example.com","Země":"CZ"},
+      {"Název řešení":"Autonomní hladinové plavidlo","Dodavatel":"MarineBot","Kategorie":"Námořní operace","Popis":"Bezosádkové plavidlo pro námořní průzkum přístavů a podvodní detekci.","TRL":"6","Tagy":"námořní; plavidlo; podvodní","Web":"example.com","Země":"CZ"},
+      {"Název řešení":"Vybavení pro arktické podmínky","Dodavatel":"ExtremeGear","Kategorie":"Operace v extrémních prostředích","Popis":"Systémy odolné vůči extrémnímu mrazu, polárnímu a vysokohorskému prostředí.","TRL":"7","Tagy":"arktida; mráz; extrémní","Web":"example.com","Země":"CZ"},
+      {"Název řešení":"Autonomní pozemní robot UGV","Dodavatel":"GroundBot","Kategorie":"Autonomie a bezosádkové systémy","Popis":"Samořízené pásové vozidlo (UGV) pro logistiku a odminování s dálkovým i autonomním režimem.","TRL":"6","Tagy":"UGV; autonomie; robot","Web":"example.com","Země":"CZ"},
+      {"Název řešení":"Kvantový gravimetr","Dodavatel":"QuantumSense","Kategorie":"Kvantové a nastupující technologie","Popis":"Nastupující kvantová technologie pro velmi přesnou navigaci bez GNSS.","TRL":"4","Tagy":"kvantové; navigace; senzor","Web":"example.com","Země":"CZ"},
+      {"Název řešení":"Pasivní radiolokační senzor","Dodavatel":"Retisense","Kategorie":"Senzory a sledování","Popis":"Pasivní detekce a sledování vzdušných cílů bez vlastního vyzařování, obtížně zaměřitelný protistranou.","TRL":"7","Tagy":"radar; detekce; ISR","Web":"example.com","Země":"CZ"}
     ];
   }
 
