@@ -1,0 +1,23 @@
+# Blueprint pro nasazení DH Kompas backendu na Render.com
+# Postup pro člověka: viz backend/NASAZENI.md (10 minut klikání).
+# Render po připojení repozitáře tento soubor najde a vše nastaví sám.
+services:
+  - type: web
+    name: dh-kompas-backend
+    runtime: node
+    rootDir: backend
+    plan: free
+    buildCommand: npm install
+    startCommand: node server.js
+    healthCheckPath: /api/health
+    envVars:
+      - key: ANTHROPIC_API_KEY   # vloží se ručně při nasazení, nikdy do repa
+        sync: false
+      - key: KNOWLEDGE_ZIP_URL   # volitelné: přímý odkaz na ZIP knowledge base
+        sync: false
+      - key: ALLOWED_ORIGIN
+        value: https://nadinensmark-bot.github.io
+      - key: MODEL_CHAT
+        value: claude-haiku-4-5
+      - key: MODEL_ANALYZA
+        value: claude-sonnet-5

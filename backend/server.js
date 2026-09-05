@@ -119,10 +119,33 @@ function nactiZnalosti() {
   }
   return { text: casti.join("\n\n"), pocet: casti.length, znaku };
 }
-const ZNALOSTI = nactiZnalosti();
-console.log(ZNALOSTI.pocet
-  ? `Rozšířené znalosti: ${ZNALOSTI.pocet} souborů, ${(ZNALOSTI.znaku / 1000).toFixed(0)}k znaků`
-  : "Rozšířené znalosti: žádné soubory v backend/knowledge/ (běží se jen s kompaktní KB)");
+// Volitelně se znalosti stáhnou při startu ze ZIPu (KNOWLEDGE_ZIP_URL) –
+// pro hosting bez trvalého disku (Render apod.). ZIP = Knowledge-Base-
+// Ultimate; na Drivu: soubor → sdílet odkazem → přímý odkaz
+// https://drive.google.com/uc?export=download&id=<ID_SOUBORU>
+async function stahniZnalostiZip() {
+  const url = process.env.KNOWLEDGE_ZIP_URL;
+  if (!url) return;
+  try {
+    let buf;
+    if (/^https?:/i.test(url)) {
+      const res = await fetch(url, { redirect: "follow" });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      buf = Buffer.from(await res.arrayBuffer());
+    } else {
+      buf = fs.readFileSync(url); // lokální cesta (testování)
+    }
+    const AdmZip = require("adm-zip");
+    const zip = new AdmZip(buf);
+    fs.mkdirSync(ZNALOSTI_DIR, { recursive: true });
+    zip.extractAllTo(ZNALOSTI_DIR, true);
+    console.log("Znalosti rozbaleny ze ZIP (" + (buf.length / 1024).toFixed(0) + " kB).");
+  } catch (e) {
+    console.error("Stažení znalostí ze ZIP selhalo:", e.message, "– běží se bez nich.");
+  }
+}
+
+let ZNALOSTI = { text: "", pocet: 0, znaku: 0 };
 
 // Sestaví systémové bloky: instrukce + kompaktní KB + nahrané soubory.
 // cache_control je jen na posledním bloku – cachuje se tím celý prefix.
@@ -301,7 +324,14 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-server.listen(CFG.port, () => {
-  console.log(`DH Kompas backend běží na portu ${CFG.port}` + (CFG.mock ? " (MOCK režim – bez volání API)" : ""));
-  console.log(`Modely: chat=${CFG.modelChat}, analýza=${CFG.modelAnalyza}; limity/den: chat ${CFG.limitChatDen}/IP, analýza ${CFG.limitAnalyzaDen}/IP, celkem ${CFG.limitCelkemDen}`);
-});
+(async () => {
+  await stahniZnalostiZip();
+  ZNALOSTI = nactiZnalosti();
+  console.log(ZNALOSTI.pocet
+    ? `Rozšířené znalosti: ${ZNALOSTI.pocet} souborů, ${(ZNALOSTI.znaku / 1000).toFixed(0)}k znaků`
+    : "Rozšířené znalosti: žádné (běží se jen s kompaktní KB aplikace)");
+  server.listen(CFG.port, () => {
+    console.log(`DH Kompas backend běží na portu ${CFG.port}` + (CFG.mock ? " (MOCK režim – bez volání API)" : ""));
+    console.log(`Modely: chat=${CFG.modelChat}, analýza=${CFG.modelAnalyza}; limity/den: chat ${CFG.limitChatDen}/IP, analýza ${CFG.limitAnalyzaDen}/IP, celkem ${CFG.limitCelkemDen}`);
+  });
+})();
