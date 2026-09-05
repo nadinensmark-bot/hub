@@ -12,6 +12,12 @@ Malý Node.js server, který do aplikace DH Kompas přidává:
 Znalostní bázi čte přímo ze souborů aplikace (`navigator/kb.js`, `kb-en.js`,
 `vyzvy.js`) – jeden zdroj pravdy, žádná duplicitní správa obsahu.
 
+**Nahrání plné knowledge base:** cokoli vložíte do složky `backend/knowledge/`
+(markdown/text, např. celou Knowledge-Base-Ultimate staženou z Drivu jako ZIP),
+se při startu serveru přidá do kontextu chatbota i analýzy. Obsah složky se
+nekomituje do veřejného repozitáře (interní/licencované podklady) – nahrává se
+přímo na server. Detaily v `backend/knowledge/README.md`.
+
 ## Řízení nákladů
 
 1. **Workspace spend limit** v [Anthropic Console](https://console.anthropic.com)
