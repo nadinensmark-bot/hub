@@ -655,20 +655,21 @@ window.DH_KB = {
       napovedaParametry: "Přesné prahy (výkon, přesnost, citlivost, délka klíče…) definuje příloha I u konkrétních položek. Porovnejte svůj produkt s textem přílohy, nebo odpovězte „nevím“ – pak je potřeba odborné zatřídění. Pozor: celní zařazení (TARIC) není totéž co kontrolní zařazení.",
       zadna: "Žádná z kategorií",
       polozky: [
-        { kod: "0", nazev: "Jaderné materiály, zařízení a technologie", priklady: ["štěpné a zvláštní štěpné materiály", "reaktory a jejich komponenty", "zařízení pro obohacování a přepracování"] },
-        { kod: "1", nazev: "Zvláštní materiály a související zařízení", priklady: ["speciální slitiny, kompozity a povlaky", "prekurzory chemických látek", "ochranné a detekční prostředky proti chemickým a biologickým látkám"] },
-        { kod: "2", nazev: "Zpracování materiálů", priklady: ["přesné CNC obráběcí stroje", "izostatické lisy", "ložiska zvláštních parametrů"] },
-        { kod: "3", nazev: "Elektronika", priklady: ["radiačně odolné integrované obvody", "vysokofrekvenční a mikrovlnné součástky", "rychlé A/D převodníky s vysokým rozlišením"] },
-        { kod: "4", nazev: "Počítače", priklady: ["vysoce výkonné výpočetní systémy nad stanovený práh", "počítače odolné proti extrémním podmínkám"] },
-        { kod: "5", nazev: "Telekomunikace (část 1) a informační bezpečnost / šifrování (část 2)", priklady: ["rádiové systémy s frekvenčním skákáním a adaptivními technikami", "systémy odolné proti odposlechu a rušení", "kryptografie nad stanovené parametry – typicky položka 5A002"] },
-        { kod: "6", nazev: "Senzory a lasery", priklady: ["termovizní a noktovizní kamery nad stanovenou citlivost/rozlišení", "akustické a podvodní senzory (hydrofony)", "radary, gravimetry, lasery nad stanovený výkon či vlnové délky"] },
-        { kod: "7", nazev: "Navigace a letecká elektronika (avionika)", priklady: ["inerciální navigační systémy a gyroskopy s driftem pod stanovenou mez", "GNSS přijímače odolné proti rušení pro vysoké rychlosti a výšky"] },
-        { kod: "8", nazev: "Námořní technika", priklady: ["ponorná a bezosádková podvodní plavidla", "tiché pohony", "senzory pro podvodní použití"] },
-        { kod: "9", nazev: "Letecká technika, kosmonautika a pohony", priklady: ["raketové a proudové motory a jejich komponenty", "bezpilotní prostředky se stanoveným doletem/nosností", "kosmické technologie"] }
+        { kod: "0", nazev: "Jaderné materiály, zařízení a technologie", priklady: ["štěpné a zvláštní štěpné materiály", "reaktory a jejich komponenty", "zařízení pro obohacování a přepracování"], podoblasti: [{"nazev":"Štěpné a zvláštní štěpné materiály","rozhoduje":"druh a množství materiálu"}, {"nazev":"Reaktory a jejich komponenty","rozhoduje":"určení pro jaderný reaktor"}, {"nazev":"Technologie obohacování a přepracování","rozhoduje":"typ technologie"}] },
+        { kod: "1", nazev: "Zvláštní materiály a související zařízení", priklady: ["speciální slitiny, kompozity a povlaky", "prekurzory chemických látek", "ochranné a detekční prostředky proti chemickým a biologickým látkám"], podoblasti: [{"nazev":"Speciální slitiny, kompozity, vlákna","rozhoduje":"pevnost, modul pružnosti, tepelná odolnost"}, {"nazev":"Povlaky a maskovací materiály","rozhoduje":"typ a účel povlaku"}, {"nazev":"Prekurzory chemických látek","rozhoduje":"konkrétní látka dle kontrolních seznamů"}, {"nazev":"Ochrana a detekce CBRN látek","rozhoduje":"určení a citlivost detekce"}] },
+        { kod: "2", nazev: "Zpracování materiálů", priklady: ["přesné CNC obráběcí stroje", "izostatické lisy", "ložiska zvláštních parametrů"], podoblasti: [{"nazev":"Přesné CNC obráběcí stroje","rozhoduje":"počet řízených os, přesnost polohování"}, {"nazev":"Izostatické lisy","rozhoduje":"pracovní tlak, průměr komory"}, {"nazev":"Speciální ložiska a výrobní zařízení","rozhoduje":"přesnost, materiál"}] },
+        { kod: "3", nazev: "Elektronika", priklady: ["radiačně odolné integrované obvody", "vysokofrekvenční a mikrovlnné součástky", "rychlé A/D převodníky s vysokým rozlišením"], podoblasti: [{"nazev":"Radiačně odolné integrované obvody","rozhoduje":"odolnost vůči radiační dávce"}, {"nazev":"Vysokofrekvenční a mikrovlnné součástky","rozhoduje":"pracovní frekvence, výkon"}, {"nazev":"Rychlé A/D převodníky","rozhoduje":"rozlišení v kombinaci s rychlostí vzorkování"}] },
+        { kod: "4", nazev: "Počítače", priklady: ["vysoce výkonné výpočetní systémy nad stanovený práh", "počítače odolné proti extrémním podmínkám"], podoblasti: [{"nazev":"Vysoce výkonné výpočetní systémy","rozhoduje":"agregovaný výpočetní výkon"}, {"nazev":"Počítače odolné do extrémních podmínek","rozhoduje":"teplotní rozsah, radiační odolnost"}] },
+        { kod: "5", nazev: "Telekomunikace (část 1) a informační bezpečnost / šifrování (část 2)", priklady: ["rádiové systémy s frekvenčním skákáním a adaptivními technikami", "systémy odolné proti odposlechu a rušení", "kryptografie nad stanovené parametry – typicky položka 5A002"], podoblasti: [{"nazev":"Rádiové systémy s frekvenčním skákáním / adaptivními technikami","rozhoduje":"šířka pásma, použité techniky"}, {"nazev":"Systémy odolné proti odposlechu a rušení","rozhoduje":"použité techniky odolnosti"}, {"nazev":"Kryptografie a šifrovací produkty (typicky 5A002)","rozhoduje":"typ algoritmu, délka klíče, kdo šifrování ovládá"}] },
+        { kod: "6", nazev: "Senzory a lasery", priklady: ["termovizní a noktovizní kamery nad stanovenou citlivost/rozlišení", "akustické a podvodní senzory (hydrofony)", "radary, gravimetry, lasery nad stanovený výkon či vlnové délky"], podoblasti: [{"nazev":"Termovizní a noktovizní kamery, obrazové senzory","rozhoduje":"citlivost, rozlišení, snímková frekvence"}, {"nazev":"Akustické a podvodní senzory (hydrofony, sonary)","rozhoduje":"citlivost, pracovní frekvence a hloubka"}, {"nazev":"Radary","rozhoduje":"frekvenční pásma, výkon, techniky zpracování signálu"}, {"nazev":"Lasery","rozhoduje":"výkon, vlnová délka, pulzní energie"}, {"nazev":"Gravimetry a magnetometry","rozhoduje":"přesnost, šum"}] },
+        { kod: "7", nazev: "Navigace a letecká elektronika (avionika)", priklady: ["inerciální navigační systémy a gyroskopy s driftem pod stanovenou mez", "GNSS přijímače odolné proti rušení pro vysoké rychlosti a výšky"], podoblasti: [{"nazev":"Inerciální navigace, gyroskopy, akcelerometry","rozhoduje":"drift, stabilita (bias)"}, {"nazev":"GNSS přijímače odolné proti rušení","rozhoduje":"použité techniky, limity rychlosti a výšky"}, {"nazev":"Letecká elektronika (avionika)","rozhoduje":"určení a parametry dle položky"}] },
+        { kod: "8", nazev: "Námořní technika", priklady: ["ponorná a bezosádková podvodní plavidla", "tiché pohony", "senzory pro podvodní použití"], podoblasti: [{"nazev":"Ponorná a bezosádková podvodní plavidla","rozhoduje":"pracovní hloubka, autonomie"}, {"nazev":"Tiché pohony","rozhoduje":"hlučnost, typ pohonu"}, {"nazev":"Senzory pro podvodní použití","rozhoduje":"citlivost, pracovní hloubka"}] },
+        { kod: "9", nazev: "Letecká technika, kosmonautika a pohony", priklady: ["raketové a proudové motory a jejich komponenty", "bezpilotní prostředky se stanoveným doletem/nosností", "kosmické technologie"], podoblasti: [{"nazev":"Raketové a proudové motory a komponenty","rozhoduje":"tah, specifické parametry pohonu"}, {"nazev":"Bezpilotní prostředky (UAV)","rozhoduje":"dolet, nosnost, vytrvalost"}, {"nazev":"Kosmické systémy a komponenty","rozhoduje":"určení pro kosmické použití"}, {"nazev":"Žáruvzdorné a tepelně-ochranné systémy","rozhoduje":"pracovní teploty, materiál"}] }
       ]
     },
     verdikty: {
       vojensky: {
+        semafor: "cervena", stitek: "VOJENSKÝ MATERIÁL – PŘÍSNÝ REŽIM",
         nazev: "Pravděpodobně vojenský materiál (zákon 38/1994 Sb.)",
         text: "Produkt speciálně konstruovaný nebo upravený pro vojenské použití zpravidla spadá na seznam vojenského materiálu (vyhláška 210/2012 Sb., dle Společného vojenského seznamu EU). Režim je přísnější než dual-use: dvoustupňový (povolení firmy + licence na každý obchod). Obchod bez povolení a licence je trestný čin (§ 265 trestního zákoníku).",
         dalsiKroky: [
@@ -681,6 +682,7 @@ window.DH_KB = {
         ]
       },
       listed: {
+        semafor: "cervena", stitek: "JSTE PRAVDĚPODOBNĚ DUAL-USE – NA VÝVOZ NUTNÉ POVOLENÍ",
         nazev: "Pravděpodobně kontrolovaná dual-use položka (příloha I)",
         text: "Podle odpovědí váš produkt dosahuje parametrů kontrolovaných položek přílohy I nařízení (EU) 2021/821. Pro vývoz mimo EU budete potřebovat vývozní povolení od Licenční správy MPO (proces dle zákona č. 594/2004 Sb.).",
         dalsiKroky: [
@@ -695,6 +697,7 @@ window.DH_KB = {
         ]
       },
       zatrideni: {
+        semafor: "zluta", stitek: "RADĚJI KONTROLA – NECHTE PRODUKT ZATŘÍDIT",
         nazev: "Potřebuje odborné zatřídění",
         text: "Bez porovnání s přesnými technickými prahy přílohy I nejde rozhodnout – u technologických firem nejčastější situace a nic špatného to neznamená. Platí ale self-classification: odpovědnost za správné zařazení je na vás a špatné zařazení = neoprávněný vývoz.",
         dalsiKroky: [
@@ -707,6 +710,7 @@ window.DH_KB = {
         ]
       },
       unlisted: {
+        semafor: "zelena", stitek: "PARAMETRY POD KONTROLNÍ PRAHY – PRAVDĚPODOBNĚ MIMO SEZNAMY",
         nazev: "Pravděpodobně mimo kontrolní seznamy",
         text: "Podle odpovědí produkt nedosahuje parametrů kontrolovaných položek. I tak platí catch-all: povolení může být potřeba i pro nezařazenou položku kvůli koncovému užití – zbraně hromadného ničení (čl. 4), vojenské užití v embargované zemi (čl. 4), kybernetické sledovací nástroje s rizikem represe (čl. 5), národní rozšíření kontroly (čl. 9, 10).",
         dalsiKroky: [

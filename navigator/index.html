@@ -248,6 +248,15 @@ cs: {
   duVerdikt:"Předběžné zatřídění", duRezimy:"Regulace a certifikace, které se vás pravděpodobně týkají",
   duKategorie:"Kategorie {k}", duPriklady:"Typicky kontrolované položky (příklady – přesné prahy jsou v příloze I):",
   duOdkazy:"Oficiální seznamy a zdroje",
+  duPodVyber:"Co z toho odpovídá vašemu produktu?", duPodNic:"Nic z toho",
+  duRozhoduje:"U vybraných položek rozhodují tyto parametry:",
+  duPrahy:"Překračují parametry vašeho produktu prahy uvedené u těchto položek v příloze I?",
+  duPrahyPozn:"Přesné prahy najdete v textu přílohy I (odkaz níže u zdrojů). Když si nejste jistí, zvolte „nevím“ – semafor vás pošle na kontrolu.",
+  duPrahyAno:"Ano / nevylučuji to", duPrahyNe:"Ne, jsou pod prahy", duPrahyNevim:"Nevím / neporovnali jsme",
+  duParamPole:"Vaše klíčové parametry (volitelné – přidají se do shrnutí pro konzultaci):",
+  duParamPlaceholder:"Např.: rozlišení 640×512, citlivost <30 mK, dosah 2 km…",
+  duShrnuti:"Shrnutí pro konzultaci", duShrnutiPozn:"Zkopírujte a pošlete týmu Defence Hubu (defencehub.gov.cz) – projdeme zatřídění s vámi.",
+  duKopirovat:"Zkopírovat shrnutí", duZkopirovano:"✓ Zkopírováno",
   duRezimyEmpty:"Z odpovědí zatím nevyplývá žádný specifický režim – ale projděte to s odborníkem.",
   duKdy:"Kdy se týká:", duAkce:"Co udělat:",
   duZnovu:"Vyplnit znovu", duTestNedokonceno:"Verdikt se zobrazí po zodpovězení všech otázek.",
@@ -347,6 +356,15 @@ en: {
   duVerdikt:"Preliminary classification", duRezimy:"Regulations and certifications that likely apply to you",
   duKategorie:"Category {k}", duPriklady:"Typically controlled items (examples – exact thresholds are in Annex I):",
   duOdkazy:"Official lists and sources",
+  duPodVyber:"Which of these matches your product?", duPodNic:"None of these",
+  duRozhoduje:"For the selected items, these parameters decide:",
+  duPrahy:"Do your product's parameters exceed the thresholds listed for these items in Annex I?",
+  duPrahyPozn:"The exact thresholds are in the Annex I text (link below in sources). If unsure, choose “not sure” – the traffic light will send you to a check.",
+  duPrahyAno:"Yes / can't rule it out", duPrahyNe:"No, they are below the thresholds", duPrahyNevim:"Not sure / haven't compared",
+  duParamPole:"Your key parameters (optional – added to the consultation summary):",
+  duParamPlaceholder:"E.g.: resolution 640×512, sensitivity <30 mK, range 2 km…",
+  duShrnuti:"Consultation summary", duShrnutiPozn:"Copy and send it to the Defence Hub team (defencehub.gov.cz) – we'll go through the classification with you.",
+  duKopirovat:"Copy summary", duZkopirovano:"✓ Copied",
   duRezimyEmpty:"The answers do not point to any specific regime yet – but do go through it with an expert.",
   duKdy:"When it applies:", duAkce:"What to do:",
   duZnovu:"Fill in again", duTestNedokonceno:"The verdict appears once all questions are answered.",
@@ -799,15 +817,18 @@ function renderDuTest(el, kb){
   if(!test || !test.kategorieAnnex){ el.insertAdjacentHTML("beforeend", `<div class="card" style="color:var(--muted)">[KB: dualUseTest missing]</div>`); return; }
   if(!state.duTest2) state.duTest2 = { odpovedi:{}, kategorie:[], katOdpovedi:{} };
   const s = state.duTest2;
+  s.pod = s.pod || {};             // vybrané podoblasti (indexy) na kategorii
+  s.prahy = s.prahy || {};         // odpověď na prahovou otázku na kategorii
+  s.parametry = s.parametry || {}; // volitelné parametry na kategorii
   const a = s.odpovedi;
 
   el.insertAdjacentHTML("beforeend", `<div class="card" style="color:var(--muted);font-size:12.5px;line-height:1.55">${esc(test.uvod)}</div>`);
   el.insertAdjacentHTML("beforeend", `<div class="card" style="background:var(--blueSoft);border-color:#C9D8F2;font-size:12.5px;line-height:1.55">${t("duSpec")}</div>`);
 
-  function ynRow(container, val, onPick){
+  function ynRow(container, val, onPick, popisky){
     const yn = document.createElement("div");
     yn.className = "ynrow";
-    [["ano",t("ano")],["ne",t("ne")],["nevim",t("nevim")]].forEach(([v,lbl])=>{
+    (popisky || [["ano",t("ano")],["ne",t("ne")],["nevim",t("nevim")]]).forEach(([v,lbl])=>{
       const b = document.createElement("button");
       b.className = "opt" + (val===v?" sel":"");
       b.textContent = lbl;
@@ -843,7 +864,10 @@ function renderDuTest(el, kb){
     c.textContent = p.kod+" · "+p.nazev;
     c.onclick = ()=>{
       s.kategorie = s.kategorie.filter(x=>x!=="zadna");
-      if(s.kategorie.includes(p.kod)){ s.kategorie = s.kategorie.filter(x=>x!==p.kod); delete s.katOdpovedi[p.kod]; }
+      if(s.kategorie.includes(p.kod)){
+        s.kategorie = s.kategorie.filter(x=>x!==p.kod);
+        delete s.pod[p.kod]; delete s.prahy[p.kod]; delete s.parametry[p.kod];
+      }
       else s.kategorie.push(p.kod);
       save(); go("dualuse");
     };
@@ -852,21 +876,61 @@ function renderDuTest(el, kb){
   const cz = document.createElement("span");
   cz.className = "chip" + (s.kategorie.includes("zadna")?" sel":"");
   cz.textContent = ka.zadna;
-  cz.onclick = ()=>{ s.kategorie = s.kategorie.includes("zadna") ? [] : ["zadna"]; s.katOdpovedi = {}; save(); go("dualuse"); };
+  cz.onclick = ()=>{ s.kategorie = s.kategorie.includes("zadna") ? [] : ["zadna"]; s.pod = {}; s.prahy = {}; s.parametry = {}; save(); go("dualuse"); };
   c2.appendChild(cz);
 
+  // U každé vybrané kategorie: výběr konkrétních podoblastí ("co z toho děláte"),
+  // ukázka rozhodujících parametrů, volitelné pole parametrů a prahová otázka.
   s.kategorie.filter(k=>k!=="zadna").forEach(kod=>{
     const p = ka.polozky.find(x=>x.kod===kod);
     if(!p) return;
+    const podoblasti = p.podoblasti || p.priklady.map(x=>({nazev:x, rozhoduje:""}));
+    const vybranePod = s.pod[kod] || null; // null = ještě nevybráno, [] = "nic z toho"
     const box = document.createElement("div");
     box.style.cssText = "margin-top:14px;padding:14px 16px;background:var(--mist);border-radius:12px";
     box.innerHTML = `<div class="kicker" style="margin-bottom:4px">${esc(t("duKategorie",{k:p.kod}))}</div>
       <div style="font-size:13.5px;font-weight:600;margin-bottom:8px">${esc(p.nazev)}</div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:4px">${esc(t("duPriklady"))}</div>
-      ${p.priklady.map(x=>`<div style="display:flex;gap:8px;font-size:12.5px;padding:2px 0"><span style="color:var(--blue)">›</span><span>${esc(x)}</span></div>`).join("")}
-      <div style="font-size:13px;font-weight:600;margin:10px 0 3px">${esc(ka.otazkaParametry)}</div>
-      <div style="color:var(--muted);font-size:11.5px;margin-bottom:8px">${esc(ka.napovedaParametry)}</div>`;
-    ynRow(box, s.katOdpovedi[kod], v=>{ s.katOdpovedi[kod]=v; });
+      <div style="font-size:12.5px;font-weight:600;margin-bottom:6px">${esc(t("duPodVyber"))}</div>`;
+    const rada = document.createElement("div");
+    podoblasti.forEach((po, idx)=>{
+      const ch = document.createElement("span");
+      ch.className = "chip" + (vybranePod && vybranePod.includes(idx) ? " sel" : "");
+      ch.style.background = "#fff";
+      ch.textContent = po.nazev;
+      ch.onclick = ()=>{
+        let sez = (s.pod[kod] || []).slice();
+        sez.includes(idx) ? sez = sez.filter(x=>x!==idx) : sez.push(idx);
+        s.pod[kod] = sez;
+        if(!sez.length) delete s.prahy[kod];
+        save(); go("dualuse");
+      };
+      rada.appendChild(ch);
+    });
+    const nic = document.createElement("span");
+    nic.className = "chip" + (vybranePod && vybranePod.length===0 ? " sel" : "");
+    nic.style.background = "#fff";
+    nic.textContent = t("duPodNic");
+    nic.onclick = ()=>{ s.pod[kod] = []; delete s.prahy[kod]; delete s.parametry[kod]; save(); go("dualuse"); };
+    rada.appendChild(nic);
+    box.appendChild(rada);
+
+    if(vybranePod && vybranePod.length){
+      const detaily = document.createElement("div");
+      detaily.innerHTML = `<div style="font-size:12px;color:var(--muted);margin:10px 0 4px">${esc(t("duRozhoduje"))}</div>
+        ${vybranePod.map(idx=>`<div style="display:flex;gap:8px;font-size:12.5px;padding:2px 0"><span style="color:var(--blue)">›</span><span><strong>${esc(podoblasti[idx].nazev)}</strong>${podoblasti[idx].rozhoduje?" — "+esc(podoblasti[idx].rozhoduje):""}</span></div>`).join("")}
+        <div style="font-size:12px;color:var(--muted);margin:10px 0 4px">${esc(t("duParamPole"))}</div>`;
+      const pole = document.createElement("input");
+      pole.type = "text"; pole.placeholder = t("duParamPlaceholder");
+      pole.value = s.parametry[kod] || "";
+      pole.onchange = ()=>{ s.parametry[kod] = pole.value; save(); };
+      detaily.appendChild(pole);
+      detaily.insertAdjacentHTML("beforeend",
+        `<div style="font-size:13px;font-weight:600;margin:12px 0 3px">${esc(t("duPrahy"))}</div>
+         <div style="color:var(--muted);font-size:11.5px;margin-bottom:8px">${esc(t("duPrahyPozn"))}</div>`);
+      ynRow(detaily, s.prahy[kod], v=>{ s.prahy[kod]=v; },
+        [["ano",t("duPrahyAno")],["ne",t("duPrahyNe")],["nevim",t("duPrahyNevim")]]);
+      box.appendChild(detaily);
+    }
     c2.appendChild(box);
   });
   el.appendChild(c2);
@@ -877,33 +941,87 @@ function renderDuTest(el, kb){
   test.otazky.slice(1).forEach(o=>otazkaRow(c3, o));
   el.appendChild(c3);
 
-  // hotovo?
+  // hotovo? Kategorie je vyřešená = vybráno "nic z toho", nebo vybrané
+  // podoblasti + zodpovězená prahová otázka.
   const vybrane = s.kategorie.filter(k=>k!=="zadna");
-  const katHotovo = s.kategorie.includes("zadna") || (vybrane.length>0 && vybrane.every(k=>s.katOdpovedi[k]));
+  const katVyresena = k => Array.isArray(s.pod[k]) && (s.pod[k].length===0 || s.prahy[k]);
+  const katHotovo = s.kategorie.includes("zadna") || (vybrane.length>0 && vybrane.every(katVyresena));
   const hotovo = test.otazky.every(o=>a[o.id]) && katHotovo;
   if(!hotovo){
     el.insertAdjacentHTML("beforeend", `<div class="card" style="color:var(--muted)">${esc(t("duTestNedokonceno"))}</div>`);
     return;
   }
 
-  // verdikt podle seznamů
-  const katAno = vybrane.some(k=>s.katOdpovedi[k]==="ano");
-  const katNevim = vybrane.some(k=>s.katOdpovedi[k]==="nevim");
+  // verdikt podle seznamů → semafor
+  const relevantni = vybrane.filter(k=>(s.pod[k]||[]).length>0);
+  const katAno = relevantni.some(k=>s.prahy[k]==="ano");
+  const katNevim = relevantni.some(k=>s.prahy[k]==="nevim");
   let vId;
   if(a.vojenske==="ano") vId = "vojensky";
   else if(katAno) vId = "listed";
   else if(a.vojenske==="nevim" || katNevim) vId = "zatrideni";
   else vId = "unlisted";
   const v = test.verdikty[vId];
-  const barvy = { vojensky:["var(--clay)","var(--claySoft)","#EBD9CE"], listed:["var(--green)","var(--greenSoft)","#DCE5D0"], zatrideni:["#9A7B1E","#FDF3DC","#EAD9A8"], unlisted:["var(--steel)","var(--blueSoft)","#C9D8F2"] };
-  const [bc,bg,bb] = barvy[vId];
+  const semafory = {
+    cervena: { emoji:"🔴", fg:"#8A3B24", bg:"var(--claySoft)", br:"#E0BFAF" },
+    zluta:   { emoji:"🟡", fg:"#8A6D1B", bg:"#FDF3DC", br:"#EAD9A8" },
+    zelena:  { emoji:"🟢", fg:"#4C6B33", bg:"var(--greenSoft)", br:"#C9D8B4" }
+  };
+  const sem = semafory[v.semafor] || semafory.zluta;
   el.insertAdjacentHTML("beforeend",
-    `<div class="card" style="background:${bg};border-color:${bb}">
-       <div class="kicker" style="margin-bottom:6px;color:${bc}">${esc(t("duVerdikt"))}</div>
-       <h2 style="font-size:19px;margin:0 0 8px;color:${bc}">${esc(v.nazev)}</h2>
-       <div style="line-height:1.55;font-size:13.5px">${esc(v.text)}</div>
-       <button class="btn ghost" style="margin-top:12px;padding:7px 14px;font-size:12px;background:#fff" onclick="state.duTest2={odpovedi:{},kategorie:[],katOdpovedi:{}};save();go('dualuse')">${esc(t("duZnovu"))}</button>
+    `<div class="card" style="background:${sem.bg};border-color:${sem.br}">
+       <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+         <span style="font-size:30px;line-height:1">${sem.emoji}</span>
+         <div style="flex:1;min-width:220px">
+           <div class="kicker" style="color:${sem.fg}">${esc(t("duVerdikt"))}</div>
+           <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:18px;color:${sem.fg};letter-spacing:.01em">${esc(v.stitek || v.nazev)}</div>
+         </div>
+       </div>
+       <div style="line-height:1.55;font-size:13.5px;margin-top:10px">${esc(v.text)}</div>
+       <button class="btn ghost" style="margin-top:12px;padding:7px 14px;font-size:12px;background:#fff" onclick="state.duTest2={odpovedi:{},kategorie:[],katOdpovedi:{},pod:{},prahy:{},parametry:{}};save();go('dualuse')">${esc(t("duZnovu"))}</button>
      </div>`);
+
+  // shrnutí pro konzultaci (zkopírovatelné – obsahuje výběry i zadané parametry)
+  const en = state.lang === "en";
+  const radkyShrnuti = [];
+  radkyShrnuti.push((en ? "DUAL-USE SELF-CHECK – " : "DUAL-USE SEBEHODNOCENÍ – ") + (v.stitek || v.nazev));
+  radkyShrnuti.push((en ? "Date: " : "Datum: ") + fmtDatum(new Date().toISOString().slice(0,10)));
+  radkyShrnuti.push("");
+  test.otazky.forEach(o => { radkyShrnuti.push("• " + o.text + " → " + ({ano:t("ano"),ne:t("ne"),nevim:t("nevim")}[a[o.id]] || a[o.id])); });
+  radkyShrnuti.push("");
+  if(s.kategorie.includes("zadna")){
+    radkyShrnuti.push(en ? "Annex I categories: none selected" : "Kategorie přílohy I: žádná nevybrána");
+  } else {
+    vybrane.forEach(kod => {
+      const p = ka.polozky.find(x=>x.kod===kod);
+      const podoblasti = p.podoblasti || [];
+      const sez = s.pod[kod] || [];
+      radkyShrnuti.push((en ? "Category " : "Kategorie ") + kod + " – " + p.nazev + ":");
+      if(!sez.length) radkyShrnuti.push("  " + t("duPodNic"));
+      else {
+        sez.forEach(idx => radkyShrnuti.push("  • " + (podoblasti[idx] ? podoblasti[idx].nazev : "")));
+        if(s.parametry[kod]) radkyShrnuti.push("  " + (en ? "Parameters: " : "Parametry: ") + s.parametry[kod]);
+        radkyShrnuti.push("  " + t("duPrahy") + " → " + ({ano:t("duPrahyAno"),ne:t("duPrahyNe"),nevim:t("duPrahyNevim")}[s.prahy[kod]] || ""));
+      }
+    });
+  }
+  radkyShrnuti.push("");
+  radkyShrnuti.push(test.disclaimer);
+  const shrnutiText = radkyShrnuti.join("\n");
+  const shrCard = document.createElement("div");
+  shrCard.className = "card";
+  shrCard.innerHTML = `<div class="kicker" style="margin-bottom:6px">${esc(t("duShrnuti"))}</div>
+    <div style="font-size:12.5px;color:var(--muted);margin-bottom:8px">${esc(t("duShrnutiPozn"))}</div>
+    <textarea readonly rows="8" class="mono cscroll" style="font-size:11.5px;white-space:pre">${esc(shrnutiText)}</textarea>
+    <button class="btn ghost" style="margin-top:8px;padding:7px 14px;font-size:12px" id="duKopiruj">${esc(t("duKopirovat"))}</button>`;
+  shrCard.querySelector("#duKopiruj").onclick = async (ev) => {
+    const ta = shrCard.querySelector("textarea");
+    try { await navigator.clipboard.writeText(shrnutiText); }
+    catch(e){ ta.focus(); ta.select(); try{ document.execCommand("copy"); }catch(_){} }
+    ev.target.textContent = t("duZkopirovano");
+    setTimeout(()=>{ ev.target.textContent = t("duKopirovat"); }, 2000);
+  };
+  el.appendChild(shrCard);
 
   // co dál – kroky podle verdiktu
   if(v.dalsiKroky && v.dalsiKroky.length){
