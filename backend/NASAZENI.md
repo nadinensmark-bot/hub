@@ -26,13 +26,13 @@ firem. AI se pak zapne kdykoli doplněním jedné proměnné (varianta 2).
 ### 2. Google tabulka na leady (5 min)
 
 1. Vytvoř Google tabulku „DH Kompas – leady" se záhlavím
-   `kdy | firma | email | profil | lang`.
+   `kdy | firma | ico | email | profil | lang`.
 2. **Rozšíření → Apps Script** → vlož:
    ```js
    function doPost(e) {
      const d = JSON.parse(e.postData.contents);
      SpreadsheetApp.getActiveSpreadsheet().getSheets()[0]
-       .appendRow([d.kdy, d.firma, d.email, d.profil, d.lang]);
+       .appendRow([d.kdy, d.firma, d.ico, d.email, d.profil, d.lang]);
      return ContentService.createTextOutput("ok");
    }
    ```

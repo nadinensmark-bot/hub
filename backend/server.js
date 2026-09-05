@@ -321,6 +321,7 @@ const server = http.createServer(async (req, res) => {
       const lang = telo.lang === "en" ? "en" : "cs";
       const email = String(telo.email || "").trim();
       const firma = String(telo.firma || "").trim().slice(0, 200);
+      const ico = String(telo.ico || "").trim().slice(0, 20);
       const profil = String(telo.profil || "").trim().slice(0, 2000);
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email))
         return json(res, 400, { chyba: lang === "en" ? "Invalid e-mail." : "Neplatný e-mail." });
@@ -329,7 +330,7 @@ const server = http.createServer(async (req, res) => {
       const limit = zkontrolujLimit(ip, "lead");
       if (limit) return json(res, 429, { chyba: lang === "en" ? "Too many submissions today." : "Příliš mnoho odeslání za dnešek." });
 
-      const lead = { kdy: new Date().toISOString(), firma, email, profil, lang, souhlas: true };
+      const lead = { kdy: new Date().toISOString(), firma, ico, email, profil, lang, souhlas: true };
       try {
         fs.mkdirSync(path.join(__dirname, "data"), { recursive: true });
         fs.appendFileSync(path.join(__dirname, "data", "leads.jsonl"), JSON.stringify(lead) + "\n");
