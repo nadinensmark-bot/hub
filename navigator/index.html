@@ -135,10 +135,10 @@ table.zmeny td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-ali
         <span style="flex:1" data-nav="dualuse"></span>
         <span class="mono" style="font-size:8px;letter-spacing:.08em;background:rgba(140,170,114,.2);color:#A8C48E;padding:2px 6px;border-radius:5px">BETA</span>
       </div>
-      <div class="navitem" data-view="poradce" id="navPoradce" style="display:none" onclick="go('poradce')">
+      <div class="navitem" data-view="poradce" id="navPoradce" onclick="go('poradce')">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12a8 8 0 0 1-8 8H5l-2 2V12a8 8 0 0 1 8-8h2a8 8 0 0 1 8 8z"/><path d="M9 11h.01M12.5 11h.01M16 11h.01"/></svg>
         <span style="flex:1" data-nav="poradce"></span>
-        <span class="mono" style="font-size:8px;letter-spacing:.08em;background:rgba(140,170,114,.2);color:#A8C48E;padding:2px 6px;border-radius:5px">AI</span>
+        <span id="porBadge" class="mono" style="font-size:8px;letter-spacing:.08em;background:rgba(140,170,114,.2);color:#A8C48E;padding:2px 6px;border-radius:5px">BETA</span>
       </div>
       <div class="navitem" data-view="kb" id="navKb" style="display:none" onclick="go('kb')">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg>
@@ -187,7 +187,13 @@ cs: {
   porAnalyzaSub:"Vložte technickou specifikaci produktu (parametry, výkon, frekvence, kryptografie…). Dostanete předběžný profil, kandidátní kategorie přílohy I a co ověřit dál. Specifikace se nikam neukládá.",
   porAnalyzaPlaceholder:"Sem vložte text technické specifikace (min. 100 znaků)…",
   porAnalyzaBtn:"Analyzovat specifikaci", porAnalyzaMysli:"Analyzuji – může to trvat i minutu…",
-  porSetup:"Záložka Poradce je připravená, ale backend zatím neběží. Aktivace: nasadit server podle backend/README.md a vyplnit adresu do navigator/config.js (backendUrl). Do té doby ji veřejnost nevidí – tuto zprávu vidíte jen v admin režimu.",
+  liteSub:"Poradce prohledává znalostní bázi Defence Hubu – programy, výzvy, exportní kontrolu i certifikace. Zadejte, co řešíte, nebo použijte rychlé otázky. (AI verze, která odpovídá vlastními slovy a analyzuje specifikace, se zapíná napojením backendu – nic se tím neplatí měsíčně, jen kredit za použití.)",
+  liteHledat:"Hledat", litePlaceholder:"Např.: drony, EDF přihláška, šifrování export…",
+  liteNic:"Nic jsem k tomu nenašel. Zkuste jiná slova – nebo se rovnou zeptejte týmu Defence Hubu (defencehub.gov.cz), poradí osobně a zdarma.",
+  liteVysledky:"Nejbližší odpovědi ze znalostní báze", liteOtevrit:"Otevřít →",
+  liteChip1:"Jaké výzvy teď běží?", liteChip2:"Jsme dual-use?", liteChip3:"Jak napsat přihlášku?", liteChip4:"Kdo nám pomůže?",
+  liteAnalyza:"Automatická analýza specifikací je součástí AI verze Poradce. Do té doby pošlete specifikaci rovnou týmu Defence Hubu – projdeme ji s vámi osobně a zdarma (defencehub.gov.cz).",
+  porSetup:"Pro tým (admin): AI verze Poradce se aktivuje nasazením backendu podle backend/NASAZENI.md a vyplněním adresy do navigator/config.js. Veřejnost zatím vidí vyhledávací verzi bez AI.",
   kontaktKicker:"Kontakt",
   kontaktText:"Nevíte si rady? Tým Defence Hubu vám pomůže osobně – s výběrem programu i s přihláškou.",
   typ:{grant:"Grant",equity:"Equity",akcelerator:"Akcelerátor",mix:"Grant + více",pujcky:"Půjčky státům"},
@@ -277,7 +283,13 @@ en: {
   porAnalyzaSub:"Paste the product's technical specification (parameters, performance, frequencies, cryptography…). You'll get a preliminary profile, candidate Annex I categories and what to verify next. The specification is not stored anywhere.",
   porAnalyzaPlaceholder:"Paste the technical specification text here (min. 100 characters)…",
   porAnalyzaBtn:"Analyse specification", porAnalyzaMysli:"Analysing – this can take up to a minute…",
-  porSetup:"The Advisor tab is ready but the backend is not running yet. To activate: deploy the server per backend/README.md and fill its address into navigator/config.js (backendUrl). Until then the public doesn't see this tab – this message is admin-only.",
+  liteSub:"The advisor searches the Defence Hub knowledge base – programmes, calls, export control and certifications. Type what you're dealing with, or use the quick questions. (The AI version, which answers in its own words and analyses specifications, is activated by connecting the backend – no monthly fee, just usage credit.)",
+  liteHledat:"Search", litePlaceholder:"E.g.: drones, EDF application, encryption export…",
+  liteNic:"Nothing found for that. Try different words – or ask the Defence Hub team directly (defencehub.gov.cz), they advise personally and for free.",
+  liteVysledky:"Closest answers from the knowledge base", liteOtevrit:"Open →",
+  liteChip1:"Which calls are open now?", liteChip2:"Are we dual-use?", liteChip3:"How to write the application?", liteChip4:"Who can help us?",
+  liteAnalyza:"Automatic specification analysis is part of the AI version of the advisor. Until then, send your specification directly to the Defence Hub team – we'll go through it with you personally and for free (defencehub.gov.cz).",
+  porSetup:"For the team (admin): the AI version of the advisor is activated by deploying the backend per backend/NASAZENI.md and filling its address into navigator/config.js. The public currently sees the search version without AI.",
   kontaktKicker:"Contact",
   kontaktText:"Not sure? The Defence Hub team will help you personally – with programme choice and the application.",
   typ:{grant:"Grant",equity:"Equity",akcelerator:"Accelerator",mix:"Grant + more",pujcky:"Loans to states"},
@@ -1037,11 +1049,114 @@ async function poradceDotaz(cesta, telo){
   return data;
 }
 
+// ---------- Poradce lite: vyhledávání ve znalostní bázi (bez AI, zdarma) ----------
+function bezDiakritiky(s){ return String(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase(); }
+
+function sestavIndexKB(kb){
+  const docs = [];
+  const typLabel = t("typ");
+  kb.programy.forEach(p => docs.push({
+    titul: p.nazev, stitek: typLabel[p.typ] || p.typ,
+    text: [p.kratce, p.proKoho, p.castka, (p.jakFunguje||[]).join(" "), p.terminy, p.kdeKriteria, p.pomocDH, (p.vhodnyKdyz||[]).join(" ")].join(" "),
+    ukazka: p.kratce, akce: () => go("program", p.id)
+  }));
+  seznamVyzev(kb).forEach(v => docs.push({
+    titul: v.nazev, stitek: state.lang === "en" ? "call" : "výzva",
+    text: [v.pozn, v.stavRucne, v.uzaverka, v.program].join(" "),
+    ukazka: (v.uzaverka ? (state.lang === "en" ? "deadline " : "uzávěrka ") + fmtDatum(v.uzaverka) + ". " : "") + (v.stavRucne || v.pozn || ""),
+    akce: () => go("vyzvy")
+  }));
+  (kb.dualUseTest.rezimy||[]).forEach(r => docs.push({
+    titul: r.nazev, stitek: state.lang === "en" ? "export/certification" : "export/certifikace",
+    text: r.kdy + " " + r.akce, ukazka: r.akce,
+    akce: () => { state.duTab = "test"; save(); go("dualuse"); }
+  }));
+  kb.dualUseTest.kategorieAnnex.polozky.forEach(k => docs.push({
+    titul: (state.lang === "en" ? "Annex I category " : "Kategorie přílohy I ") + k.kod + ": " + k.nazev,
+    stitek: "dual-use", text: k.priklady.join(" "), ukazka: k.priklady.join("; "),
+    akce: () => { state.duTab = "test"; save(); go("dualuse"); }
+  }));
+  kb.dualUse.domeny.forEach(d => docs.push({
+    titul: d.nazev, stitek: state.lang === "en" ? "use cases" : "use casy",
+    text: d.defence.join(" ") + " " + d.komercni.map(x => x.sektor + " " + x.useCase).join(" "),
+    ukazka: d.defence.slice(0,2).join("; ") + " ↔ " + d.komercni.slice(0,2).map(x=>x.sektor).join(", "),
+    akce: () => { state.duTab = "preklad"; state.du = { smer: "d2k", domena: d.id, popis: (state.du||{}).popis || "" }; save(); go("dualuse"); }
+  }));
+  kb.prihlaska.obecneKroky.forEach(k => docs.push({
+    titul: k.krok, stitek: state.lang === "en" ? "application" : "přihláška",
+    text: k.popis, ukazka: k.popis, akce: () => go("prihlaska")
+  }));
+  docs.push({
+    titul: state.lang === "en" ? "Defence Hub contact and consultation" : "Kontakt a konzultace Defence Hubu",
+    stitek: state.lang === "en" ? "contact" : "kontakt",
+    text: (state.lang === "en" ? "help contact consultation team advise " : "pomoc kontakt konzultace tým poradí kdo pomůže ") + kb.meta.kontakt,
+    ukazka: kb.meta.kontakt, akce: () => go("programy")
+  });
+  return docs;
+}
+
+function hledejKB(docs, dotaz){
+  const slova = bezDiakritiky(dotaz).split(/[^a-z0-9]+/).filter(w => w.length > 2);
+  if(!slova.length) return [];
+  return docs.map(d => {
+    const tb = bezDiakritiky(d.titul), xb = bezDiakritiky(d.text);
+    let skore = 0;
+    for(const w of slova){ if(tb.includes(w)) skore += 3; if(xb.includes(w)) skore += 1; }
+    return { d, skore };
+  }).filter(x => x.skore > 0).sort((a, b) => b.skore - a.skore).slice(0, 5);
+}
+
+function renderLite(el, kb){
+  const docs = sestavIndexKB(kb);
+  const card = document.createElement("div");
+  card.className = "card";
+  card.innerHTML = `
+    <div style="display:flex;gap:9px">
+      <input type="text" id="liteVstup" placeholder="${esc(t("litePlaceholder"))}" style="flex:1" maxlength="200">
+      <button class="btn" id="liteHledat">${esc(t("liteHledat"))}</button>
+    </div>
+    <div style="margin-top:10px">
+      ${[t("liteChip1"),t("liteChip2"),t("liteChip3"),t("liteChip4")].map(ch=>`<span class="chip lite-chip">${esc(ch)}</span>`).join("")}
+    </div>
+    <div id="liteVysledky" style="margin-top:6px"></div>`;
+  el.appendChild(card);
+
+  const vstup = card.querySelector("#liteVstup");
+  const box = card.querySelector("#liteVysledky");
+  function hledej(dotaz){
+    const vysledky = hledejKB(docs, dotaz);
+    box.innerHTML = "";
+    if(!vysledky.length){
+      box.innerHTML = `<div style="margin-top:10px;color:var(--muted);font-size:13px;line-height:1.55">${esc(t("liteNic"))}</div>`;
+      return;
+    }
+    box.insertAdjacentHTML("beforeend", `<div class="kicker" style="margin:14px 0 8px">${esc(t("liteVysledky"))}</div>`);
+    vysledky.forEach(({d}) => {
+      const radek = document.createElement("div");
+      radek.style.cssText = "background:var(--mist);border-radius:12px;padding:11px 14px;margin-bottom:8px;cursor:pointer";
+      radek.innerHTML = `<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <strong style="font-size:13.5px;flex:1;min-width:180px">${esc(d.titul)}</strong>
+          <span class="tag" style="background:var(--blueSoft);color:var(--blue)">${esc(d.stitek)}</span>
+        </div>
+        <div style="font-size:12.5px;color:var(--muted);margin-top:4px;line-height:1.5">${esc(String(d.ukazka||"").slice(0,180))}</div>
+        <div style="font-size:12px;color:var(--blue);font-weight:600;margin-top:5px">${esc(t("liteOtevrit"))}</div>`;
+      radek.onclick = d.akce;
+      box.appendChild(radek);
+    });
+  }
+  card.querySelector("#liteHledat").onclick = () => hledej(vstup.value);
+  vstup.addEventListener("keydown", e => { if(e.key === "Enter") hledej(vstup.value); });
+  card.querySelectorAll(".lite-chip").forEach(ch => ch.onclick = () => { vstup.value = ch.textContent; hledej(ch.textContent); });
+}
+
 function vPoradce(el){
-  header(el, t("porKicker"), t("porTitle"), t("porSub"));
+  const kb = KB();
+  header(el, backendUrl() ? t("porKicker") : (state.lang === "en" ? "Advisor · Beta" : "Poradce · Beta"), t("porTitle"), backendUrl() ? t("porSub") : t("liteSub"));
 
   if(!backendUrl()){
-    el.insertAdjacentHTML("beforeend", `<div class="card" style="background:#FDF3DC;border-color:#EAD9A8;color:#9A7B1E;line-height:1.55">${esc(t("porSetup"))}</div>`);
+    renderLite(el, kb);
+    el.insertAdjacentHTML("beforeend", `<div class="card" style="border-style:dashed;color:var(--muted);font-size:12.5px;line-height:1.55">${esc(t("liteAnalyza"))}</div>`);
+    if(state.admin) el.insertAdjacentHTML("beforeend", `<div class="card" style="background:#FDF3DC;border-color:#EAD9A8;color:#9A7B1E;font-size:12.5px;line-height:1.55">${esc(t("porSetup"))}</div>`);
     return;
   }
 
@@ -1198,10 +1313,9 @@ function aplikujAdmin(){
   if(location.hash === "#admin"){ state.admin = true; save(); }
   if(location.hash === "#noadmin"){ state.admin = false; save(); }
   document.getElementById("navKb").style.display = state.admin ? "" : "none";
-  // Poradce: veřejně jen se zapnutým backendem; adminům vždy (vidí návod na aktivaci)
-  document.getElementById("navPoradce").style.display = (backendUrl() || state.admin) ? "" : "none";
+  // Poradce je veřejný vždy: bez backendu jako vyhledávání v KB, s backendem jako AI chat
+  document.getElementById("porBadge").textContent = backendUrl() ? "AI" : "BETA";
   if(!state.admin && state.view === "kb"){ state.view = "wizard"; save(); go("wizard"); }
-  if(!state.admin && !backendUrl() && state.view === "poradce"){ state.view = "wizard"; save(); go("wizard"); }
 }
 window.addEventListener("hashchange", aplikujAdmin);
 aplikujAdmin();
