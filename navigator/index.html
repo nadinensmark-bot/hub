@@ -187,7 +187,7 @@ cs: {
   porAnalyzaSub:"Vložte technickou specifikaci produktu (parametry, výkon, frekvence, kryptografie…). Dostanete předběžný profil, kandidátní kategorie přílohy I a co ověřit dál. Specifikace se nikam neukládá.",
   porAnalyzaPlaceholder:"Sem vložte text technické specifikace (min. 100 znaků)…",
   porAnalyzaBtn:"Analyzovat specifikaci", porAnalyzaMysli:"Analyzuji – může to trvat i minutu…",
-  liteSub:"Poradce prohledává znalostní bázi Defence Hubu – programy, výzvy, exportní kontrolu i certifikace. Zadejte, co řešíte, nebo použijte rychlé otázky. (AI verze, která odpovídá vlastními slovy a analyzuje specifikace, se zapíná napojením backendu – nic se tím neplatí měsíčně, jen kredit za použití.)",
+  liteSub:"Chatbot odpovídá připravenými odpověďmi přímo ze znalostní báze Defence Hubu – programy, výzvy, exportní kontrola, certifikace. Žádná AI, žádné náklady: každou odpověď má tým pod kontrolou. Zadejte dotaz nebo použijte rychlé otázky.",
   liteHledat:"Hledat", litePlaceholder:"Např.: drony, EDF přihláška, šifrování export…",
   liteNic:"Nic jsem k tomu nenašel. Zkuste jiná slova – nebo se rovnou zeptejte týmu Defence Hubu (defencehub.gov.cz), poradí osobně a zdarma.",
   liteVysledky:"Nejbližší odpovědi ze znalostní báze", liteOtevrit:"Otevřít →",
@@ -283,7 +283,7 @@ en: {
   porAnalyzaSub:"Paste the product's technical specification (parameters, performance, frequencies, cryptography…). You'll get a preliminary profile, candidate Annex I categories and what to verify next. The specification is not stored anywhere.",
   porAnalyzaPlaceholder:"Paste the technical specification text here (min. 100 characters)…",
   porAnalyzaBtn:"Analyse specification", porAnalyzaMysli:"Analysing – this can take up to a minute…",
-  liteSub:"The advisor searches the Defence Hub knowledge base – programmes, calls, export control and certifications. Type what you're dealing with, or use the quick questions. (The AI version, which answers in its own words and analyses specifications, is activated by connecting the backend – no monthly fee, just usage credit.)",
+  liteSub:"The chatbot answers with prepared responses straight from the Defence Hub knowledge base – programmes, calls, export control, certifications. No AI, no costs: the team controls every answer. Type a question or use the quick ones.",
   liteHledat:"Search", litePlaceholder:"E.g.: drones, EDF application, encryption export…",
   liteNic:"Nothing found for that. Try different words – or ask the Defence Hub team directly (defencehub.gov.cz), they advise personally and for free.",
   liteVysledky:"Closest answers from the knowledge base", liteOtevrit:"Open →",
@@ -1056,45 +1056,55 @@ async function poradceDotaz(cesta, telo){
 // ---------- Poradce lite: vyhledávání ve znalostní bázi (bez AI, zdarma) ----------
 function bezDiakritiky(s){ return String(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase(); }
 
+// route = serializovatelná navigace (ukládá se do historie chatu)
+function aplikujRoute(r){
+  if(!r) return;
+  if(r.duTab){ state.duTab = r.duTab; }
+  if(r.domena){ state.du = { smer: "d2k", domena: r.domena, popis: (state.du||{}).popis || "" }; }
+  if(r.prihlaskaProgram !== undefined){ state.prihlaskaProgram = r.prihlaskaProgram; }
+  save();
+  go(r.view, r.param);
+}
+
 function sestavIndexKB(kb){
   const docs = [];
   const typLabel = t("typ");
   kb.programy.forEach(p => docs.push({
     titul: p.nazev, stitek: typLabel[p.typ] || p.typ,
     text: [p.kratce, p.proKoho, p.castka, (p.jakFunguje||[]).join(" "), p.terminy, p.kdeKriteria, p.pomocDH, (p.vhodnyKdyz||[]).join(" ")].join(" "),
-    ukazka: p.kratce, akce: () => go("program", p.id)
+    ukazka: p.kratce, route: { view: "program", param: p.id }
   }));
   seznamVyzev(kb).forEach(v => docs.push({
     titul: v.nazev, stitek: state.lang === "en" ? "call" : "výzva",
     text: [v.pozn, v.stavRucne, v.uzaverka, v.program].join(" "),
     ukazka: (v.uzaverka ? (state.lang === "en" ? "deadline " : "uzávěrka ") + fmtDatum(v.uzaverka) + ". " : "") + (v.stavRucne || v.pozn || ""),
-    akce: () => go("vyzvy")
+    route: { view: "vyzvy" }
   }));
   (kb.dualUseTest.rezimy||[]).forEach(r => docs.push({
     titul: r.nazev, stitek: state.lang === "en" ? "export/certification" : "export/certifikace",
     text: r.kdy + " " + r.akce, ukazka: r.akce,
-    akce: () => { state.duTab = "test"; save(); go("dualuse"); }
+    route: { view: "dualuse", duTab: "test" }
   }));
   kb.dualUseTest.kategorieAnnex.polozky.forEach(k => docs.push({
     titul: (state.lang === "en" ? "Annex I category " : "Kategorie přílohy I ") + k.kod + ": " + k.nazev,
     stitek: "dual-use", text: k.priklady.join(" "), ukazka: k.priklady.join("; "),
-    akce: () => { state.duTab = "test"; save(); go("dualuse"); }
+    route: { view: "dualuse", duTab: "test" }
   }));
   kb.dualUse.domeny.forEach(d => docs.push({
     titul: d.nazev, stitek: state.lang === "en" ? "use cases" : "use casy",
     text: d.defence.join(" ") + " " + d.komercni.map(x => x.sektor + " " + x.useCase).join(" "),
     ukazka: d.defence.slice(0,2).join("; ") + " ↔ " + d.komercni.slice(0,2).map(x=>x.sektor).join(", "),
-    akce: () => { state.duTab = "preklad"; state.du = { smer: "d2k", domena: d.id, popis: (state.du||{}).popis || "" }; save(); go("dualuse"); }
+    route: { view: "dualuse", duTab: "preklad", domena: d.id }
   }));
   kb.prihlaska.obecneKroky.forEach(k => docs.push({
     titul: k.krok, stitek: state.lang === "en" ? "application" : "přihláška",
-    text: k.popis, ukazka: k.popis, akce: () => go("prihlaska")
+    text: k.popis, ukazka: k.popis, route: { view: "prihlaska" }
   }));
   docs.push({
     titul: state.lang === "en" ? "Defence Hub contact and consultation" : "Kontakt a konzultace Defence Hubu",
     stitek: state.lang === "en" ? "contact" : "kontakt",
     text: (state.lang === "en" ? "help contact consultation team advise " : "pomoc kontakt konzultace tým poradí kdo pomůže ") + kb.meta.kontakt,
-    ukazka: kb.meta.kontakt, akce: () => go("programy")
+    ukazka: kb.meta.kontakt, route: { view: "programy" }
   });
   return docs;
 }
@@ -1110,47 +1120,228 @@ function hledejKB(docs, dotaz){
   }).filter(x => x.skore > 0).sort((a, b) => b.skore - a.skore).slice(0, 5);
 }
 
+// ---------- skriptovaný chatbot (bez AI): intenty nad znalostní bází ----------
+// Detekce záměru je řízená klíčovými slovy; odpovědi se skládají živě z KB,
+// takže aktualizace obsahu se propíší i do chatbota. Fallback = vyhledávání.
+function botAliasyProgramu(kb){
+  const mapa = {};
+  const pridej = (klic, id) => { mapa[bezDiakritiky(klic)] = id; };
+  pridej("diana", "diana"); pridej("nif", "nif"); pridej("innovation fund", "nif");
+  pridej("eic", "eic-accelerator");
+  pridej("edf", "edf"); pridej("defence fund", "edf"); pridej("eudis", "eudis");
+  pridej("accelerator", "eic-accelerator"); pridej("akcelerator eic", "eic-accelerator");
+  pridej("pathfinder", "eic-pathfinder"); pridej("transition", "eic-pathfinder");
+  pridej("step", "eic-step-defence"); pridej("scale up", "eic-step-defence");
+  pridej("prodef", "prodef"); pridej("tacr", "prodef");
+  pridej("optak", "optak-deeptech"); pridej("op tak", "optak-deeptech"); pridej("deep tech", "optak-deeptech");
+  pridej("edip", "edip"); pridej("safe", "safe"); pridej("agile", "agile");
+  pridej("horizon", "horizon-cl3"); pridej("horizont", "horizon-cl3"); pridej("klastr", "horizon-cl3"); pridej("cluster", "horizon-cl3");
+  return mapa;
+}
+
+function botProgramText(p, en){
+  return "**" + p.nazev + "**\n" + p.kratce +
+    "\n\n💶 " + p.castka + (p.overit ? " _[" + (en?"verify":"ověřit") + "]_" : "") +
+    "\n📅 " + p.terminy;
+}
+
+function botOdpoved(dotaz, kb, docs){
+  const en = state.lang === "en";
+  const q = " " + bezDiakritiky(dotaz) + " ";
+  const ma = (...slova) => slova.some(w => q.includes(w));
+  const T = (cs, enTxt) => en ? enTxt : cs;
+  const btnPruvodce = { t: T("Spustit průvodce", "Start the wizard"), route: { view: "wizard" } };
+  const btnTest = { t: T("Spustit dual-use test", "Start the dual-use test"), route: { view: "dualuse", duTab: "test" } };
+  const btnVyzvy = { t: T("Otevřít výzvy", "Open the calls"), route: { view: "vyzvy" } };
+  const btnKontakt = kb.meta.kontakt;
+
+  // programy zmíněné v dotazu
+  // krátké aliasy jen jako celá slova (ať "edf" nechytá "předfinancování")
+  const aliasy = botAliasyProgramu(kb);
+  const nalezene = [...new Set(Object.keys(aliasy)
+    .filter(a => a.length <= 4 ? q.includes(" " + a + " ") || q.includes(" " + a + "?") || q.includes(" " + a + ".") || q.includes(" " + a + ",") : q.includes(a))
+    .map(a => aliasy[a]))];
+
+  // 1) pozdrav / prázdno
+  if(dotaz.trim().length < 3 || ma("ahoj","dobry den","zdravim","cau ","hello","hi ","hey")){
+    return { text: T("Dobrý den! Jsem poradce Defence Hubu. Ptejte se na programy financování, aktuální výzvy, exportní kontrolu, certifikace nebo přípravu přihlášky – odpovídám přímo ze znalostní báze.",
+      "Hello! I'm the Defence Hub advisor. Ask about funding programmes, open calls, export control, certifications or application prep – I answer straight from the knowledge base."),
+      tlacitka: [btnVyzvy, btnPruvodce, btnTest] };
+  }
+  // 2) kontakt / konzultace
+  if(ma("kontakt","konzultac","poradte","pomoc","pomuzete","contact","consult","help us","who are you","kdo jste")){
+    return { text: T("Nejrychlejší cesta: ", "The fastest way: ") + btnKontakt, tlacitka: [btnPruvodce] };
+  }
+  // 3) konkrétní program(y)
+  if(nalezene.length === 1){
+    const p = kb.programy.find(x => x.id === nalezene[0]);
+    return { text: botProgramText(p, en) + (p.kdeKriteria ? "\n\n📋 " + p.kdeKriteria : ""),
+      tlacitka: [
+        { t: t("detailBtn"), route: { view: "program", param: p.id } },
+        { t: t("prihlaskaBtn"), route: { view: "prihlaska", prihlaskaProgram: p.id } }
+      ] };
+  }
+  if(nalezene.length > 1){
+    return { text: T("Týká se to několika programů – který vás zajímá?", "That touches several programmes – which one do you mean?"),
+      tlacitka: nalezene.slice(0,4).map(id => { const p = kb.programy.find(x=>x.id===id); return { t: p.nazev, route: { view: "program", param: id } }; }) };
+  }
+  // 4) výzvy / termíny
+  if(ma("vyzv","uzaverk","termin","deadline","calls","otevren","open call","bezi","aktualni")){
+    const akt = aktivniVyzvy(kb).filter(x => x.s.rank < 3).slice(0, 5);
+    return { text: T("Aktuální výzvy podle znalostní báze:", "Current calls per the knowledge base:") + "\n" +
+      akt.map(x => "- **" + x.v.nazev + "** — " + x.s.text).join("\n"),
+      tlacitka: [btnVyzvy] };
+  }
+  // 5) investice / equity
+  if(ma("invest","equity","podil","venture"," vc ","fond")){
+    const inv = kb.programy.filter(p => (p.typ === "equity" || p.typ === "mix") && !p.jenInfo).slice(0, 3);
+    return { text: T("Pro investici (výměnou za podíl) jsou hlavní cesty:", "For investment (in exchange for equity) the main routes are:") + "\n" +
+      inv.map(p => "- **" + p.nazev + "** — " + p.castka).join("\n"),
+      tlacitka: inv.map(p => ({ t: p.nazev, route: { view: "program", param: p.id } })) };
+  }
+  // 6) šifrování (dřív než obecný export)
+  if(ma("sifr","krypt","encrypt")){
+    const kat5 = kb.dualUseTest.kategorieAnnex.polozky.find(k => k.kod === "5");
+    return { text: T("Šifrování patří do kategorie 5 přílohy I (typicky položka 5A002): ", "Encryption falls under Annex I category 5 (typically entry 5A002): ") +
+      kat5.priklady.join("; ") + ".\n\n" + T("Jestli překračujete kontrolované parametry, zjistíte v dual-use testu.", "Whether you exceed the controlled parameters – find out in the dual-use test."),
+      tlacitka: [btnTest] };
+  }
+  // 7) ITAR / americké komponenty
+  if(ma("itar"," ear ","americk","us komponent","reexport")){
+    const rez = kb.dualUseTest.rezimy.find(r => r.id === "itar");
+    return { text: "**" + rez.nazev + "**\n" + rez.kdy + ".\n\n" + rez.akce, tlacitka: [btnTest] };
+  }
+  // 8) prověrky / utajení
+  if(ma("prover","utajen"," nbu ","clearance","classified")){
+    const rez = kb.dualUseTest.rezimy.find(r => r.id === "nbu");
+    return { text: "**" + rez.nazev + "**\n" + rez.kdy + ".\n\n" + rez.akce, tlacitka: [btnTest] };
+  }
+  // 9) certifikace / NATO řetězec
+  if(ma("certifik","ncage","nspa","aqap","stanag","kodifik","as9100"," iso ","nsn","dodavatel")){
+    const rez = kb.dualUseTest.rezimy.find(r => r.id === "nato-retezec");
+    return { text: "**" + rez.nazev + "**\n" + rez.akce, tlacitka: [btnTest] };
+  }
+  // 10) dual-use / export obecně
+  if(ma("dual","zatrid","export","vyvoz","licenc","klasifikac","classif","kontrolni seznam","vojensky material")){
+    return { text: T("Zatřídění se dělá podle dvou kontrolních seznamů – Společného vojenského seznamu EU a přílohy I nařízení 2021/821. Nejrychleji to zjistíte v dual-use testu: provede vás oběma seznamy a řekne, co ověřit dál (vždy s tím, že závazné zatřídění dělá Licenční správa MPO).",
+      "Classification follows two control lists – the EU Common Military List and Annex I of Regulation 2021/821. The fastest way is the dual-use test: it walks you through both lists and tells you what to verify next (binding classification is always for the MPO Licensing Authority)."),
+      tlacitka: [btnTest, { t: T("Dual-use překladač", "Dual-use translator"), route: { view: "dualuse", duTab: "preklad" } }] };
+  }
+  // 11) konsorcium / partneři
+  if(ma("konsorci","partner","consorti")){
+    return { text: T("Konsorcium vyžadují EDF (min. 3 subjekty ze 3 zemí) a Horizont; EUDIS Open Call 3 firmy ze 3 států. Sami žádáte u DIANA, EIC, PRODEF nebo OP TAK. S hledáním partnerů pomáhá Defence Hub (matchmaking) a EUDIS eventy.",
+      "EDF requires a consortium (min. 3 entities from 3 countries), as does Horizon; the EUDIS Open Call needs 3 companies from 3 states. You apply alone to DIANA, EIC, PRODEF or OP TAK. The Defence Hub helps with partner search (matchmaking), as do EUDIS events."),
+      tlacitka: [{ t: "EDF", route: { view: "program", param: "edf" } }, { t: "EUDIS", route: { view: "program", param: "eudis" } }, btnPruvodce] };
+  }
+  // 12) přihláška
+  if(ma("prihlask","zadost","napsat","application","apply","proposal","podat")){
+    const kroky = kb.prihlaska.obecneKroky.slice(0, 3);
+    return { text: T("Základ dobré žádosti:", "The basics of a good application:") + "\n" +
+      kroky.map((k, i) => (i+1) + ". **" + k.krok + "** – " + k.popis).join("\n") + "\n…",
+      tlacitka: [{ t: t("nav").prihlaska, route: { view: "prihlaska" } }] };
+  }
+  // 13) TRL
+  if(ma(" trl")){
+    return { text: T("TRL (Technology Readiness Level) je stupnice zralosti technologie 1–9: 1–3 výzkum, 4–6 prototyp, 7–9 produkt. Programy cílí na různá pásma – průvodce vám podle TRL doporučí ty správné.",
+      "TRL (Technology Readiness Level) is a 1–9 maturity scale: 1–3 research, 4–6 prototype, 7–9 product. Programmes target different bands – the wizard recommends the right ones for your TRL."),
+      tlacitka: [btnPruvodce] };
+  }
+  // 14) Ukrajina
+  if(ma("ukrajin","ukrain","brave")){
+    return { text: T("Cesty přes Ukrajinu: EUDIS Accelerator nabízí Test in Ukraine, EDIP zahrnuje program BraveTech EU (50 mil. € EU + 50 mil. € Ukrajina) a platforma BRAVE1 propojuje s ukrajinským defense-tech ekosystémem.",
+      "Ukraine routes: the EUDIS Accelerator offers Test in Ukraine, EDIP includes BraveTech EU (€50m EU + €50m Ukraine), and the BRAVE1 platform connects to the Ukrainian defense-tech ecosystem."),
+      tlacitka: [{ t: "EUDIS", route: { view: "program", param: "eudis" } }, { t: "EDIP", route: { view: "program", param: "edip" } }] };
+  }
+  // 15) granty / peníze obecně
+  if(ma("grant","penize","financ","dotac","fund","money","kolik","podpor")){
+    return { text: T("Nezřeďující granty nabízí hlavně DIANA, EDF/EUDIS, grantová část EIC, PRODEF a OP TAK. Který sedí právě vám, zjistí průvodce z 5 otázek (zaměření, TRL, konsorcium…).",
+      "Non-dilutive grants come mainly from DIANA, EDF/EUDIS, the EIC grant component, PRODEF and OP TAK. The 5-question wizard tells you which fits you (focus, TRL, consortium…)."),
+      tlacitka: [btnPruvodce, btnVyzvy] };
+  }
+  // 16) fallback: vyhledávání
+  const vysledky = hledejKB(docs, dotaz);
+  if(vysledky.length){
+    return { text: T("Tohle jsem k tomu ve znalostní bázi našel:", "Here's what I found in the knowledge base:"),
+      karty: vysledky.slice(0, 3).map(({d}) => ({ titul: d.titul, stitek: d.stitek, ukazka: String(d.ukazka||"").slice(0,160), route: d.route })) };
+  }
+  return { text: t("liteNic"), tlacitka: [btnPruvodce] };
+}
+
 function renderLite(el, kb){
   const docs = sestavIndexKB(kb);
+  if(!state.liteHist) state.liteHist = [];
   const card = document.createElement("div");
   card.className = "card";
   card.innerHTML = `
-    <div style="display:flex;gap:9px">
-      <input type="text" id="liteVstup" placeholder="${esc(t("litePlaceholder"))}" style="flex:1" maxlength="200">
-      <button class="btn" id="liteHledat">${esc(t("liteHledat"))}</button>
+    <div id="botOkno" class="cscroll" style="max-height:440px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding-bottom:6px"></div>
+    <div style="display:flex;gap:9px;margin-top:10px">
+      <input type="text" id="botVstup" placeholder="${esc(t("litePlaceholder"))}" style="flex:1" maxlength="300">
+      <button class="btn" id="botOdeslat">${esc(t("porOdeslat"))}</button>
     </div>
     <div style="margin-top:10px">
       ${[t("liteChip1"),t("liteChip2"),t("liteChip3"),t("liteChip4")].map(ch=>`<span class="chip lite-chip">${esc(ch)}</span>`).join("")}
-    </div>
-    <div id="liteVysledky" style="margin-top:6px"></div>`;
+      ${state.liteHist.length?`<span class="chip" id="botNovy">${esc(t("porNovy"))}</span>`:""}
+    </div>`;
   el.appendChild(card);
 
-  const vstup = card.querySelector("#liteVstup");
-  const box = card.querySelector("#liteVysledky");
-  function hledej(dotaz){
-    const vysledky = hledejKB(docs, dotaz);
-    box.innerHTML = "";
-    if(!vysledky.length){
-      box.innerHTML = `<div style="margin-top:10px;color:var(--muted);font-size:13px;line-height:1.55">${esc(t("liteNic"))}</div>`;
+  const okno = card.querySelector("#botOkno");
+  function bublina(z){
+    if(z.role === "user"){
+      okno.insertAdjacentHTML("beforeend",
+        `<div style="align-self:flex-end;max-width:85%;background:var(--blue);color:#fff;border-radius:13px 13px 3px 13px;padding:9px 13px;font-size:13.5px;line-height:1.5;white-space:pre-wrap">${esc(z.text)}</div>`);
       return;
     }
-    box.insertAdjacentHTML("beforeend", `<div class="kicker" style="margin:14px 0 8px">${esc(t("liteVysledky"))}</div>`);
-    vysledky.forEach(({d}) => {
-      const radek = document.createElement("div");
-      radek.style.cssText = "background:var(--mist);border-radius:12px;padding:11px 14px;margin-bottom:8px;cursor:pointer";
-      radek.innerHTML = `<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-          <strong style="font-size:13.5px;flex:1;min-width:180px">${esc(d.titul)}</strong>
-          <span class="tag" style="background:var(--blueSoft);color:var(--blue)">${esc(d.stitek)}</span>
-        </div>
-        <div style="font-size:12.5px;color:var(--muted);margin-top:4px;line-height:1.5">${esc(String(d.ukazka||"").slice(0,180))}</div>
-        <div style="font-size:12px;color:var(--blue);font-weight:600;margin-top:5px">${esc(t("liteOtevrit"))}</div>`;
-      radek.onclick = d.akce;
-      box.appendChild(radek);
+    const b = document.createElement("div");
+    b.style.cssText = "align-self:flex-start;max-width:92%;background:var(--mist);border-radius:13px 13px 13px 3px;padding:10px 13px;font-size:13.5px;line-height:1.55";
+    b.innerHTML = mdHtml(z.text);
+    (z.karty || []).forEach(k => {
+      const kdiv = document.createElement("div");
+      kdiv.style.cssText = "background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 12px;margin-top:8px;cursor:pointer";
+      kdiv.innerHTML = `<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><strong style="font-size:13px;flex:1;min-width:150px">${esc(k.titul)}</strong><span class="tag" style="background:var(--blueSoft);color:var(--blue)">${esc(k.stitek)}</span></div>
+        <div style="font-size:12px;color:var(--muted);margin-top:3px">${esc(k.ukazka)}</div>`;
+      kdiv.onclick = () => aplikujRoute(k.route);
+      b.appendChild(kdiv);
     });
+    if(z.tlacitka && z.tlacitka.length){
+      const rada = document.createElement("div");
+      rada.style.cssText = "display:flex;gap:7px;flex-wrap:wrap;margin-top:9px";
+      z.tlacitka.forEach(tl => {
+        const btn = document.createElement("button");
+        btn.className = "btn ghost";
+        btn.style.cssText = "padding:6px 12px;font-size:12px;background:#fff";
+        btn.textContent = tl.t;
+        btn.onclick = () => aplikujRoute(tl.route);
+        rada.appendChild(btn);
+      });
+      b.appendChild(rada);
+    }
+    okno.appendChild(b);
   }
-  card.querySelector("#liteHledat").onclick = () => hledej(vstup.value);
-  vstup.addEventListener("keydown", e => { if(e.key === "Enter") hledej(vstup.value); });
-  card.querySelectorAll(".lite-chip").forEach(ch => ch.onclick = () => { vstup.value = ch.textContent; hledej(ch.textContent); });
+  if(!state.liteHist.length){
+    bublina({ role: "bot", ...botOdpoved("", kb, docs) }); // uvítání (neukládá se)
+  } else {
+    state.liteHist.forEach(bublina);
+  }
+  okno.scrollTop = okno.scrollHeight;
+
+  const vstup = card.querySelector("#botVstup");
+  function odesli(text){
+    text = (text || "").trim();
+    if(!text) return;
+    vstup.value = "";
+    const u = { role: "user", text };
+    const b = { role: "bot", ...botOdpoved(text, kb, docs) };
+    state.liteHist.push(u, b);
+    if(state.liteHist.length > 30) state.liteHist = state.liteHist.slice(-30);
+    save();
+    bublina(u); bublina(b);
+    okno.scrollTop = okno.scrollHeight;
+  }
+  card.querySelector("#botOdeslat").onclick = () => odesli(vstup.value);
+  vstup.addEventListener("keydown", e => { if(e.key === "Enter") odesli(vstup.value); });
+  card.querySelectorAll(".lite-chip").forEach(ch => ch.onclick = () => odesli(ch.textContent));
+  const novy = card.querySelector("#botNovy");
+  if(novy) novy.onclick = () => { state.liteHist = []; save(); go("poradce"); };
 }
 
 function vPoradce(el){
