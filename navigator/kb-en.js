@@ -1042,12 +1042,12 @@ window.DH_KB_EN = {
       },
       {
         id: "export",
-        nazev: "Export permits",
-        kdy: "You export (or plan to export) outside Czechia/the EU – dual-use items or military material.",
+        nazev: "Export permits: dual-use vs. defence",
+        kdy: "You export (or plan to export) outside Czechia/the EU. There are two separate regimes depending on which control list your product is on: DUAL-USE items (Annex I of Regulation (EU) 2021/821) need an export authorisation; DEFENCE – military material (Act 38/1994) needs a trading permit + a licence per deal. The dual-use advisor in the Dual-use tab tells you which route applies.",
         polozky: [
           {
             id: "dualuse-povoleni",
-            nazev: "Dual-use export authorisation",
+            nazev: "DUAL-USE export – export authorisation",
             coJe: "Authorisation to export Annex I items of Regulation (EU) 2021/821 outside the EU (Annex IV also inside the EU). Types: general authorisations EU001–EU008, global and individual.",
             kdyPotrebuji: "When your product is on the dual-use control list and crosses borders – check in our dual-use advisor.",
             trvani: "Individual authorisation weeks to months [VERIFY with the Licensing Authority]; export records for 5 years and semi-annual reporting.",
@@ -1059,7 +1059,7 @@ window.DH_KB_EN = {
           },
           {
             id: "vojmat-licence",
-            nazev: "Military material permit and licences",
+            nazev: "DEFENCE export – military material (permit + licences)",
             coJe: "A two-stage regime under Act 38/1994: first a company permit to trade in military material, then a licence for each specific deal.",
             kdyPotrebuji: "When the product is on the military list (Decree 210/2012) and you trade it internationally.",
             trvani: "Permit: months (binding opinions of the foreign, defence and interior ministries); then a licence per deal. Start before the first talks with a foreign partner.",

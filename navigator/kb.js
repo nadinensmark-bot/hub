@@ -1071,12 +1071,12 @@ window.DH_KB = {
       },
       {
         id: "export",
-        nazev: "Exportní povolení",
-        kdy: "Vyvážíte (nebo plánujete vývoz) mimo ČR/EU – dual-use položky nebo vojenský materiál.",
+        nazev: "Exportní povolení: dual-use vs. defence",
+        kdy: "Vyvážíte (nebo plánujete vývoz) mimo ČR/EU. Existují dva oddělené režimy podle toho, na kterém kontrolním seznamu produkt je: DUAL-USE položky (příloha I nařízení EU 2021/821) potřebují vývozní povolení; DEFENCE – vojenský materiál (zákon 38/1994 Sb.) potřebuje povolení k obchodování + licenci na každý obchod. Kterou cestou jdete, vám řekne dual-use poradce v záložce Dual-use.",
         polozky: [
           {
             id: "dualuse-povoleni",
-            nazev: "Vývozní povolení dual-use",
+            nazev: "DUAL-USE export – vývozní povolení",
             coJe: "Povolení k vývozu položek přílohy I nařízení (EU) 2021/821 mimo EU (u přílohy IV i uvnitř EU). Typy: všeobecná povolení EU001–EU008, souhrnná a individuální.",
             kdyPotrebuji: "Když je váš produkt na kontrolním seznamu dual-use a míří za hranice – ověříte v našem dual-use poradci.",
             trvani: "Individuální povolení týdny až měsíce [OVĚŘIT u Licenční správy]; evidence vývozů 5 let a pololetní hlášení.",
@@ -1088,7 +1088,7 @@ window.DH_KB = {
           },
           {
             id: "vojmat-licence",
-            nazev: "Povolení a licence na vojenský materiál",
+            nazev: "DEFENCE export – vojenský materiál (povolení + licence)",
             coJe: "Dvoustupňový režim podle zákona 38/1994 Sb.: nejdřív povolení k obchodování s vojenským materiálem (firma), pak licence na každý konkrétní obchod.",
             kdyPotrebuji: "Když je produkt na seznamu vojenského materiálu (vyhláška 210/2012 Sb.) a chcete s ním obchodovat se zahraničím.",
             trvani: "Povolení: měsíce (závazná stanoviska MZV, MO a MV); licence pak ke každému obchodu. Řešte před prvním jednáním se zahraničním partnerem.",
