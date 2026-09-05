@@ -114,6 +114,11 @@ table.zmeny td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-ali
 
     <div class="mono hidemobile" id="navKicker" style="font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:#5E6E96;padding:0 8px 8px"></div>
     <nav style="display:flex;flex-direction:column;gap:2px">
+      <div class="navitem" data-view="konzultant" onclick="go('konzultant')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg>
+        <span style="flex:1" data-nav="konzultant"></span>
+        <span class="mono" style="font-size:8px;letter-spacing:.08em;background:rgba(140,170,114,.2);color:#A8C48E;padding:2px 6px;border-radius:5px">NOVÉ</span>
+      </div>
       <div class="navitem" data-view="wizard" onclick="go('wizard')">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg>
         <span style="flex:1" data-nav="wizard"></span>
@@ -177,7 +182,26 @@ if(!state.lang) state.lang = "cs";
 const UI = {
 cs: {
   navKicker:"Pro startupy",
-  nav:{wizard:"Průvodce",programy:"Programy",vyzvy:"Výzvy",prihlaska:"Přihláška",dualuse:"Dual-use",poradce:"Poradce",kb:"Knowledge base"},
+  nav:{konzultant:"Konzultant",wizard:"Průvodce",programy:"Programy",vyzvy:"Výzvy",prihlaska:"Přihláška",dualuse:"Dual-use",poradce:"Poradce",kb:"Knowledge base"},
+  konKicker:"Váš konzultant", konTitle:"Konzultant pro vaši firmu",
+  konSub:"Vyplňte jednou profil firmy – konzultant sestaví akční plán, doporučí programy, pohlídá uzávěrky a předá kontakt týmu Defence Hubu.",
+  konProfilNadpis:"Profil firmy", konFirma:"Název firmy", konEmail:"Kontaktní e-mail",
+  konPopis:"Co děláte (technologie a klíčové vlastnosti)",
+  konSouhlas:"Souhlasím, aby mě tým Defence Hubu CzechInvest kontaktoval na uvedený e-mail ohledně programů podpory. [znění souhlasu ověří právník DH]",
+  konUlozit:"Uložit profil a sestavit plán",
+  konChybi:"Vyplňte prosím popis a všechny volby (zaměření, TRL, podpora, konsorcium, kdo jste).",
+  konVasProfil:"Váš profil", konUpravit:"Upravit profil",
+  konOdeslano:"✓ Kontakt předán Defence Hubu – ozveme se vám.",
+  konOdeslaniPozdeji:"Kontakt zatím zůstává jen ve vašem prohlížeči – Defence Hubu se odešle, jakmile poběží server (pilotní verze).",
+  konBezKontaktu:"Bez e-mailu a souhlasu se kontakt nikam neodesílá.",
+  konDoporucene:"Programy doporučené pro vás",
+  konPlan:"Váš akční plán",
+  konPlanPodat:"Připravit přihlášku do: {p}",
+  konPlanDU:"Ověřit dual-use zatřídění – váš popis ukazuje na kategorii {k}",
+  konPlanDU0:"Ověřit dual-use zatřídění vaší technologie",
+  konPlanAI:"Probrat plán s konzultantem v chatu a s týmem DH: ",
+  konZadneProgramy:"Podle profilu teď žádný program přesně nesedí – upravte profil, nebo se ozvěte Defence Hubu.",
+  miniPlaceholderKon:"Např.: čím mám začít? co budu potřebovat k přihlášce?…",
   porKicker:"AI poradce · Beta", porTitle:"Zeptejte se na cokoliv z programů a exportu",
   porSub:"Poradce odpovídá výhradně ze znalostní báze Defence Hubu – programy, výzvy, přihlášky, exportní kontrola, certifikace. Není to právní poradenství; na konci vás vždy rádi propojíme s týmem DH.",
   porTabChat:"Chat", porTabAnalyza:"Analýza specifikace",
@@ -301,7 +325,26 @@ cs: {
 },
 en: {
   navKicker:"For startups",
-  nav:{wizard:"Wizard",programy:"Programmes",vyzvy:"Open calls",prihlaska:"Application",dualuse:"Dual-use",poradce:"Advisor",kb:"Knowledge base"},
+  nav:{konzultant:"Consultant",wizard:"Wizard",programy:"Programmes",vyzvy:"Open calls",prihlaska:"Application",dualuse:"Dual-use",poradce:"Advisor",kb:"Knowledge base"},
+  konKicker:"Your consultant", konTitle:"A consultant for your company",
+  konSub:"Fill in your company profile once – the consultant builds an action plan, recommends programmes, watches deadlines and hands your contact to the Defence Hub team.",
+  konProfilNadpis:"Company profile", konFirma:"Company name", konEmail:"Contact e-mail",
+  konPopis:"What you do (technology and key properties)",
+  konSouhlas:"I agree to be contacted by the Defence Hub CzechInvest team at this e-mail about support programmes. [consent wording to be reviewed by DH legal]",
+  konUlozit:"Save profile and build the plan",
+  konChybi:"Please fill in the description and all the selections (focus, TRL, support, consortium, who you are).",
+  konVasProfil:"Your profile", konUpravit:"Edit profile",
+  konOdeslano:"✓ Contact handed to the Defence Hub – we'll be in touch.",
+  konOdeslaniPozdeji:"Your contact stays in your browser for now – it will be sent to the Defence Hub once the server is live (pilot).",
+  konBezKontaktu:"Without an e-mail and consent, the contact is not sent anywhere.",
+  konDoporucene:"Programmes recommended for you",
+  konPlan:"Your action plan",
+  konPlanPodat:"Prepare the application for: {p}",
+  konPlanDU:"Verify the dual-use classification – your description points to category {k}",
+  konPlanDU0:"Verify the dual-use classification of your technology",
+  konPlanAI:"Discuss the plan with the consultant in chat and with the DH team: ",
+  konZadneProgramy:"With this profile no programme is an exact fit right now – adjust the profile, or contact the Defence Hub.",
+  miniPlaceholderKon:"E.g.: where do I start? what will I need for the application?…",
   porKicker:"AI advisor · Beta", porTitle:"Ask anything about programmes and export",
   porSub:"The advisor answers exclusively from the Defence Hub knowledge base – programmes, calls, applications, export control, certifications. It is not legal advice; we are always happy to connect you with the DH team.",
   porTabChat:"Chat", porTabAnalyza:"Specification analysis",
@@ -461,7 +504,7 @@ function applyChrome(){
 }
 
 // ---------------- routing ----------------
-const views = { wizard: vWizard, programy: vProgramy, vyzvy: vVyzvy, prihlaska: vPrihlaska, dualuse: vDualUse, poradce: vPoradce, kb: vKB, program: vProgramDetail };
+const views = { konzultant: vKonzultant, wizard: vWizard, programy: vProgramy, vyzvy: vVyzvy, prihlaska: vPrihlaska, dualuse: vDualUse, poradce: vPoradce, kb: vKB, program: vProgramDetail };
 function go(view, param){
   state.view = view; state.viewParam = param; save();
   document.querySelectorAll(".navitem").forEach(n=>n.classList.toggle("active", n.dataset.view===view || (view==="program" && n.dataset.view==="programy")));
@@ -849,6 +892,152 @@ function vPrihlaska(el){
 
   el.insertAdjacentHTML("beforeend",
     `<div class="card" style="background:var(--blueSoft);border-color:#C9D8F2">${t("priNez",{k:esc(kb.meta.kontakt)})}</div>`);
+}
+
+// =====================================================================
+// KONZULTANT: profil firmy → akční plán, deadliny, předání kontaktu DH
+// =====================================================================
+function profilText(){
+  const f = state.firma;
+  if(!f || !f.hotovo) return "";
+  const L = t("velikostL");
+  const en = state.lang === "en";
+  return [
+    f.nazev ? (en ? "Company: " : "Firma: ") + f.nazev : "",
+    (en ? "What they do: " : "Co dělá: ") + f.popis,
+    (en ? "Focus: " : "Zaměření: ") + f.zamereni,
+    "TRL: " + f.trl,
+    (en ? "Applicant type: " : "Typ žadatele: ") + (L[f.velikost] || f.velikost),
+    (en ? "Support sought: " : "Hledaná podpora: ") + f.typ,
+    (en ? "Consortium possible: " : "Konsorcium možné: ") + f.konsorcium
+  ].filter(Boolean).join(" | ").slice(0, 1400);
+}
+async function odesliLead(){
+  const f = state.firma;
+  if(!backendUrl() || !f.email || !f.souhlas) return;
+  try{
+    const r = await fetch(backendUrl() + "/api/lead", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ firma: f.nazev, email: f.email, profil: profilText(), souhlas: true, lang: state.lang })
+    });
+    f.odeslano = r.ok; save();
+  }catch(e){ f.odeslano = false; save(); }
+  // překreslit dashboard, aby se ukázal stav odeslání
+  if(state.view === "konzultant" && !state.firmaEdit) go("konzultant");
+}
+function vKonzultant(el){
+  const kb = KB();
+  header(el, t("konKicker"), t("konTitle"), t("konSub"));
+  if(!state.firma) state.firma = {};
+  const f = state.firma;
+  const LBL = 'style="font-size:12px;font-weight:600;margin-bottom:5px"';
+
+  if(!f.hotovo || state.firmaEdit){
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `<div class="kicker" style="margin-bottom:10px">${esc(t("konProfilNadpis"))}</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
+        <div><div ${LBL}>${esc(t("konFirma"))}</div><input type="text" id="kfNazev" value="${esc(f.nazev||"")}" maxlength="120"></div>
+        <div><div ${LBL}>${esc(t("konEmail"))}</div><input type="text" id="kfEmail" value="${esc(f.email||"")}" maxlength="120" placeholder="jmeno@firma.cz"></div>
+      </div>
+      <div ${LBL.replace('style="','style="margin-top:12px;')}>${esc(t("konPopis"))}</div>
+      <textarea id="kfPopis" rows="3" placeholder="${esc(t("duPopisPlaceholder"))}">${esc(f.popis||"")}</textarea>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-top:12px" id="kfSelects"></div>
+      <label class="check" style="margin-top:14px"><input type="checkbox" id="kfSouhlas" ${f.souhlas?"checked":""}><span style="font-size:12.5px;line-height:1.5">${esc(t("konSouhlas"))}</span></label>
+      <button class="btn" style="margin-top:12px" id="kfUlozit">${esc(t("konUlozit"))}</button>
+      <div id="kfMsg" style="font-size:12.5px;margin-top:8px"></div>`;
+    const selWrap = card.querySelector("#kfSelects");
+    kb.wizard.forEach(q=>{
+      const d = document.createElement("div");
+      d.innerHTML = `<div ${LBL}>${esc(q.otazka)}</div>
+        <select data-q="${esc(q.id)}"><option value="">–</option>${q.moznosti.map(m=>`<option value="${esc(m.v)}" ${m.v===(f[q.id]||"")?"selected":""}>${esc(m.t)}</option>`).join("")}</select>`;
+      selWrap.appendChild(d);
+    });
+    card.querySelector("#kfUlozit").onclick = async ()=>{
+      f.nazev = card.querySelector("#kfNazev").value.trim();
+      f.email = card.querySelector("#kfEmail").value.trim();
+      f.popis = card.querySelector("#kfPopis").value.trim();
+      f.souhlas = card.querySelector("#kfSouhlas").checked;
+      card.querySelectorAll("select[data-q]").forEach(s=>{ f[s.dataset.q] = s.value; });
+      const msg = card.querySelector("#kfMsg");
+      if(!f.popis || !f.zamereni || !f.trl || !f.velikost || !f.typ || !f.konsorcium){
+        msg.style.color = "var(--clay)"; msg.textContent = t("konChybi"); return;
+      }
+      f.hotovo = true; state.firmaEdit = false;
+      // profil řídí i průvodce (stejné odpovědi, žádné druhé vyplňování)
+      state.odpovedi = { zamereni:f.zamereni, trl:f.trl, typ:f.typ, konsorcium:f.konsorcium, velikost:f.velikost };
+      state.wizKrok = 99;
+      save();
+      odesliLead();
+      go("konzultant");
+    };
+    el.appendChild(card);
+    return;
+  }
+
+  // ---- dashboard: plán na míru z profilu ----
+  const o = { zamereni:f.zamereni, trl:f.trl, typ:f.typ, konsorcium:f.konsorcium, velikost:f.velikost };
+  const [tmin, tmax] = o.trl.split("-").map(Number);
+  const typOk = p => o.typ === "vse" || (o.typ === "grant" && ["grant","mix","akcelerator"].includes(p.typ)) || (o.typ === "equity" && ["equity","mix"].includes(p.typ)) || (o.typ === "akcelerator" && ["akcelerator","mix"].includes(p.typ));
+  const zamOk = p => o.zamereni === "nevim" || o.zamereni === "dual" || p.zamereni === "dual" || p.zamereni === o.zamereni;
+  const povolene = kb.programy.filter(p => !p.jenInfo && (!p.jenPro || p.jenPro.includes(o.velikost)) && zamOk(p) && (tmax >= p.trl[0] && tmin <= p.trl[1]) && !(p.konsorcium && o.konsorcium === "ne") && typOk(p));
+  const top = povolene.map(p => ({ p, ...skoreProgramu(p, o) })).sort((a,b) => b.skore - a.skore).slice(0, 3);
+
+  // profil + stav kontaktu
+  const stavKontakt = f.odeslano ? t("konOdeslano")
+    : (f.email && f.souhlas) ? (backendUrl() ? "" : t("konOdeslaniPozdeji"))
+    : t("konBezKontaktu");
+  el.insertAdjacentHTML("beforeend",
+    `<div class="card"><div style="display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap">
+       <div style="flex:1;min-width:240px">
+         <div class="kicker" style="margin-bottom:4px">${esc(t("konVasProfil"))}</div>
+         <strong style="font-size:15px">${esc(f.nazev || t("konFirma"))}</strong>
+         <div style="color:var(--muted);font-size:12.5px;margin-top:4px;line-height:1.5">${esc(f.popis.slice(0,220))}</div>
+         ${stavKontakt?`<div style="font-size:12px;margin-top:8px;color:${f.odeslano?"var(--green)":"var(--muted)"}">${esc(stavKontakt)}</div>`:""}
+       </div>
+       <button class="btn ghost" style="padding:8px 14px;font-size:12.5px" onclick="state.firmaEdit=true;save();go('konzultant')">${esc(t("konUpravit"))}</button>
+     </div></div>`);
+
+  // doporučené programy
+  const dop = document.createElement("div");
+  dop.className = "card";
+  dop.innerHTML = `<div class="kicker" style="margin-bottom:10px">${esc(t("konDoporucene"))}</div>`;
+  if(!top.length){
+    dop.insertAdjacentHTML("beforeend", `<div style="color:var(--muted);font-size:13px;line-height:1.5">${esc(t("konZadneProgramy"))} ${esc(kb.meta.kontakt)}</div>`);
+  }
+  top.forEach((v, idx)=>{
+    const vy = aktivniVyzvy(kb, v.p.id).filter(x=>x.s.rank<4).slice(0,1);
+    dop.insertAdjacentHTML("beforeend",
+      `<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 0;border-bottom:1px solid var(--line)">
+         <span class="mono" style="font-size:11px;color:var(--muted)">#${idx+1}</span>
+         <strong style="flex:1;min-width:170px;font-size:13.5px">${esc(v.p.nazev)}</strong>
+         ${vy.map(x=>`<span style="font-size:11.5px;font-weight:600;color:${x.s.barva};background:${x.s.bg};border-radius:8px;padding:3px 9px">◷ ${esc(x.s.text)}</span>`).join("")}
+         <button class="btn ghost" style="padding:6px 12px;font-size:12px" onclick="go('program','${esc(v.p.id)}')">${esc(t("detailBtn"))}</button>
+       </div>`);
+  });
+  el.appendChild(dop);
+
+  // akční plán
+  if(top.length){
+    const duShody = duNajdiKategorie(f.popis, kb).filter(x=>x.skore>=2).slice(0,1);
+    const kroky = [];
+    kroky.push({ text: t("konPlanPodat", { p: top[0].p.nazev }) + (aktivniVyzvy(kb, top[0].p.id).filter(x=>x.s.rank<4).slice(0,1).map(x=>" — "+x.s.text).join("")),
+      btn: { t: t("prihlaskaBtn"), route: { view:"prihlaska", prihlaskaProgram: top[0].p.id } } });
+    kroky.push({ text: duShody.length ? t("konPlanDU", { k: duShody[0].k.kod + " – " + duShody[0].k.nazev }) : t("konPlanDU0"),
+      btn: { t: t("duTabTest"), route: { view:"dualuse", duTab:"test", duPopis: f.popis } } });
+    kroky.push({ text: t("konPlanAI") + kb.meta.kontakt, btn: { t: t("nav").poradce, route: { view:"poradce" } } });
+    el.insertAdjacentHTML("beforeend",
+      `<div class="card"><div class="kicker" style="margin-bottom:10px">${esc(t("konPlan"))}</div>
+       ${kroky.map((k,i)=>`<div style="display:flex;gap:12px;align-items:flex-start;padding:8px 0;line-height:1.5">
+          <span class="mono" style="flex:none;width:24px;height:24px;border-radius:50%;background:var(--blueSoft);color:var(--blue);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600">${i+1}</span>
+          <span style="font-size:13px;flex:1">${esc(k.text)}</span>
+          <button class="btn ghost" style="padding:6px 12px;font-size:12px;flex:none" data-krok="${i}">${esc(k.btn.t)}</button>
+        </div>`).join("")}</div>`);
+    el.querySelectorAll("[data-krok]").forEach(b=>{ b.onclick = ()=>aplikujRoute(kroky[+b.dataset.krok].btn.route); });
+  }
+
+  // konzultant-chat přímo tady, s kontextem nejlepšího programu
+  vlozMiniPoradce(el, kb, "konzultant", t("miniPlaceholderKon"), top.length ? top[0].p.id : null);
 }
 
 // =====================================================================
@@ -1340,6 +1529,16 @@ function duNajdiKategorie(text, kb){
 function aplikujRoute(r){
   if(!r) return;
   if(r.duTab){ state.duTab = r.duTab; }
+  if(r.duPopis){
+    // předvyplní dual-use poradce popisem (např. z profilu firmy) a rovnou vyhodnotí
+    const kb = KB();
+    const s2 = { odpovedi:{}, kategorie:[], katOdpovedi:{}, pod:{}, prahy:{}, parametry:{}, popis:r.duPopis, analyzovano:true };
+    const shody = duNajdiKategorie(r.duPopis, kb).filter(x=>x.skore>=2).slice(0,2);
+    s2.kategorie = shody.map(x=>x.k.kod);
+    shody.forEach(x=>{ if(x.pod.length) s2.pod[x.k.kod] = x.pod.slice(); });
+    s2.rucne = !shody.length;
+    state.duTest2 = s2;
+  }
   if(r.domena){ state.du = { smer: "d2k", domena: r.domena, popis: (state.du||{}).popis || "" }; }
   if(r.prihlaskaProgram !== undefined){ state.prihlaskaProgram = r.prihlaskaProgram; }
   save();
@@ -1897,7 +2096,7 @@ function renderChat(el){
     okno.insertAdjacentHTML("beforeend", `<div id="chatCekam" style="align-self:flex-start;color:var(--muted);font-size:12.5px;padding:4px 2px">${esc(t("porMysli"))}</div>`);
     okno.scrollTop = okno.scrollHeight;
     try {
-      const data = await poradceDotaz("/api/chat", { messages: state.chatHist, lang: state.lang });
+      const data = await poradceDotaz("/api/chat", { messages: state.chatHist, lang: state.lang, profil: profilText() });
       state.chatHist.push({ role: "assistant", content: data.odpoved || "…" });
     } catch(e) {
       state.chatHist.push({ role: "assistant", content: "⚠ " + (e.message || t("porChyba")) });

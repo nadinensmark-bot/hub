@@ -227,9 +227,10 @@ function zkontrolujLimit(ip, druh) {
   if (celkemDnes.den !== den) celkemDnes = { den, pocet: 0 };
   if (celkemDnes.pocet >= CFG.limitCelkemDen) return "celkem";
   let z = pocitadla.get(ip);
-  if (!z || z.den !== den) { z = { den, chat: 0, analyza: 0 }; pocitadla.set(ip, z); }
-  const limit = druh === "chat" ? CFG.limitChatDen : CFG.limitAnalyzaDen;
+  if (!z || z.den !== den) { z = { den, chat: 0, analyza: 0, lead: 0 }; pocitadla.set(ip, z); }
+  const limit = druh === "chat" ? CFG.limitChatDen : druh === "lead" ? 5 : CFG.limitAnalyzaDen;
   if (z[druh] >= limit) return "ip";
+  z[druh] = z[druh] || 0;
   z[druh]++; celkemDnes.pocet++;
   if (pocitadla.size > 50000) pocitadla.clear(); // pojistka proti růstu paměti
   return null;
@@ -295,6 +296,9 @@ const server = http.createServer(async (req, res) => {
         if (z.content.length > CFG.maxZpravaChars) return json(res, 400, { chyba: "Zpráva je příliš dlouhá." });
       }
       if (zpravy[0].role !== "user") zpravy.unshift({ role: "user", content: lang === "en" ? "Hello" : "Dobrý den" });
+      // profil firmy (z aplikace) se přidá jako kontext k prvnímu dotazu
+      const profilFirmy = typeof telo.profil === "string" ? telo.profil.trim().slice(0, 1500) : "";
+      if (profilFirmy) zpravy[0] = { role: "user", content: (lang === "en" ? "Company profile (context for the whole conversation): " : "Profil firmy (kontext pro celou konverzaci): ") + profilFirmy + "\n\n" + zpravy[0].content };
 
       const limit = zkontrolujLimit(ip, "chat");
       if (limit) return json(res, 429, { chyba: lang === "en" ? "Daily question limit reached. Book a free consultation at defencehub.gov.cz." : "Denní limit dotazů vyčerpán. Rezervujte si bezplatnou konzultaci na defencehub.gov.cz." });
@@ -306,6 +310,43 @@ const server = http.createServer(async (req, res) => {
       });
       if (v.refusal) return json(res, 200, { odpoved: lang === "en" ? "I can't help with this question. Please contact the Defence Hub team directly." : "S tímto dotazem nemohu pomoci. Obraťte se prosím přímo na tým Defence Hubu." });
       return json(res, 200, { odpoved: v.text });
+    }
+
+    // Sběr kontaktů firem (leady pro DH tým). Ukládá se lokálně do
+    // data/leads.jsonl a volitelně přeposílá na LEADS_WEBHOOK_URL
+    // (např. Google Apps Script zapisující do tabulky – viz README).
+    // Pozor: na Renderu free je disk efemérní, webhook je proto hlavní úložiště.
+    if (req.method === "POST" && req.url === "/api/lead") {
+      const telo = await prectiTelo(req);
+      const lang = telo.lang === "en" ? "en" : "cs";
+      const email = String(telo.email || "").trim();
+      const firma = String(telo.firma || "").trim().slice(0, 200);
+      const profil = String(telo.profil || "").trim().slice(0, 2000);
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email))
+        return json(res, 400, { chyba: lang === "en" ? "Invalid e-mail." : "Neplatný e-mail." });
+      if (telo.souhlas !== true)
+        return json(res, 400, { chyba: lang === "en" ? "Consent to being contacted is required." : "Bez souhlasu s kontaktováním nelze údaje uložit." });
+      const limit = zkontrolujLimit(ip, "lead");
+      if (limit) return json(res, 429, { chyba: lang === "en" ? "Too many submissions today." : "Příliš mnoho odeslání za dnešek." });
+
+      const lead = { kdy: new Date().toISOString(), firma, email, profil, lang, souhlas: true };
+      try {
+        fs.mkdirSync(path.join(__dirname, "data"), { recursive: true });
+        fs.appendFileSync(path.join(__dirname, "data", "leads.jsonl"), JSON.stringify(lead) + "\n");
+      } catch (e) { console.error("Zápis leadu selhal:", e.message); }
+      let preposlano = false;
+      if (process.env.LEADS_WEBHOOK_URL) {
+        try {
+          const r = await fetch(process.env.LEADS_WEBHOOK_URL, {
+            method: "POST", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(lead), signal: AbortSignal.timeout(10000), redirect: "follow"
+          });
+          preposlano = r.ok;
+          if (!r.ok) console.error("Lead webhook vrátil HTTP", r.status);
+        } catch (e) { console.error("Lead webhook selhal:", e.message); }
+      }
+      console.log("Nový lead:", firma || "(bez názvu)", email, preposlano ? "(přeposláno)" : "");
+      return json(res, 200, { ok: true });
     }
 
     if (req.method === "POST" && req.url === "/api/analyza") {
