@@ -196,6 +196,7 @@ cs: {
   certPostup:"Postup", certKdy:"Kdy potřebuji:", certTrvani:"Jak dlouho a za kolik:",
   miniPlaceholderCert:"Např.: co je AQAP? jak dlouho trvá prověrka NBÚ?…",
   uaNadpis:"Testování a cesty přes Ukrajinu",
+  uaPod:"Test in Ukraine, BraveTech EU, granty DefTech Forges a další – rozklikněte.",
   konKicker:"Váš konzultant", konTitle:"Konzultant pro vaši firmu",
   konSub:"Vyplňte jednou profil firmy – konzultant sestaví akční plán, doporučí programy, pohlídá uzávěrky a předá kontakt týmu Defence Hubu.",
   konProfilNadpis:"Profil firmy", konFirma:"Název firmy", konEmail:"Kontaktní e-mail",
@@ -354,6 +355,7 @@ en: {
   certPostup:"Procedure", certKdy:"When I need it:", certTrvani:"How long and how much:",
   miniPlaceholderCert:"E.g.: what is AQAP? how long does an NBÚ clearance take?…",
   uaNadpis:"Testing and routes via Ukraine",
+  uaPod:"Test in Ukraine, BraveTech EU, DefTech Forges grants and more – click to expand.",
   konKicker:"Your consultant", konTitle:"A consultant for your company",
   konSub:"Fill in your company profile once – the consultant builds an action plan, recommends programmes, watches deadlines and hands your contact to the Defence Hub team.",
   konProfilNadpis:"Company profile", konFirma:"Company name", konEmail:"Contact e-mail",
@@ -767,6 +769,34 @@ function renderVysledky(el, kb){
 function vProgramy(el){
   const kb = KB();
   header(el, t("katKicker"), t("katTitle"), t("katSub"));
+
+  // Ukrajina a testování – viditelně nahoře, rozbalovací
+  if(kb.ukrajina){
+    const roz = !!state.uaRozbaleno;
+    const ua = document.createElement("div");
+    ua.className = "card";
+    ua.style.cssText = "background:var(--blueSoft);border-color:#C9D8F2";
+    ua.innerHTML = `<div style="display:flex;align-items:center;gap:10px;cursor:pointer" id="uaToggle">
+        <span style="font-size:20px">🇺🇦</span>
+        <div style="flex:1"><strong style="font-size:14.5px">${esc(t("uaNadpis"))}</strong>
+          <div style="color:var(--muted);font-size:12px;margin-top:2px">${esc(t("uaPod"))}</div></div>
+        <span class="mono" style="font-size:13px;color:var(--muted)">${roz ? "−" : "+"}</span>
+      </div>`;
+    if(roz){
+      ua.insertAdjacentHTML("beforeend", `<div style="color:var(--muted);font-size:12.5px;line-height:1.55;margin:10px 0 4px">${esc(kb.ukrajina.uvod)}</div>`);
+      kb.ukrajina.cesty.forEach(c=>{
+        ua.insertAdjacentHTML("beforeend",
+          `<div style="padding:9px 0;border-top:1px solid #C9D8F2;cursor:${c.program ? "pointer" : "default"}" ${c.program ? `onclick="go('program','${esc(c.program)}')"` : ""}>
+             <strong style="font-size:13.5px">${esc(c.nazev)}</strong>
+             <div style="color:var(--muted);font-size:12.5px;margin-top:3px;line-height:1.5">${esc(c.popis)}</div>
+           </div>`);
+      });
+      ua.insertAdjacentHTML("beforeend", `<div style="font-size:12px;color:var(--muted);margin-top:8px;line-height:1.5">${esc(kb.ukrajina.akce)} ${esc(kb.ukrajina.overeno)}</div>`);
+    }
+    ua.querySelector("#uaToggle").onclick = ()=>{ state.uaRozbaleno = !roz; save(); go("programy"); };
+    el.appendChild(ua);
+  }
+
   kb.programy.forEach(p=>{
     el.insertAdjacentHTML("beforeend",
       `<div class="card" style="cursor:pointer" onclick="go('program','${esc(p.id)}')">
