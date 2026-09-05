@@ -632,7 +632,7 @@ window.DH_KB = {
         nazev: "Podání do DIANA (přes web DIANA, s podporou Defence Hubu)",
         kroky: [
           { krok: "Sledujte otevření výzvy", popis: "Výzvy (challenges) se otevírají na diana.nato.int – kohorta 2027 měla uzávěrku 3. 7. 2026, další výzva se čeká v červnu 2027. U každé challenge je applicant guide.", odkaz: "https://www.diana.nato.int/accelerator-programme.html", odkazText: "DIANA Accelerator Programme", obrazek: "img/podani/diana.png" },
-          { krok: "Zařiďte si DUNS číslo předem", popis: "DIANA v přihlášce vyžaduje DUNS. Je zdarma u Dun & Bradstreet, ale vyřízení může trvat týdny – žádejte hned, ne až s otevřenou výzvou. Podrobný postup je v záložce Certifikace (DUNS / UEI).", odkaz: "https://www.dnb.com/duns.html", odkazText: "dnb.com – D-U-N-S Number", obrazek: "img/podani/duns.png" },
+          { krok: "Zařiďte si DUNS číslo předem", popis: "DIANA v přihlášce vyžaduje DUNS. Je zdarma u Dun & Bradstreet, ale vyřízení může trvat týdny – žádejte hned, ne až s otevřenou výzvou. Podrobný postup je v záložce Certifikace (DUNS / UEI).", odkaz: "https://www.dnb.com/duns.html", odkazText: "dnb.com – D-U-N-S Number" },
           { krok: "Přihlaste se online formulářem ke konkrétní challenge", popis: "Podává jedna firma, v angličtině; vybíráte konkrétní challenge oblast. Přesná podoba portálu se u každé výzvy liší [OVĚŘIT při otevření výzvy]." },
           { krok: "Před podáním se ozvěte Defence Hubu", popis: "Jsme česká akcelerační site DIANA – máme podklady k aktuální výzvě a přihlášku s vámi projdeme. Tohle je nejcennější krok." }
         ],
@@ -1024,7 +1024,7 @@ window.DH_KB = {
             kdyPotrebuji: "Když vstupujete do zahraničních dodavatelských řetězců, žádáte do NATO DIANA (přihláška DUNS vyžaduje!), nebo míříte na americké vládní zakázky a granty (UEI přes SAM.gov).",
             trvani: "DUNS: zdarma, dny až týdny [OVĚŘIT u D&B]. UEI: zdarma při registraci na SAM.gov; česká firma potřebuje nejdřív NCAGE.",
             kroky: [
-              { krok: "DUNS: požádejte zdarma u Dun & Bradstreet", popis: "Nejdřív si ověřte, jestli DUNS už nemáte (D&B ho firmám často přiděluje automaticky); jinak o něj požádáte na webu D&B.", odkaz: "https://www.dnb.com/duns.html", odkazText: "dnb.com – D-U-N-S Number", obrazek: "img/podani/duns.png" },
+              { krok: "DUNS: požádejte zdarma u Dun & Bradstreet", popis: "Nejdřív si ověřte, jestli DUNS už nemáte (D&B ho firmám často přiděluje automaticky); jinak o něj požádáte na webu D&B.", odkaz: "https://www.dnb.com/duns.html", odkazText: "dnb.com – D-U-N-S Number" },
               { krok: "UEI pro americké zakázky: registrace na SAM.gov", popis: "UEI dostanete zdarma registrací firmy na SAM.gov (System for Award Management). Pořadí pro českou firmu: nejdřív NCAGE (viz výše, Úř OSK SOJ), pak registrace v SAM.gov – bez NCAGE zahraniční firmu nezaregistrují.", odkaz: "https://sam.gov/", odkazText: "sam.gov", obrazek: "img/podani/sam.png" }
             ]
           },

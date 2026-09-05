@@ -615,7 +615,7 @@ window.DH_KB_EN = {
         nazev: "Applying to DIANA (via the DIANA website, with Defence Hub support)",
         kroky: [
           { krok: "Watch for the call opening", popis: "Challenges open at diana.nato.int – the 2027 cohort closed 3 July 2026, the next call is expected in June 2027. Each challenge has an applicant guide.", odkaz: "https://www.diana.nato.int/accelerator-programme.html", odkazText: "DIANA Accelerator Programme", obrazek: "img/podani/diana.png" },
-          { krok: "Get a DUNS number in advance", popis: "The DIANA application requires a DUNS. It is free from Dun & Bradstreet but can take weeks – request it now, not once the call opens. Full procedure in the Certifications tab (DUNS / UEI).", odkaz: "https://www.dnb.com/duns.html", odkazText: "dnb.com – D-U-N-S Number", obrazek: "img/podani/duns.png" },
+          { krok: "Get a DUNS number in advance", popis: "The DIANA application requires a DUNS. It is free from Dun & Bradstreet but can take weeks – request it now, not once the call opens. Full procedure in the Certifications tab (DUNS / UEI).", odkaz: "https://www.dnb.com/duns.html", odkazText: "dnb.com – D-U-N-S Number" },
           { krok: "Apply online for a specific challenge", popis: "A single company applies, in English, to a specific challenge area. The exact portal differs per call [VERIFY when the call opens]." },
           { krok: "Talk to the Defence Hub before submitting", popis: "We are the Czech DIANA accelerator site – we have the materials for the current call and will go through your application with you." }
         ],
@@ -995,7 +995,7 @@ window.DH_KB_EN = {
             kdyPotrebuji: "When entering foreign supply chains, applying to NATO DIANA (the application requires a DUNS!), or targeting US government contracts and grants (UEI via SAM.gov).",
             trvani: "DUNS: free, days to weeks [VERIFY with D&B]. UEI: free with SAM.gov registration; a Czech company needs an NCAGE first.",
             kroky: [
-              { krok: "DUNS: request it free from Dun & Bradstreet", popis: "First check whether you already have one (D&B often assigns them automatically); otherwise request it on the D&B website.", odkaz: "https://www.dnb.com/duns.html", odkazText: "dnb.com – D-U-N-S Number", obrazek: "img/podani/duns.png" },
+              { krok: "DUNS: request it free from Dun & Bradstreet", popis: "First check whether you already have one (D&B often assigns them automatically); otherwise request it on the D&B website.", odkaz: "https://www.dnb.com/duns.html", odkazText: "dnb.com – D-U-N-S Number" },
               { krok: "UEI for US contracts: register at SAM.gov", popis: "You get the UEI free by registering at SAM.gov. Order for a Czech company: NCAGE first (see above), then SAM.gov – foreign entities can't register without one.", odkaz: "https://sam.gov/", odkazText: "sam.gov", obrazek: "img/podani/sam.png" }
             ]
           },
