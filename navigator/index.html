@@ -246,7 +246,17 @@ cs: {
   priNez:"<strong>Než odešlete:</strong> {k} Umíme zprostředkovat zpětnou vazbu na draft žádosti.",
   duKicker:"Fáze 2 · Beta", duTitle:"Dual-use nástroje",
   duSub:"Dva nástroje: test, který orientačně vyhodnotí, jestli je vaše technologie dual-use a jaké regulace a certifikace vás čekají – a překladač, který ukáže zrcadlo vašeho use casu v druhém světě.",
-  duTabTest:"Test: jste dual-use?", duTabPreklad:"Překladač use casů",
+  duTabTest:"Poradce: jste dual-use?", duTabPreklad:"Překladač use casů",
+  duPopisN:"Popište, co děláte", duPopisPozn:"Vlastními slovy – co produkt dělá a klíčové technické vlastnosti. Systém sám navrhne kategorie kontrolních seznamů a provede vás zbytkem: parametry, semafor, export, certifikace.",
+  duPopisPlaceholder:"Např.: vyvíjíme bezpilotní letoun s termovizní kamerou, dolet 350 km…",
+  duVyhodnotit:"Vyhodnotit",
+  duNalezeno:"Podle popisu to vypadá na tyto kategorie:",
+  duNalezenoPozn:"Podoblasti jsou předvybrané podle popisu – zkontrolujte, co opravdu děláte, a odpovězte na otázku k parametrům.",
+  duNenalezeno:"Z popisu jsem kategorii nepoznala – nechci hádat. Zkuste popis upřesnit (co technicky děláte – např. senzory, šifrování, drony), nebo vyberte kategorii ručně níže.",
+  duCekaNaPopis:"Začněte popisem produktu výše – kategorie se doplní samy.",
+  duRucneToggle:"Vybrat/upravit kategorie ručně", duRucneSchovat:"Skrýt ruční výběr kategorií",
+  duUpresneni:"Upřesnění – export a certifikace",
+  duUpresneniPozn:"Pár rychlých otázek; podle nich se sestaví seznam povolení a certifikací a kde o ně zažádat.",
   duVerdikt:"Předběžné zatřídění", duRezimy:"Regulace a certifikace, které se vás pravděpodobně týkají",
   duKategorie:"Kategorie {k}", duPriklady:"Typicky kontrolované položky (příklady – přesné prahy jsou v příloze I):",
   duOdkazy:"Oficiální seznamy a zdroje",
@@ -356,7 +366,17 @@ en: {
   priNez:"<strong>Before you submit:</strong> {k} We can broker feedback on your draft application.",
   duKicker:"Phase 2 · Beta", duTitle:"Dual-use tools",
   duSub:"Two tools: a test that gives an indicative assessment of whether your technology is dual-use and which regulations and certifications await you – and a translator that mirrors your use case into the other world.",
-  duTabTest:"Test: are you dual-use?", duTabPreklad:"Use case translator",
+  duTabTest:"Advisor: are you dual-use?", duTabPreklad:"Use case translator",
+  duPopisN:"Describe what you do", duPopisPozn:"In your own words – what the product does and its key technical properties. The system suggests the control-list categories itself and walks you through the rest: parameters, traffic light, export, certifications.",
+  duPopisPlaceholder:"E.g.: we develop an uncrewed aircraft with a thermal camera, range 350 km…",
+  duVyhodnotit:"Evaluate",
+  duNalezeno:"From your description this looks like these categories:",
+  duNalezenoPozn:"Sub-areas are pre-selected from your description – check what you really do and answer the parameter question.",
+  duNenalezeno:"I couldn't tell the category from this description – I won't guess. Try being more specific (what you technically do – e.g. sensors, encryption, drones), or pick a category manually below.",
+  duCekaNaPopis:"Start with the product description above – the categories fill in themselves.",
+  duRucneToggle:"Pick/adjust categories manually", duRucneSchovat:"Hide manual category selection",
+  duUpresneni:"Details – export and certifications",
+  duUpresneniPozn:"A few quick questions; they determine the list of permits and certifications and where to apply for them.",
   duVerdikt:"Preliminary classification", duRezimy:"Regulations and certifications that likely apply to you",
   duKategorie:"Category {k}", duPriklady:"Typically controlled items (examples – exact thresholds are in Annex I):",
   duOdkazy:"Official lists and sources",
@@ -847,7 +867,26 @@ function renderDuTest(el, kb){
   const a = s.odpovedi;
 
   el.insertAdjacentHTML("beforeend", `<div class="card" style="color:var(--muted);font-size:12.5px;line-height:1.55">${esc(test.uvod)}</div>`);
-  el.insertAdjacentHTML("beforeend", `<div class="card" style="background:var(--blueSoft);border-color:#C9D8F2;font-size:12.5px;line-height:1.55">${t("duSpec")}</div>`);
+
+  // 1) volný popis produktu → automatické zatřídění (bez znalosti kategorií)
+  const cp = document.createElement("div");
+  cp.className = "card";
+  cp.innerHTML = `<div style="font-size:14px;font-weight:600;margin-bottom:3px">${esc(t("duPopisN"))}</div>
+    <div style="color:var(--muted);font-size:12px;margin-bottom:10px">${esc(t("duPopisPozn"))}</div>
+    <textarea id="duPopisPole" rows="3" placeholder="${esc(t("duPopisPlaceholder"))}">${esc(s.popis||"")}</textarea>
+    <button class="btn" style="margin-top:10px" id="duVyhodnot">${esc(t("duVyhodnotit"))}</button>`;
+  cp.querySelector("#duVyhodnot").onclick = ()=>{
+    s.popis = cp.querySelector("#duPopisPole").value.trim();
+    // skóre 1 = jediné slabé slovo, často náhodná shoda podřetězce – nehádat
+    const shody = s.popis ? duNajdiKategorie(s.popis, kb).filter(x=>x.skore>=2).slice(0,2) : [];
+    s.kategorie = shody.map(x=>x.k.kod);
+    s.pod = {}; s.prahy = {}; s.parametry = {};
+    shody.forEach(x=>{ if(x.pod.length) s.pod[x.k.kod] = x.pod.slice(); });
+    s.analyzovano = true;
+    s.rucne = !shody.length;
+    save(); go("dualuse");
+  };
+  el.appendChild(cp);
 
   function ynRow(container, val, onPick, popisky){
     const yn = document.createElement("div");
@@ -870,38 +909,22 @@ function renderDuTest(el, kb){
     card.appendChild(row);
   }
 
-  // 1) vojenský seznam
-  const c1 = document.createElement("div");
-  c1.className = "card";
-  otazkaRow(c1, test.otazky[0]);
-  el.appendChild(c1);
-
-  // 2) kategorie přílohy I (multi-select) + parametry vybraných
+  // 2) kategorie přílohy I – navržené z popisu; ruční výběr jen jako oprava
   const ka = test.kategorieAnnex;
+  const vybraneKat = s.kategorie.filter(k=>k!=="zadna");
+  const ukazRucne = !!s.rucne;
   const c2 = document.createElement("div");
   c2.className = "card";
-  c2.innerHTML = `<div style="font-size:13.5px;font-weight:600;margin-bottom:3px">${esc(ka.text)}</div>
-    <div style="color:var(--muted);font-size:12px;margin-bottom:10px">${esc(ka.napoveda)}</div>`;
-  ka.polozky.forEach(p=>{
-    const c = document.createElement("span");
-    c.className = "chip" + (s.kategorie.includes(p.kod)?" sel":"");
-    c.textContent = p.kod+" · "+p.nazev;
-    c.onclick = ()=>{
-      s.kategorie = s.kategorie.filter(x=>x!=="zadna");
-      if(s.kategorie.includes(p.kod)){
-        s.kategorie = s.kategorie.filter(x=>x!==p.kod);
-        delete s.pod[p.kod]; delete s.prahy[p.kod]; delete s.parametry[p.kod];
-      }
-      else s.kategorie.push(p.kod);
-      save(); go("dualuse");
-    };
-    c2.appendChild(c);
-  });
-  const cz = document.createElement("span");
-  cz.className = "chip" + (s.kategorie.includes("zadna")?" sel":"");
-  cz.textContent = ka.zadna;
-  cz.onclick = ()=>{ s.kategorie = s.kategorie.includes("zadna") ? [] : ["zadna"]; s.pod = {}; s.prahy = {}; s.parametry = {}; save(); go("dualuse"); };
-  c2.appendChild(cz);
+  if(vybraneKat.length){
+    c2.innerHTML = `<div style="font-size:13.5px;font-weight:600;margin-bottom:3px">${esc(t("duNalezeno"))}</div>
+      <div style="color:var(--muted);font-size:12px;margin-bottom:4px">${esc(t("duNalezenoPozn"))}</div>`;
+  } else if(s.kategorie.includes("zadna")){
+    c2.innerHTML = `<div style="color:var(--muted);font-size:13px;margin-bottom:4px">${esc(ka.zadna)}</div>`;
+  } else if(s.analyzovano){
+    c2.innerHTML = `<div style="font-size:13px;line-height:1.55;margin-bottom:4px">${esc(t("duNenalezeno"))}</div>`;
+  } else {
+    c2.innerHTML = `<div style="color:var(--muted);font-size:13px;margin-bottom:4px">${esc(t("duCekaNaPopis"))}</div>`;
+  }
 
   // U každé vybrané kategorie: výběr konkrétních podoblastí ("co z toho děláte"),
   // ukázka rozhodujících parametrů, volitelné pole parametrů a prahová otázka.
@@ -957,13 +980,54 @@ function renderDuTest(el, kb){
     }
     c2.appendChild(box);
   });
+
+  // ruční oprava kategorií (schovaná, dokud ji člověk nechce)
+  const prep = document.createElement("div");
+  prep.style.cssText = "margin-top:12px";
+  const prepBtn = document.createElement("span");
+  prepBtn.className = "chip";
+  prepBtn.textContent = ukazRucne ? t("duRucneSchovat") : t("duRucneToggle");
+  prepBtn.onclick = ()=>{ s.rucne = !ukazRucne; save(); go("dualuse"); };
+  prep.appendChild(prepBtn);
+  c2.appendChild(prep);
+  if(ukazRucne){
+    const grid = document.createElement("div");
+    grid.style.cssText = "margin-top:10px";
+    grid.innerHTML = `<div style="color:var(--muted);font-size:12px;margin-bottom:8px">${esc(ka.napoveda)}</div>`;
+    ka.polozky.forEach(p=>{
+      const c = document.createElement("span");
+      c.className = "chip" + (s.kategorie.includes(p.kod)?" sel":"");
+      c.textContent = p.kod+" · "+p.nazev;
+      c.onclick = ()=>{
+        s.kategorie = s.kategorie.filter(x=>x!=="zadna");
+        if(s.kategorie.includes(p.kod)){
+          s.kategorie = s.kategorie.filter(x=>x!==p.kod);
+          delete s.pod[p.kod]; delete s.prahy[p.kod]; delete s.parametry[p.kod];
+        }
+        else s.kategorie.push(p.kod);
+        s.analyzovano = true;
+        save(); go("dualuse");
+      };
+      grid.appendChild(c);
+    });
+    const cz = document.createElement("span");
+    cz.className = "chip" + (s.kategorie.includes("zadna")?" sel":"");
+    cz.textContent = ka.zadna;
+    cz.onclick = ()=>{ s.kategorie = s.kategorie.includes("zadna") ? [] : ["zadna"]; s.pod = {}; s.prahy = {}; s.parametry = {}; s.analyzovano = true; save(); go("dualuse"); };
+    grid.appendChild(cz);
+    c2.appendChild(grid);
+  }
   el.appendChild(c2);
 
-  // 3) ostatní otázky
-  const c3 = document.createElement("div");
-  c3.className = "card";
-  test.otazky.slice(1).forEach(o=>otazkaRow(c3, o));
-  el.appendChild(c3);
+  // 3) upřesnění – všechny doplňkové otázky v jedné kartě (až po kategoriích)
+  if(s.analyzovano || s.kategorie.length){
+    const c3 = document.createElement("div");
+    c3.className = "card";
+    c3.innerHTML = `<div class="kicker" style="margin-bottom:3px">${esc(t("duUpresneni"))}</div>
+      <div style="color:var(--muted);font-size:12px;margin-bottom:4px">${esc(t("duUpresneniPozn"))}</div>`;
+    test.otazky.forEach(o=>otazkaRow(c3, o));
+    el.appendChild(c3);
+  }
 
   // hotovo? Kategorie je vyřešená = vybráno "nic z toho", nebo vybrané
   // podoblasti + zodpovězená prahová otázka.
@@ -972,7 +1036,9 @@ function renderDuTest(el, kb){
   const katHotovo = s.kategorie.includes("zadna") || (vybrane.length>0 && vybrane.every(katVyresena));
   const hotovo = test.otazky.every(o=>a[o.id]) && katHotovo;
   if(!hotovo){
-    el.insertAdjacentHTML("beforeend", `<div class="card" style="color:var(--muted)">${esc(t("duTestNedokonceno"))}</div>`);
+    if(s.analyzovano || s.kategorie.length){
+      el.insertAdjacentHTML("beforeend", `<div class="card" style="color:var(--muted)">${esc(t("duTestNedokonceno"))}</div>`);
+    }
     return;
   }
 
@@ -1218,6 +1284,45 @@ async function poradceDotaz(cesta, telo){
 // ---------- Poradce lite: vyhledávání ve znalostní bázi (bez AI, zdarma) ----------
 function bezDiakritiky(s){ return String(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase(); }
 
+// ---------- dual-use motor: rozpozn\u00e1n\u00ed kategori\u00ed p\u0159\u00edlohy I z voln\u00e9ho popisu ----------
+// Sd\u00edl\u00ed ho dual-use modul i chatbot. Synonyma dopl\u0148uj\u00ed slova, kter\u00e1 v textu
+// KB nejsou doslova (dron \u2192 kategorie 9 apod.).
+const DU_SYNONYMA = {
+  "0": ["jader","nuklear","reaktor","uran"],
+  "1": ["slitin","kompozit","chemick","povlak","material","cbrn","detekce latek","vlakn"],
+  "2": ["cnc","obrabe","lis ","lozisk","vyrobni stroj"],
+  "3": ["cip","polovodic","obvod","elektronik","prevodnik","mikrovln"],
+  "4": ["pocitac","server","vypocet","computing","superpocitac"],
+  "5": ["sifr","krypt","encrypt","radio","komunikac","telekom","vpn","anten","vysilac"],
+  "6": ["senzor","kamer","termo","noktoviz","radar","lidar","laser","sonar","hydrofon","optick","noceni videni"],
+  "7": ["navigac","gps","gnss","gyroskop","akcelerometr","avionik","inercial"],
+  "8": ["ponork","podvodni","namorni","lod "],
+  "9": ["dron","uav","bezpilot","letadl","raket","motor","satelit","vesmir","kosm","space","kvadrokopt"]
+};
+// aliasy pro p\u00e1rov\u00e1n\u00ed podoblast\u00ed (slovo z popisu \u2192 kmen slova v KB)
+const DU_ALIASY = { dron: "uav", kvadrokopt: "uav", termoviz: "termovizni", sifrov: "kryptografie", satelit: "kosmicke", ponork: "ponorna", vesmir: "kosmicke" };
+function duNajdiKategorie(text, kb){
+  const q = " " + bezDiakritiky(text) + " ";
+  const slova = bezDiakritiky(text).split(/[^a-z0-9]+/).filter(w => w.length > 3);
+  const prelozene = slova.map(w => {
+    for(const klic in DU_ALIASY){ if(w.startsWith(klic)) return DU_ALIASY[klic]; }
+    return w;
+  });
+  return kb.dualUseTest.kategorieAnnex.polozky.map(k => {
+    const txt = bezDiakritiky(k.nazev + " " + k.priklady.join(" ") + " " + (k.podoblasti||[]).map(p => p.nazev + " " + p.rozhoduje).join(" "));
+    let skore = 0;
+    for(const w of slova){ if(w.length > 3 && txt.includes(w)) skore += 1; }
+    for(const syn of (DU_SYNONYMA[k.kod]||[])){ if(q.includes(syn)) skore += 3; }
+    // kter\u00e9 podoblasti z popisu sed\u00ed (p\u00e1rov\u00e1n\u00ed p\u0159es 5znakov\u00e9 kmeny slov)
+    const pod = (k.podoblasti||[]).map((p, idx) => {
+      const tokeny = bezDiakritiky(p.nazev + " " + p.rozhoduje).split(/[^a-z0-9]+/).filter(t => t.length > 3);
+      const sedi = prelozene.some(w => tokeny.some(t => t.slice(0,5) === w.slice(0,5)));
+      return sedi ? idx : -1;
+    }).filter(x => x >= 0);
+    return { k, skore, pod };
+  }).filter(x => x.skore > 0).sort((a, b) => b.skore - a.skore);
+}
+
 // route = serializovatelná navigace (ukládá se do historie chatu)
 function aplikujRoute(r){
   if(!r) return;
@@ -1362,27 +1467,7 @@ function botOdpoved(dotaz, kb, docs){
   // Skóruje dotaz proti názvům, příkladům a podoblastem kategorií 0–9 z KB
   // (+ synonyma běžných výrazů, které v textu KB nejsou doslova).
   if(ma("kategori","categor","spadam","spadame","zatrid","zarazeni","zaradit") || (ma("dual") && ma("jaka","jake","jsem","jsme","which","what category"))){
-    const kats = kb.dualUseTest.kategorieAnnex.polozky;
-    const synonyma = {
-      "0": ["jader","nuklear","reaktor","uran"],
-      "1": ["slitin","kompozit","chemick","povlak","material","cbrn","detekce latek"],
-      "2": ["cnc","obrabe","lis ","lozisk","vyrobni stroj"],
-      "3": ["cip","polovodic","obvod","elektronik","prevodnik","mikrovln"],
-      "4": ["pocitac","server","vypocet","computing","superpocitac"],
-      "5": ["sifr","krypt","encrypt","radio","komunikac","telekom","vpn","anten"],
-      "6": ["senzor","kamer","termo","noktoviz","radar","lidar","laser","sonar","hydrofon","optick"],
-      "7": ["navigac","gps","gnss","gyroskop","akcelerometr","avionik","inercial"],
-      "8": ["ponork","podvodni","namorni","lod "],
-      "9": ["dron","uav","bezpilot","letadl","raket","motor","satelit","vesmir","kosm","space"]
-    };
-    const skoruj = k => {
-      const txt = bezDiakritiky(k.nazev + " " + k.priklady.join(" ") + " " + (k.podoblasti||[]).map(p=>p.nazev+" "+p.rozhoduje).join(" "));
-      let s = 0;
-      for(const w of bezDiakritiky(dotaz).split(/[^a-z0-9]+/)){ if(w.length > 3 && txt.includes(w)) s += 1; }
-      for(const syn of (synonyma[k.kod]||[])){ if(q.includes(syn)) s += 3; }
-      return s;
-    };
-    const shody = kats.map(k => ({ k, s: skoruj(k) })).filter(x => x.s > 0).sort((a,b) => b.s - a.s).slice(0, 2);
+    const shody = duNajdiKategorie(dotaz, kb).filter(x => x.skore >= 2).slice(0, 2);
     const aiPozn = ma(" ai ","umela intel","machine learning"," software","software ") ?
       T("\n\nPozn.: software a technologie nemají samostatnou kategorii – v každé kategorii mají vlastní položky (D = software, E = technologie) vázané na tamní parametry. Rozhoduje tedy, k čemu software slouží (šifrování → 5, zpracování dat ze senzorů → 6, řízení dronů → 7/9…).",
         "\n\nNote: software and technology have no category of their own – each category has its own entries for them (D = software, E = technology), tied to that category's parameters. What matters is what the software does (encryption → 5, sensor data processing → 6, drone control → 7/9…).") : "";
