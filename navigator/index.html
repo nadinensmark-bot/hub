@@ -141,7 +141,7 @@ table.zmeny td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-ali
         <span style="flex:1" data-nav="dualuse"></span>
         <span class="mono" style="font-size:8px;letter-spacing:.08em;background:rgba(140,170,114,.2);color:#A8C48E;padding:2px 6px;border-radius:5px">BETA</span>
       </div>
-      <div class="navitem" data-view="poradce" id="navPoradce" onclick="go('poradce')">
+      <div class="navitem" data-view="poradce" id="navPoradce" style="display:none" onclick="go('poradce')">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12a8 8 0 0 1-8 8H5l-2 2V12a8 8 0 0 1 8-8h2a8 8 0 0 1 8 8z"/><path d="M9 11h.01M12.5 11h.01M16 11h.01"/></svg>
         <span style="flex:1" data-nav="poradce"></span>
         <span id="porBadge" class="mono" style="font-size:8px;letter-spacing:.08em;background:rgba(140,170,114,.2);color:#A8C48E;padding:2px 6px;border-radius:5px">BETA</span>
@@ -298,6 +298,10 @@ cs: {
   duKdy:"Kdy se týká:", duAkce:"Co udělat:",
   duZnovu:"Vyplnit znovu", duTestNedokonceno:"Verdikt se zobrazí po zodpovězení všech otázek.",
   ano:"Ano", ne:"Ne", nevim:"Nevím",
+  konChatKrok:"Krok 2 · Zeptejte se konzultanta",
+  konChatPozn:"Doplňující otázky k plánu, programům, přihlášce i dual-use – konzultant zná váš profil.",
+  priPodani:"Jak podat přihlášku – krok za krokem",
+  priPodaniZdroj:"Zdroj postupu:",
   duPopisAuto:"Když popíšete svůj use case, doména výše se vybere sama – a na otázky odpovídá poradce v okně níže.",
   miniPoradce:"Zeptejte se poradce (bez AI – odpovídá ze znalostní báze)",
   miniPlaceholderDu:"Např.: jaká jsem kategorie? co je vývozní povolení?…",
@@ -441,6 +445,10 @@ en: {
   duKdy:"When it applies:", duAkce:"What to do:",
   duZnovu:"Fill in again", duTestNedokonceno:"The verdict appears once all questions are answered.",
   ano:"Yes", ne:"No", nevim:"Not sure",
+  konChatKrok:"Step 2 · Ask the consultant",
+  konChatPozn:"Follow-up questions about the plan, programmes, the application or dual-use – the consultant knows your profile.",
+  priPodani:"How to submit – step by step",
+  priPodaniZdroj:"Source:",
   duPopisAuto:"When you describe your use case, the domain above picks itself – and you can ask questions in the advisor box below.",
   miniPoradce:"Ask the advisor (no AI – answers from the knowledge base)",
   miniPlaceholderDu:"E.g.: which category am I? what is an export licence?…",
@@ -856,6 +864,29 @@ function vPrihlaska(el){
        </div>`);
   }
 
+  // podací postup krok za krokem (odkazy + printscreeny portálů)
+  const sadaPodani = sel ? (kb.prihlaska.podani || []).find(s => (s.programy || []).includes(sel)) : null;
+  if(sadaPodani){
+    const pd = document.createElement("div");
+    pd.className = "card";
+    pd.innerHTML = `<div class="kicker" style="margin-bottom:3px">${esc(t("priPodani"))}</div>
+      <div style="color:var(--muted);font-size:12px;margin-bottom:6px">${esc(sadaPodani.nazev || "")}</div>`;
+    (sadaPodani.kroky || []).forEach((k, i)=>{
+      pd.insertAdjacentHTML("beforeend",
+        `<div style="display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);line-height:1.55">
+           <span class="mono" style="flex:none;width:26px;height:26px;border-radius:50%;background:var(--blueSoft);color:var(--blue);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600">${i+1}</span>
+           <div style="flex:1;min-width:0">
+             <strong style="font-size:13.5px">${esc(k.krok)}</strong>
+             <div style="font-size:12.5px;color:var(--muted);margin-top:3px">${esc(k.popis || "")}</div>
+             ${k.odkaz ? `<a href="${esc(k.odkaz)}" target="_blank" rel="noopener" style="display:inline-block;font-size:12px;margin-top:6px;color:var(--blue)">${esc(k.odkazText || k.odkaz)} ↗</a>` : ""}
+             ${k.obrazek ? `<img src="${esc(k.obrazek)}" alt="" loading="lazy" style="display:block;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:8px" onerror="this.style.display='none'">` : ""}
+           </div>
+         </div>`);
+    });
+    if(sadaPodani.zdroj) pd.insertAdjacentHTML("beforeend", `<div style="font-size:11.5px;color:var(--muted);margin-top:8px">${esc(t("priPodaniZdroj"))} ${esc(sadaPodani.zdroj)}</div>`);
+    el.appendChild(pd);
+  }
+
   const kroky = document.createElement("div");
   kroky.className = "card";
   kroky.innerHTML = `<div class="kicker" style="margin-bottom:10px">${esc(t("priZasady"))}</div>`;
@@ -1025,19 +1056,23 @@ function vKonzultant(el){
       btn: { t: t("prihlaskaBtn"), route: { view:"prihlaska", prihlaskaProgram: top[0].p.id } } });
     kroky.push({ text: duShody.length ? t("konPlanDU", { k: duShody[0].k.kod + " – " + duShody[0].k.nazev }) : t("konPlanDU0"),
       btn: { t: t("duTabTest"), route: { view:"dualuse", duTab:"test", duPopis: f.popis } } });
-    kroky.push({ text: t("konPlanAI") + kb.meta.kontakt, btn: { t: t("nav").poradce, route: { view:"poradce" } } });
+    kroky.push({ text: t("konPlanAI") + kb.meta.kontakt });
     el.insertAdjacentHTML("beforeend",
       `<div class="card"><div class="kicker" style="margin-bottom:10px">${esc(t("konPlan"))}</div>
        ${kroky.map((k,i)=>`<div style="display:flex;gap:12px;align-items:flex-start;padding:8px 0;line-height:1.5">
           <span class="mono" style="flex:none;width:24px;height:24px;border-radius:50%;background:var(--blueSoft);color:var(--blue);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600">${i+1}</span>
           <span style="font-size:13px;flex:1">${esc(k.text)}</span>
-          <button class="btn ghost" style="padding:6px 12px;font-size:12px;flex:none" data-krok="${i}">${esc(k.btn.t)}</button>
+          ${k.btn?`<button class="btn ghost" style="padding:6px 12px;font-size:12px;flex:none" data-krok="${i}">${esc(k.btn.t)}</button>`:""}
         </div>`).join("")}</div>`);
     el.querySelectorAll("[data-krok]").forEach(b=>{ b.onclick = ()=>aplikujRoute(kroky[+b.dataset.krok].btn.route); });
   }
 
-  // konzultant-chat přímo tady, s kontextem nejlepšího programu
-  vlozMiniPoradce(el, kb, "konzultant", t("miniPlaceholderKon"), top.length ? top[0].p.id : null);
+  // krok 2: plnohodnotný poradce (chat / AI) přímo tady – na doplňující otázky
+  if(top.length && top[0].p) state.botKontext = top[0].p.id;
+  el.insertAdjacentHTML("beforeend",
+    `<div style="margin:26px 0 10px"><div class="kicker">${esc(t("konChatKrok"))}</div>
+     <div style="color:var(--muted);font-size:12.5px;margin-top:3px">${esc(t("konChatPozn"))}</div></div>`);
+  renderPoradceJadro(el, kb);
 }
 
 // =====================================================================
@@ -2041,12 +2076,17 @@ function vPoradce(el){
   const kb = KB();
   const rezim = aiRezim();
   header(el, rezim ? t("porKicker") : (state.lang === "en" ? "Advisor · Beta" : "Poradce · Beta"), t("porTitle"), rezim ? t("porSub") : t("liteSub"));
-
+  renderPoradceJadro(el, kb);
+}
+// jádro poradce (chat bez AI / AI chat + analýza) – používá ho záložka
+// Poradce (admin) i druhý krok Konzultanta
+function renderPoradceJadro(el, kb){
+  const rezim = aiRezim();
   if(!rezim){
     renderLite(el, kb);
     if(window.DH_AI_RUNTIME){
       el.insertAdjacentHTML("beforeend",
-        `<div style="margin-top:4px"><span class="chip" onclick="state.porAI=true;save();go('poradce')">${esc(t("porPrepnoutAI"))}</span></div>`);
+        `<div style="margin-top:4px"><span class="chip" onclick="state.porAI=true;save();go(state.view)">${esc(t("porPrepnoutAI"))}</span></div>`);
     }
     el.insertAdjacentHTML("beforeend", `<div class="card" style="border-style:dashed;color:var(--muted);font-size:12.5px;line-height:1.55;margin-top:10px">${esc(t("liteAnalyza"))}</div>`);
     if(state.admin) el.insertAdjacentHTML("beforeend", `<div class="card" style="background:#FDF3DC;border-color:#EAD9A8;color:#9A7B1E;font-size:12.5px;line-height:1.55">${esc(t("porSetup"))}</div>`);
@@ -2056,9 +2096,9 @@ function vPoradce(el){
   if(!state.porTab) state.porTab = "chat";
   el.insertAdjacentHTML("beforeend",
     `<div style="display:flex;gap:9px;margin-bottom:18px;flex-wrap:wrap;align-items:center">
-       <div class="subtab ${state.porTab==="chat"?"active":""}" onclick="state.porTab='chat';save();go('poradce')">${esc(t("porTabChat"))}</div>
-       <div class="subtab ${state.porTab==="analyza"?"active":""}" onclick="state.porTab='analyza';save();go('poradce')">${esc(t("porTabAnalyza"))}</div>
-       ${rezim==="demo"?`<span class="chip" onclick="state.porAI=false;save();go('poradce')">${esc(t("porPrepnoutLite"))}</span>`:""}
+       <div class="subtab ${state.porTab==="chat"?"active":""}" onclick="state.porTab='chat';save();go(state.view)">${esc(t("porTabChat"))}</div>
+       <div class="subtab ${state.porTab==="analyza"?"active":""}" onclick="state.porTab='analyza';save();go(state.view)">${esc(t("porTabAnalyza"))}</div>
+       ${rezim==="demo"?`<span class="chip" onclick="state.porAI=false;save();go(state.view)">${esc(t("porPrepnoutLite"))}</span>`:""}
      </div>`);
   if(rezim==="demo"){
     el.insertAdjacentHTML("beforeend", `<div class="card" style="background:var(--blueSoft);border-color:#C9D8F2;font-size:12.5px;line-height:1.55">${
@@ -2214,7 +2254,9 @@ function aplikujAdmin(){
   if(location.hash === "#admin"){ state.admin = true; save(); }
   if(location.hash === "#noadmin"){ state.admin = false; save(); }
   document.getElementById("navKb").style.display = state.admin ? "" : "none";
-  // Poradce je veřejný vždy: výchozí je chat bez AI, AI jen s backendem/přepínačem
+  // Samostatná záložka Poradce je jen pro admin režim – veřejnost má
+  // plnohodnotný chat jako druhý krok Konzultanta (méně matoucí)
+  document.getElementById("navPoradce").style.display = state.admin ? "" : "none";
   document.getElementById("porBadge").textContent = aiRezim() ? "AI" : "BETA";
   if(!state.admin && state.view === "kb"){ state.view = "wizard"; save(); go("wizard"); }
 }

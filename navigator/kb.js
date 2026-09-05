@@ -594,6 +594,82 @@ window.DH_KB = {
         popis: "Ideálně někoho, kdo hodnotil nebo psal úspěšné žádosti – Defence Hub umí zprostředkovat zpětnou vazbu. Portály před uzávěrkou padají: kompletní žádost v systému min. 48 hodin předem."
       }
     ],
+    // Podací postupy krok za krokem (rešerše 9/2026; obrázky doplňuje
+    // GitHub Action do img/podani/ – když obrázek chybí, krok se zobrazí bez něj)
+    podani: [
+      {
+        id: "ft",
+        programy: ["edf", "eudis", "edip", "horizon-cl3", "eic-pathfinder", "eic-step-defence"],
+        nazev: "Podání přes portál EU Funding & Tenders (platí pro EDF, EUDIS, EDIP, Horizont i EIC výzvy)",
+        kroky: [
+          { krok: "Založte si EU Login", popis: "Jednotné přihlášení ke všem systémům EU: e-mail + heslo, poté si v nastavení zapněte dvoufaktorové ověření (pro podání žádosti je povinné).", odkaz: "https://webgate.ec.europa.eu/cas/", odkazText: "EU Login (webgate.ec.europa.eu/cas)", obrazek: "img/podani/eu-login.png" },
+          { krok: "Zaregistrujte firmu a získejte PIC", popis: "V Participant Register zaregistrujte organizaci – dostanete 9místný kód PIC. Dělá se jednou, PIC pak používáte pro všechny EU programy. U konsorcia potřebuje PIC každý partner.", odkaz: "https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/how-to-participate/participant-register", odkazText: "Participant Register", obrazek: "img/podani/participant-register.png" },
+          { krok: "Najděte své téma (topic)", popis: "Na portálu Funding & Tenders vyhledejte program (EDF, EUDIS…) a otevřete konkrétní topic – u něj jsou call documents, šablony a hodnoticí kritéria.", odkaz: "https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/opportunities/calls-for-proposals", odkazText: "Vyhledávání výzev na portálu F&T", obrazek: "img/podani/ft-portal.png" },
+          { krok: "Klikněte na Start Submission", popis: "Na stránce tématu; otevře se podací systém s průvodcem (progress bar vás vede krok za krokem)." },
+          { krok: "Vytvořte návrh a pozvěte partnery", popis: "Create proposal: PIC koordinátora, název a akronym projektu. U konsorcia pozvete partnery – systém jim pošle pozvánku, každý ji potvrdí pod svým EU Loginem." },
+          { krok: "Vyplňte část A, nahrajte část B", popis: "Část A = online administrativní formuláře (účastníci, rozpočet). Část B = technický popis projektu podle šablony staženou z topicu – pozor na limit stran, co je přes limit, hodnotitelé nevidí." },
+          { krok: "Validace a odeslání – min. 48 h před uzávěrkou", popis: "Tlačítko Validate odhalí chyby, Submit odešle. Rozhoduje čas serveru, pozdní podání se zamítá automaticky a bez výjimek. Do uzávěrky lze podat opakovaně – počítá se poslední verze." }
+        ],
+        zdroj: "Online Manual a IT How To portálu F&T (webgate.ec.europa.eu/funding-tenders-opportunities), ověřeno 9/2026."
+      },
+      {
+        id: "eic-accelerator",
+        programy: ["eic-accelerator"],
+        nazev: "Podání do EIC Accelerator (4 kroky; kdykoli začnete krátkou žádostí)",
+        kroky: [
+          { krok: "EU Login + PIC firmy", popis: "Stejný základ jako u všech EU programů: účet EU Login s dvoufaktorovým ověřením a registrace firmy v Participant Register (PIC).", odkaz: "https://webgate.ec.europa.eu/cas/", odkazText: "EU Login", obrazek: "img/podani/eu-login.png" },
+          { krok: "Krok 1: krátká žádost (kdykoli)", popis: "Ze stránky EIC Accelerator na portálu F&T spusťte podání. Obsah: formulář cca 12 stran + pitch deck do 10 slidů + 3minutové video. Vyhodnocuje se v měsíčních dávkách (první úterý v měsíci), výsledek za 4–6 týdnů.", odkaz: "https://eic.ec.europa.eu/eic-funding-opportunities/eic-accelerator_en", odkazText: "EIC Accelerator – oficiální stránka", obrazek: "img/podani/eic-accelerator.png" },
+          { krok: "Krok 2: plná žádost (k cut-off termínu)", popis: "Po úspěchu v kroku 1. Cut-offs 2026: 7. 1., 4. 3., 6. 5., 8. 7., 2. 9. a 4. 11. v 17:00 bruselského času. Formulář max 20 stran + deck + video + přílohy: finance a cap table, IP/freedom-to-operate, plán implementace s milníky." },
+          { krok: "Krok 3: pohovor před porotou EIC", popis: "Pohovory se konají 3× ročně; připravte pitch a obhajobu čísel – porota jde do hloubky." },
+          { krok: "Krok 4: finalizace", popis: "Podle typu podpory: podpis grant agreementu a/nebo jednání o equity investici s EIC Fund. Pozor: současně smíte mít jen jednu živou žádost." }
+        ],
+        zdroj: "eic.ec.europa.eu + průvodce EUACC/Segler Consulting, ověřeno 9/2026."
+      },
+      {
+        id: "diana",
+        programy: ["diana"],
+        nazev: "Podání do DIANA (přes web DIANA, s podporou Defence Hubu)",
+        kroky: [
+          { krok: "Sledujte otevření výzvy", popis: "Výzvy (challenges) se otevírají na diana.nato.int – kohorta 2027 měla uzávěrku 3. 7. 2026, další výzva se čeká v červnu 2027. U každé challenge je applicant guide.", odkaz: "https://www.diana.nato.int/accelerator-programme.html", odkazText: "DIANA Accelerator Programme", obrazek: "img/podani/diana.png" },
+          { krok: "Přihlaste se online formulářem ke konkrétní challenge", popis: "Podává jedna firma, v angličtině; vybíráte konkrétní challenge oblast. Přesná podoba portálu se u každé výzvy liší [OVĚŘIT při otevření výzvy]." },
+          { krok: "Před podáním se ozvěte Defence Hubu", popis: "Jsme česká akcelerační site DIANA – máme podklady k aktuální výzvě a přihlášku s vámi projdeme. Tohle je nejcennější krok." }
+        ],
+        zdroj: "diana.nato.int, ověřeno 9/2026."
+      },
+      {
+        id: "nif",
+        programy: ["nif"],
+        nazev: "Cesta k NATO Innovation Fund (žádné formuláře – standardní VC proces)",
+        kroky: [
+          { krok: "Připravte investorské materiály", popis: "Pitch deck, data room, finanční plán, cap table – NIF je fond, hodnotí firmu jako investor, ne žádost podle kritérií." },
+          { krok: "Získejte warm intro", popis: "Studený e-mail přes nif.fund skoro nikdy nefunguje. Defence Hub umí zprostředkovat představení přes síť DIANA – absolventi akcelerátoru jsou pro NIF viditelnější.", odkaz: "https://www.nif.fund/", odkazText: "nif.fund" },
+          { krok: "Standardní VC proces", popis: "Pitch → série jednání → due diligence → investice za podíl. Počítejte s měsíci; fond často vede kolo a chce board seat." }
+        ],
+        zdroj: "nif.fund, ověřeno 9/2026."
+      },
+      {
+        id: "prodef",
+        programy: ["prodef"],
+        nazev: "Podání do TAČR PRODEF (informační systém ISTA)",
+        kroky: [
+          { krok: "Sledujte vyhlášení soutěže", popis: "Veřejné soutěže PRODEF se vyhlašují na tacr.gov.cz včetně zadávací dokumentace.", odkaz: "https://tacr.gov.cz/program/program-prodef/", odkazText: "tacr.gov.cz – PRODEF", obrazek: "img/podani/tacr.png" },
+          { krok: "Založte si účet v systému ISTA s předstihem", popis: "Návrhy projektů se podávají přes informační systém TAČR (ista.tacr.cz); registrace a ověření účtu chvíli trvá [OVĚŘIT podmínky u konkrétní soutěže].", odkaz: "https://ista.tacr.cz/", odkazText: "ista.tacr.cz" },
+          { krok: "Návrh projektu podle zadávací dokumentace", popis: "U PP2 počítejte s vazbou na potřeby Armády ČR (aplikační garant); u PP1 se dokládá účast v EDF konsorciu." }
+        ],
+        zdroj: "tacr.gov.cz, ověřeno 9/2026 (podrobnosti vždy v zadávací dokumentaci konkrétní soutěže)."
+      },
+      {
+        id: "optak-deeptech",
+        programy: ["optak-deeptech"],
+        nazev: "Podání do OP TAK (monitorovací systém IS KP21+)",
+        kroky: [
+          { krok: "Sledujte vyhlášení výzvy", popis: "Výzvy aktivity Aplikace/DEEP TECH na optak.gov.cz; výzva IV proběhla, další zatím nevyhlášena.", odkaz: "https://optak.gov.cz/", odkazText: "optak.gov.cz", obrazek: "img/podani/optak.png" },
+          { krok: "Žádost přes IS KP21+", popis: "Žádosti o podporu z OP TAK se podávají elektronicky přes monitorovací systém IS KP21+ (vyžaduje elektronický podpis) [OVĚŘIT u konkrétní výzvy].", odkaz: "https://iskp21.mssf.cz/", odkazText: "iskp21.mssf.cz" },
+          { krok: "Využijte regionální kancelář CzechInvest", popis: "S přípravou žádosti do OP TAK pomáhají regionální kanceláře CzechInvest – propojíme vás." }
+        ],
+        zdroj: "optak.gov.cz, ověřeno 9/2026."
+      }
+    ],
     checklisty: {
       diana: [
         "Přihláška reaguje na konkrétní vypsanou challenge (ne obecně)",
