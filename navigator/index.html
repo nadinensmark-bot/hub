@@ -10,6 +10,7 @@
 <script src="kb.js"></script>
 <script src="kb-en.js"></script>
 <script src="vyzvy.js"></script>
+<script src="weby.js"></script>
 <script src="config.js"></script>
 <style>
 :root{
@@ -1256,6 +1257,14 @@ function sestavIndexKB(kb){
     text: d.defence.join(" ") + " " + d.komercni.map(x => x.sektor + " " + x.useCase).join(" "),
     ukazka: d.defence.slice(0,2).join("; ") + " ↔ " + d.komercni.slice(0,2).map(x=>x.sektor).join(", "),
     route: { view: "dualuse", duTab: "preklad", domena: d.id }
+  }));
+  // obsah webů programů (generuje denně GitHub Action z data/weby.csv)
+  (((window.DH_WEBY || {}).polozky) || []).forEach(w => docs.push({
+    titul: w.titul || w.url,
+    stitek: state.lang === "en" ? (w.stitekEn || "website") : (w.stitekCs || "web"),
+    text: w.text || "",
+    ukazka: String(w.text || "").slice(0, 160) + (w.stazeno ? " (" + (state.lang === "en" ? "fetched " : "staženo ") + w.stazeno + ")" : ""),
+    route: w.program ? { view: "program", param: w.program } : { view: "programy" }
   }));
   ((kb.ukrajina || {}).cesty || []).forEach(c => docs.push({
     titul: c.nazev, stitek: state.lang === "en" ? "Ukraine/testing" : "Ukrajina/testování",
