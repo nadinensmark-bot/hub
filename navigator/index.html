@@ -274,6 +274,10 @@ cs: {
   duKdy:"Kdy se týká:", duAkce:"Co udělat:",
   duZnovu:"Vyplnit znovu", duTestNedokonceno:"Verdikt se zobrazí po zodpovězení všech otázek.",
   ano:"Ano", ne:"Ne", nevim:"Nevím",
+  duPopisAuto:"Když popíšete svůj use case, doména výše se vybere sama – a na otázky odpovídá poradce v okně níže.",
+  miniPoradce:"Zeptejte se poradce (bez AI – odpovídá ze znalostní báze)",
+  miniPlaceholderDu:"Např.: jaká jsem kategorie? co je vývozní povolení?…",
+  miniPlaceholderPri:"Např.: kde najdu hodnoticí kritéria? kdy je uzávěrka?…",
   duSmer:"Směr překladu",
   duD2K:"Obranný → komerční", duD2Ksub:"Máme defence use case, hledáme civilní trh",
   duK2D:"Komerční → obranný", duK2Dsub:"Máme civilní produkt, chceme do defence",
@@ -394,6 +398,10 @@ en: {
   duKdy:"When it applies:", duAkce:"What to do:",
   duZnovu:"Fill in again", duTestNedokonceno:"The verdict appears once all questions are answered.",
   ano:"Yes", ne:"No", nevim:"Not sure",
+  duPopisAuto:"When you describe your use case, the domain above picks itself – and you can ask questions in the advisor box below.",
+  miniPoradce:"Ask the advisor (no AI – answers from the knowledge base)",
+  miniPlaceholderDu:"E.g.: which category am I? what is an export licence?…",
+  miniPlaceholderPri:"E.g.: where do I find the evaluation criteria? when is the deadline?…",
   duSmer:"Translation direction",
   duD2K:"Defence → commercial", duD2Ksub:"We have a defence use case, looking for a civilian market",
   duK2D:"Commercial → defence", duK2Dsub:"We have a civilian product, we want into defence",
@@ -836,6 +844,9 @@ function vPrihlaska(el){
   });
   el.appendChild(chk);
 
+  // interaktivní poradce přímo u přihlášky – zná vybraný program
+  vlozMiniPoradce(el, kb, "prihlaska", t("miniPlaceholderPri"), sel || null);
+
   el.insertAdjacentHTML("beforeend",
     `<div class="card" style="background:var(--blueSoft);border-color:#C9D8F2">${t("priNez",{k:esc(kb.meta.kontakt)})}</div>`);
 }
@@ -853,6 +864,7 @@ function vDualUse(el){
        <div class="subtab ${state.duTab==="preklad"?"active":""}" onclick="state.duTab='preklad';save();go('dualuse')">${esc(t("duTabPreklad"))}</div>
      </div>`);
   if(state.duTab==="test") renderDuTest(el, kb); else renderPrekladac(el, kb);
+  vlozMiniPoradce(el, kb, "du_" + state.duTab, t("miniPlaceholderDu"), null);
 }
 
 // ---------- 4a) test „jste dual-use?" – podle kontrolních seznamů ----------
@@ -1180,7 +1192,8 @@ function renderPrekladac(el, kb){
         ${du.domeny.map(d=>`<option value="${esc(d.id)}" ${d.id===s.domena?"selected":""}>${esc(d.nazev)}</option>`).join("")}
       </select>
       <div class="kicker" style="margin:16px 0 8px">${esc(t("duUseCase"))}</div>
-      <textarea rows="3" placeholder="${esc(t("duPlaceholder"))}" onchange="state.du.popis=this.value;save()">${esc(s.popis)}</textarea>
+      <textarea rows="3" placeholder="${esc(t("duPlaceholder"))}" onchange="state.du.popis=this.value;const d=duNajdiDomenu(this.value,KB());if(d){state.du.domena=d;}save();go('dualuse')">${esc(s.popis)}</textarea>
+      <div style="color:var(--muted);font-size:11.5px;margin-top:6px">${esc(t("duPopisAuto"))}</div>
     </div>`);
 
   if(!s.domena) {
@@ -1398,6 +1411,86 @@ function hledejKB(docs, dotaz){
     for(const w of slova){ if(tb.includes(w)) skore += 3; if(xb.includes(w)) skore += 1; }
     return { d, skore };
   }).filter(x => x.skore > 0).sort((a, b) => b.skore - a.skore).slice(0, 5);
+}
+
+// ---------- rozpoznání domény překladače z volného textu ----------
+const DU_DOMENA_SYN = {
+  senzory: ["senzor","kamer","radar","termo","lidar","sonar","noktoviz","optick"],
+  autonomie: ["dron","uav","robot","autonom","bezpilot","kvadrokopt","rover"],
+  ai: ["umela intel"," ai ","machine learning","strojove ucen","analyz dat","algoritm","llm"],
+  komunikace: ["komunikac","radio","sifr","krypt","anten","5g","mesh","vysilac"],
+  kyber: ["kyber","cyber","malware","penetrac","zabezpec","utok","firewall"],
+  space: ["satelit","vesmir","kosm","navigac","gps","gnss","druzice"],
+  materialy: ["material","slitin","kompozit","3d tisk","aditivni","povlak","vyrob"],
+  energie: ["energi","bateri","pohon","vodik","palivo","akumulator"],
+  zdravi: ["medic","zdravot","cbrn","biotech","trauma","zranen","dekontamin"],
+  simulace: ["simulac","vycvik","trenaz","vr ","virtualni","digitalni dvojce"]
+};
+function duNajdiDomenu(text, kb){
+  const q = " " + bezDiakritiky(text) + " ";
+  let nej = null, nejSkore = 0;
+  kb.dualUse.domeny.forEach(d => {
+    let s = 0;
+    for(const syn of (DU_DOMENA_SYN[d.id]||[])){ if(q.includes(syn)) s += 3; }
+    const txt = bezDiakritiky(d.nazev + " " + (d.defence||[]).join(" ") + " " + (d.komercni||[]).map(x=>x.sektor+" "+x.useCase).join(" "));
+    for(const w of q.split(/[^a-z0-9]+/)){ if(w.length > 4 && txt.includes(w)) s += 1; }
+    if(s > nejSkore){ nej = d.id; nejSkore = s; }
+  });
+  return nejSkore >= 2 ? nej : null;
+}
+
+// ---------- mini-poradce: ptací pole vložené do modulů (bez AI) ----------
+// Stejný mozek jako chat v Poradci; historie se drží per záložka.
+function vlozMiniPoradce(el, kb, klic, placeholder, kontextProgram){
+  const docs = sestavIndexKB(kb);
+  if(!state.miniHist) state.miniHist = {};
+  const hist = state.miniHist[klic] = state.miniHist[klic] || [];
+  const box = document.createElement("div");
+  box.className = "card";
+  box.innerHTML = `<div class="kicker" style="margin-bottom:6px">${esc(t("miniPoradce"))}</div>
+    <div class="miniOkno cscroll" style="display:flex;flex-direction:column;gap:8px;max-height:320px;overflow-y:auto"></div>
+    <div style="display:flex;gap:9px;margin-top:8px">
+      <input type="text" class="miniVstup" placeholder="${esc(placeholder)}" style="flex:1" maxlength="300">
+      <button class="btn miniOdeslat" style="padding:9px 16px">${esc(t("porOdeslat"))}</button>
+    </div>`;
+  const okno = box.querySelector(".miniOkno");
+  const vykresli = z => {
+    if(z.role === "user"){
+      okno.insertAdjacentHTML("beforeend", `<div style="align-self:flex-end;background:var(--blue);color:#fff;border-radius:12px 12px 3px 12px;padding:8px 12px;font-size:13px;max-width:85%">${esc(z.text)}</div>`);
+      return;
+    }
+    const b = document.createElement("div");
+    b.style.cssText = "align-self:flex-start;background:var(--mist);border-radius:12px 12px 12px 3px;padding:9px 12px;font-size:13px;max-width:92%;line-height:1.55";
+    b.innerHTML = mdHtml(z.text);
+    (z.tlacitka||[]).forEach(tl=>{
+      if(!tl.route) return;
+      const btn = document.createElement("button");
+      btn.className = "btn ghost";
+      btn.style.cssText = "padding:5px 11px;font-size:11.5px;background:#fff;margin:6px 6px 0 0";
+      btn.textContent = tl.t;
+      btn.onclick = ()=>aplikujRoute(tl.route);
+      b.appendChild(btn);
+    });
+    okno.appendChild(b);
+  };
+  hist.forEach(vykresli);
+  const vstup = box.querySelector(".miniVstup");
+  const posli = ()=>{
+    const q = vstup.value.trim();
+    if(!q) return;
+    vstup.value = "";
+    if(kontextProgram) state.botKontext = kontextProgram;
+    const r = botOdpoved(q, kb, docs);
+    hist.push({ role:"user", text:q });
+    hist.push({ role:"bot", text:r.text, tlacitka:(r.tlacitka||[]).filter(x=>x.route) });
+    while(hist.length > 14) hist.shift();
+    save();
+    vykresli(hist[hist.length-2]); vykresli(hist[hist.length-1]);
+    okno.scrollTop = okno.scrollHeight;
+  };
+  box.querySelector(".miniOdeslat").onclick = posli;
+  vstup.addEventListener("keydown", e=>{ if(e.key === "Enter") posli(); });
+  el.appendChild(box);
 }
 
 // ---------- skriptovaný chatbot (bez AI): intenty nad znalostní bází ----------
