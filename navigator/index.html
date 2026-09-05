@@ -51,6 +51,7 @@ main{flex:1;overflow-y:auto;padding:34px 40px 60px}
 .tag.equity{background:var(--claySoft);color:var(--clay)}
 .tag.akcelerator{background:var(--blueSoft);color:var(--blue)}
 .tag.mix{background:#EFEAF7;color:#6B4BAA}
+.tag.pujcky{background:var(--mist);color:var(--muted)}
 .tag.overit{background:#FDF3DC;color:#9A7B1E}
 .opt{display:block;width:100%;text-align:left;background:var(--paper);border:1.5px solid var(--line);border-radius:13px;padding:14px 16px;margin-bottom:9px;cursor:pointer;font-family:'IBM Plex Sans',sans-serif;font-size:14px;color:var(--navy)}
 .opt:hover{border-color:var(--blue);background:var(--blueSoft)}
@@ -171,9 +172,9 @@ cs: {
   nav:{wizard:"Průvodce",programy:"Programy",vyzvy:"Výzvy",prihlaska:"Přihláška",dualuse:"Dual-use",kb:"Knowledge base"},
   kontaktKicker:"Kontakt",
   kontaktText:"Nevíte si rady? Tým Defence Hubu vám pomůže osobně – s výběrem programu i s přihláškou.",
-  typ:{grant:"Grant",equity:"Equity",akcelerator:"Akcelerátor",mix:"Grant + více"},
+  typ:{grant:"Grant",equity:"Equity",akcelerator:"Akcelerátor",mix:"Grant + více",pujcky:"Půjčky státům"},
   typHledam:{grant:"grant",equity:"investici",akcelerator:"akceleraci"},
-  typNabizi:{grant:"grant",equity:"equity investici",akcelerator:"akceleraci"},
+  typNabizi:{grant:"grant",equity:"equity investici",akcelerator:"akceleraci",pujcky:"půjčky státům"},
   zamereni:{defence:"obranné",dual:"dual-use",civil:"civilní"},
   zamereniJine:{defence:"čistě obranné",dual:"dual-use",civil:"výhradně civilní"},
   overit:"ověřit", overitTitle:"Částku/termín je potřeba ověřit proti oficiálnímu zdroji",
@@ -182,6 +183,9 @@ cs: {
   wizSub:"Odpovězte na {n} otázek. Průvodce porovná váš profil se znalostní bází Defence Hubu a seřadí programy podle vhodnosti. Nic se nikam neodesílá – vše zůstává ve vašem prohlížeči.",
   znovu:"Začít znovu", otazka:"Otázka {n}",
   vysledky:"Doporučené programy", vysledkySub:"seřazeno podle shody s vaším profilem",
+  wizZpet:"← Zpět", wizUpravit:"Upravit odpovědi",
+  kdeKriteriaL:"Kde najít výzvu a hodnoticí kritéria",
+  duSpec:"<strong style=\"color:var(--navy)\">Máte hotovou technickou specifikaci?</strong> Nemusíte se testem trápit – pošlete ji Defence Hubu a projdeme zatřídění s vámi. Připravujeme verzi, kde specifikaci rovnou nahrajete a systém navrhne zatřídění automaticky (vyžaduje serverovou část – další fáze).",
   detailBtn:"Detail programu", prihlaskaBtn:"Jak napsat přihlášku →",
   dalsiKrok:"Další krok:", dalsiKrokText:"výsledek je orientační vodítko, ne rozhodnutí.",
   sZamereniOk:"Zaměření programu odpovídá ({z})", sDualOk:"Program bere dual-use technologie",
@@ -247,9 +251,9 @@ en: {
   nav:{wizard:"Wizard",programy:"Programmes",vyzvy:"Open calls",prihlaska:"Application",dualuse:"Dual-use",kb:"Knowledge base"},
   kontaktKicker:"Contact",
   kontaktText:"Not sure? The Defence Hub team will help you personally – with programme choice and the application.",
-  typ:{grant:"Grant",equity:"Equity",akcelerator:"Accelerator",mix:"Grant + more"},
+  typ:{grant:"Grant",equity:"Equity",akcelerator:"Accelerator",mix:"Grant + more",pujcky:"Loans to states"},
   typHledam:{grant:"a grant",equity:"an investment",akcelerator:"acceleration"},
-  typNabizi:{grant:"a grant",equity:"an equity investment",akcelerator:"acceleration"},
+  typNabizi:{grant:"a grant",equity:"an equity investment",akcelerator:"acceleration",pujcky:"loans to states"},
   zamereni:{defence:"defence",dual:"dual-use",civil:"civilian"},
   zamereniJine:{defence:"purely defence",dual:"dual-use",civil:"exclusively civilian"},
   overit:"verify", overitTitle:"Amount/date needs verification against the official source",
@@ -258,6 +262,9 @@ en: {
   wizSub:"Answer {n} questions. The wizard compares your profile against the Defence Hub knowledge base and ranks the programmes by fit. Nothing is sent anywhere – everything stays in your browser.",
   znovu:"Start over", otazka:"Question {n}",
   vysledky:"Recommended programmes", vysledkySub:"ranked by fit with your profile",
+  wizZpet:"← Back", wizUpravit:"Edit answers",
+  kdeKriteriaL:"Where to find the call and evaluation criteria",
+  duSpec:"<strong style=\"color:var(--navy)\">Already have a technical specification?</strong> You don't have to struggle through the test – send it to the Defence Hub and we'll go through the classification with you. We are preparing a version where you upload the specification and the system proposes a classification automatically (requires a server component – a later phase).",
   detailBtn:"Programme detail", prihlaskaBtn:"How to write the application →",
   dalsiKrok:"Next step:", dalsiKrokText:"the result is an indicative guide, not a decision.",
   sZamereniOk:"Programme focus matches ({z})", sDualOk:"The programme accepts dual-use technologies",
@@ -422,33 +429,56 @@ function vWizard(el){
 
   header(el, t("wizKicker"), t("wizTitle"), t("wizSub",{n:otazky.length}));
 
+  // aktuální krok: uložený, jinak první nezodpovězená otázka
+  let krok = state.wizKrok;
+  if(typeof krok !== "number"){
+    const prvni = otazky.findIndex(q=>!state.odpovedi[q.id]);
+    krok = prvni === -1 ? otazky.length : prvni;
+  }
+  krok = Math.max(0, Math.min(krok, otazky.length));
+  if(krok >= otazky.length && !hotovo){
+    krok = otazky.findIndex(q=>!state.odpovedi[q.id]);
+  }
+
   el.insertAdjacentHTML("beforeend",
     `<div style="display:flex;align-items:center;gap:14px;margin-bottom:18px">
        <div class="bar" style="flex:1"><div style="width:${(zodpovezeno/otazky.length)*100}%"></div></div>
        <div class="mono" style="font-size:11px;color:var(--muted)">${zodpovezeno}/${otazky.length}</div>
-       ${zodpovezeno?`<button class="btn ghost" style="padding:7px 14px;font-size:12px" onclick="state.odpovedi={};save();go('wizard')">${esc(t("znovu"))}</button>`:""}
+       ${zodpovezeno?`<button class="btn ghost" style="padding:7px 14px;font-size:12px" onclick="state.odpovedi={};state.wizKrok=0;save();go('wizard')">${esc(t("znovu"))}</button>`:""}
      </div>`);
 
-  otazky.forEach((o,i)=>{
+  if(krok < otazky.length){
+    // jedna otázka na obrazovce; zodpovězené mizí, zpět se dá vracet
+    const o = otazky[krok];
     const odp = state.odpovedi[o.id];
-    const prvniNezodpovezena = otazky.findIndex(q=>!state.odpovedi[q.id]);
-    if(!odp && i>prvniNezodpovezena && prvniNezodpovezena!==-1) return; // ukazuj postupně
     const div = document.createElement("div");
-    div.className = "card";
-    div.innerHTML = `<div class="kicker" style="margin-bottom:4px">${esc(t("otazka",{n:i+1}))}</div>
+    div.className = "card fade";
+    div.innerHTML = `<div class="kicker" style="margin-bottom:4px">${esc(t("otazka",{n:krok+1}))} / ${otazky.length}</div>
       <h3 style="font-size:16px;margin:0 0 ${o.napoveda?"4":"12"}px">${esc(o.otazka)}</h3>
       ${o.napoveda?`<div style="color:var(--muted);font-size:12.5px;margin-bottom:12px">${esc(o.napoveda)}</div>`:""}`;
     o.moznosti.forEach(m=>{
       const b = document.createElement("button");
       b.className = "opt" + (odp===m.v ? " sel":"");
       b.innerHTML = `<strong>${esc(m.t)}</strong>${m.p?`<small>${esc(m.p)}</small>`:""}`;
-      b.onclick = ()=>{ state.odpovedi[o.id]=m.v; save(); go("wizard"); };
+      b.onclick = ()=>{ state.odpovedi[o.id]=m.v; state.wizKrok=krok+1; save(); go("wizard"); };
       div.appendChild(b);
     });
+    if(krok > 0){
+      const back = document.createElement("button");
+      back.className = "btn ghost";
+      back.style.cssText = "margin-top:6px;padding:8px 16px;font-size:12.5px";
+      back.textContent = t("wizZpet");
+      back.onclick = ()=>{ state.wizKrok = krok-1; save(); go("wizard"); };
+      div.appendChild(back);
+    }
     el.appendChild(div);
-  });
+    return;
+  }
 
-  if(hotovo) renderVysledky(el, kb);
+  // všechny otázky zodpovězené → jen výsledky
+  el.insertAdjacentHTML("beforeend",
+    `<div style="margin-bottom:14px"><button class="btn ghost" style="padding:8px 16px;font-size:12.5px" onclick="state.wizKrok=${otazky.length-1};save();go('wizard')">${esc(t("wizUpravit"))}</button></div>`);
+  renderVysledky(el, kb);
 }
 
 function skoreProgramu(p, o){
@@ -558,6 +588,7 @@ function vProgramDetail(el, id){
         ${aktivniVyzvy(kb, p.id).map(x=>`<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:4px 0;font-size:13px"><span>${esc(x.v.nazev)}</span><span class="tag" style="background:${x.s.bg};color:${x.s.barva}">${esc(x.s.text)}</span></div>`).join("")}
       </div>`:""}
     </div>
+    ${p.kdeKriteria?`<div class="card"><div class="kicker" style="margin-bottom:8px">${esc(t("kdeKriteriaL"))}</div><div style="line-height:1.55;font-size:13.5px">${esc(p.kdeKriteria)}</div></div>`:""}
     <div class="card"><div class="kicker" style="margin-bottom:8px">${esc(t("proKoho"))}</div><div style="line-height:1.55">${esc(p.proKoho)}</div></div>
     <div class="card"><div class="kicker" style="margin-bottom:8px">${esc(t("jakFunguje"))}</div>
       ${p.jakFunguje.map(x=>`<div style="display:flex;gap:9px;padding:4px 0;line-height:1.5"><span style="color:var(--blue)">›</span><span>${esc(x)}</span></div>`).join("")}
@@ -637,6 +668,15 @@ function vPrihlaska(el){
        </select>
      </div>`);
 
+  const selProgram = kb.programy.find(p=>p.id===sel);
+  if(selProgram && selProgram.kdeKriteria){
+    el.insertAdjacentHTML("beforeend",
+      `<div class="card" style="background:var(--blueSoft);border-color:#C9D8F2">
+         <div class="kicker" style="margin-bottom:6px;color:var(--blue)">${esc(t("kdeKriteriaL"))}</div>
+         <div style="line-height:1.55;font-size:13.5px">${esc(selProgram.kdeKriteria)}</div>
+       </div>`);
+  }
+
   const kroky = document.createElement("div");
   kroky.className = "card";
   kroky.innerHTML = `<div class="kicker" style="margin-bottom:10px">${esc(t("priZasady"))}</div>`;
@@ -696,6 +736,7 @@ function renderDuTest(el, kb){
   const a = s.odpovedi;
 
   el.insertAdjacentHTML("beforeend", `<div class="card" style="color:var(--muted);font-size:12.5px;line-height:1.55">${esc(test.uvod)}</div>`);
+  el.insertAdjacentHTML("beforeend", `<div class="card" style="background:var(--blueSoft);border-color:#C9D8F2;font-size:12.5px;line-height:1.55">${t("duSpec")}</div>`);
 
   function ynRow(container, val, onPick){
     const yn = document.createElement("div");
