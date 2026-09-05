@@ -1443,9 +1443,21 @@ function backendUrl(){ return (window.DH_CONFIG && window.DH_CONFIG.backendUrl |
 // Režim AI poradce: "backend" (ostrý server), "demo" (Claude runtime artefaktu,
 // jen když si ho uživatel zapne přepínačem) – jinak null = chat bez AI (výchozí).
 function aiRezim(){
-  if(backendUrl()) return "backend";
+  // backend počítá jako AI jen když server hlásí, že AI opravdu má
+  // (nasazení bez klíče = jen sběr kontaktů, chat zůstává bez AI)
+  if(backendUrl() && window.DH_BACKEND && (window.DH_BACKEND.klicNastaven || window.DH_BACKEND.mock)) return "backend";
   if(window.DH_AI_RUNTIME && state.porAI) return "demo";
   return null;
+}
+window.DH_BACKEND = null;
+function zkontrolujBackend(){
+  const u = backendUrl();
+  if(!u) return;
+  fetch(u + "/api/health").then(r=>r.json()).then(d=>{
+    window.DH_BACKEND = d;
+    aplikujAdmin(); // překreslí badge Poradce (AI/BETA)
+    if(state.view === "poradce") go("poradce");
+  }).catch(()=>{ window.DH_BACKEND = { ok:false }; });
 }
 
 // mini-markdown: escapuje HTML a převede **tučné**, nadpisy a odrážky
@@ -2210,6 +2222,7 @@ window.addEventListener("hashchange", aplikujAdmin);
 aplikujAdmin();
 if(!state.admin && state.view === "kb") state.view = "wizard";
 applyChrome();
+zkontrolujBackend();
 go(state.view && views[state.view] ? state.view : "wizard", state.viewParam);
 </script>
 </body>

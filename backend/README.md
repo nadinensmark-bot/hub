@@ -44,6 +44,16 @@ se při startu serveru přidá do kontextu chatbota i analýzy. Obsah složky se
 nekomituje do veřejného repozitáře (interní/licencované podklady) – nahrává se
 přímo na server. Detaily v `backend/knowledge/README.md`.
 
+## Režim bez AI (jen sběr kontaktů) – zdarma
+
+Server jde nasadit i **bez Anthropic klíče**: pak funguje jen `/api/lead`
+(sběr kontaktů firem do Google tabulky) a aplikace to pozná sama přes
+`/api/health` – chat zůstane v režimu bez AI a nic se nerozbije.
+Žádný Anthropic účet, žádné náklady za dotazy; Render free tier je zdarma
+(server po ~15 min nečinnosti usne a první požadavek pak trvá ~30 s –
+pro sběr kontaktů to nevadí). AI se později zapne prostým doplněním
+`ANTHROPIC_API_KEY` v Renderu – bez zásahu do kódu.
+
 ## Řízení nákladů
 
 1. **Workspace spend limit** v [Anthropic Console](https://console.anthropic.com)
