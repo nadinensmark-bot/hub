@@ -186,6 +186,8 @@ cs: {
   konKicker:"Váš konzultant", konTitle:"Konzultant pro vaši firmu",
   konSub:"Vyplňte jednou profil firmy – konzultant sestaví akční plán, doporučí programy, pohlídá uzávěrky a předá kontakt týmu Defence Hubu.",
   konProfilNadpis:"Profil firmy", konFirma:"Název firmy", konEmail:"Kontaktní e-mail",
+  konIco:"IČO", konIcoPlaceholder:"12345678",
+  konIcoChyba:"Bez platného IČO to dál nejde – zkontrolujte prosím číslo (8 číslic).",
   konPopis:"Co děláte (technologie a klíčové vlastnosti)",
   konSouhlas:"Souhlasím, aby mě tým Defence Hubu CzechInvest kontaktoval na uvedený e-mail ohledně programů podpory. [znění souhlasu ověří právník DH]",
   konUlozit:"Uložit profil a sestavit plán",
@@ -333,6 +335,8 @@ en: {
   konKicker:"Your consultant", konTitle:"A consultant for your company",
   konSub:"Fill in your company profile once – the consultant builds an action plan, recommends programmes, watches deadlines and hands your contact to the Defence Hub team.",
   konProfilNadpis:"Company profile", konFirma:"Company name", konEmail:"Contact e-mail",
+  konIco:"Company registration number (IČO)", konIcoPlaceholder:"e.g. 12345678",
+  konIcoChyba:"A company registration number is required to continue.",
   konPopis:"What you do (technology and key properties)",
   konSouhlas:"I agree to be contacted by the Defence Hub CzechInvest team at this e-mail about support programmes. [consent wording to be reviewed by DH legal]",
   konUlozit:"Save profile and build the plan",
@@ -928,6 +932,14 @@ function vPrihlaska(el){
 // =====================================================================
 // KONZULTANT: profil firmy → akční plán, deadliny, předání kontaktu DH
 // =====================================================================
+// kontrolní součet IČO (vážený součet mod 11) – chytá překlepy
+function icoValidni(ico){
+  if(!/^\d{8}$/.test(ico)) return false;
+  let s = 0;
+  for(let i = 0; i < 7; i++) s += +ico[i] * (8 - i);
+  const z = s % 11;
+  return +ico[7] === (z === 0 ? 1 : z === 1 ? 0 : 11 - z);
+}
 function profilText(){
   const f = state.firma;
   if(!f || !f.hotovo) return "";
@@ -935,6 +947,7 @@ function profilText(){
   const en = state.lang === "en";
   return [
     f.nazev ? (en ? "Company: " : "Firma: ") + f.nazev : "",
+    f.ico ? ("IČO: " + f.ico) : "",
     (en ? "What they do: " : "Co dělá: ") + f.popis,
     (en ? "Focus: " : "Zaměření: ") + f.zamereni,
     "TRL: " + f.trl,
@@ -949,7 +962,7 @@ async function odesliLead(){
   try{
     const r = await fetch(backendUrl() + "/api/lead", {
       method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ firma: f.nazev, email: f.email, profil: profilText(), souhlas: true, lang: state.lang })
+      body: JSON.stringify({ firma: f.nazev, ico: f.ico || "", email: f.email, profil: profilText(), souhlas: true, lang: state.lang })
     });
     f.odeslano = r.ok; save();
   }catch(e){ f.odeslano = false; save(); }
@@ -963,11 +976,12 @@ function vKonzultant(el){
   const f = state.firma;
   const LBL = 'style="font-size:12px;font-weight:600;margin-bottom:5px"';
 
-  if(!f.hotovo || state.firmaEdit){
+  if(!f.hotovo || state.firmaEdit || !f.ico){
     const card = document.createElement("div");
     card.className = "card";
     card.innerHTML = `<div class="kicker" style="margin-bottom:10px">${esc(t("konProfilNadpis"))}</div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
+        <div><div ${LBL}>${esc(t("konIco"))} *</div><input type="text" id="kfIco" value="${esc(f.ico||"")}" maxlength="20" placeholder="${esc(t("konIcoPlaceholder"))}" inputmode="numeric"></div>
         <div><div ${LBL}>${esc(t("konFirma"))}</div><input type="text" id="kfNazev" value="${esc(f.nazev||"")}" maxlength="120"></div>
         <div><div ${LBL}>${esc(t("konEmail"))}</div><input type="text" id="kfEmail" value="${esc(f.email||"")}" maxlength="120" placeholder="jmeno@firma.cz"></div>
       </div>
@@ -991,6 +1005,15 @@ function vKonzultant(el){
       f.souhlas = card.querySelector("#kfSouhlas").checked;
       card.querySelectorAll("select[data-q]").forEach(s=>{ f[s.dataset.q] = s.value; });
       const msg = card.querySelector("#kfMsg");
+      // IČO je vstupenka: bez něj (nebo s překlepem) se dál nejde
+      const ico = card.querySelector("#kfIco").value.replace(/\s+/g, "");
+      const icoOk = state.lang === "en" ? ico.length >= 4 : icoValidni(ico.padStart(8, "0"));
+      if(!icoOk){
+        msg.style.color = "var(--clay)"; msg.textContent = t("konIcoChyba");
+        card.querySelector("#kfIco").focus();
+        return;
+      }
+      f.ico = state.lang === "en" ? ico : ico.padStart(8, "0");
       if(!f.popis || !f.zamereni || !f.trl || !f.velikost || !f.typ || !f.konsorcium){
         msg.style.color = "var(--clay)"; msg.textContent = t("konChybi"); return;
       }

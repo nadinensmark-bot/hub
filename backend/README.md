@@ -17,13 +17,13 @@ Malý Node.js server, který do aplikace DH Kompas přidává:
 ## Sběr leadů do Google tabulky (5 minut)
 
 1. Vytvořte Google tabulku (např. „DH Kompas – leady") se záhlavím
-   `kdy | firma | email | profil | lang`.
+   `kdy | firma | ico | email | profil | lang`.
 2. Rozšíření → Apps Script → vložte:
    ```js
    function doPost(e) {
      const d = JSON.parse(e.postData.contents);
      SpreadsheetApp.getActiveSpreadsheet().getSheets()[0]
-       .appendRow([d.kdy, d.firma, d.email, d.profil, d.lang]);
+       .appendRow([d.kdy, d.firma, d.ico, d.email, d.profil, d.lang]);
      return ContentService.createTextOutput("ok");
    }
    ```
