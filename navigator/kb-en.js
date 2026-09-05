@@ -965,6 +965,173 @@ window.DH_KB_EN = {
   },
 
   // -------------------------------------------------------------------
+  // CERTIFICATIONS AND PERMITS (catalogue with procedures; research 9/2026)
+  // -------------------------------------------------------------------
+  certifikace: {
+    uvod: "A catalogue of certifications and permits for defence and dual-use companies: what each one is, when you need it and how to apply. Always verify indicative times and costs with the authority or certification body – the Defence Hub will guide you through the whole journey.",
+    skupiny: [
+      {
+        id: "nato",
+        nazev: "NATO supply chain",
+        kdy: "You want to supply armed forces, NATO contracts, or act as a subcontractor to defence primes.",
+        polozky: [
+          {
+            id: "ncage",
+            nazev: "NCAGE code",
+            coJe: "Your company's identifier in the NATO codification system – without it, army procurement systems and NSPA can't 'see' you.",
+            kdyPotrebuji: "The first step for any supplies to armed forces and NATO contracts; a precondition for NSPA registration and item codification.",
+            trvani: "Days to weeks; free of charge.",
+            kroky: [
+              { krok: "Apply via the Czech defence standardisation office (Úř OSK SOJ)", popis: "In Czechia the NCAGE is assigned by the Ministry of Defence's standardisation, codification and quality assurance office [VERIFY the form].", odkaz: "https://urosksoj.mo.gov.cz/", odkazText: "Úř OSK SOJ", obrazek: "img/podani/urosksoj.png" },
+              { krok: "Verify in the NATO Master Catalogue", popis: "Check the assigned NCAGE in the public NMCRL." }
+            ]
+          },
+          {
+            id: "iso9001",
+            nazev: "ISO 9001",
+            coJe: "The baseline quality management certification – treated as the minimum bar for a serious defence supplier.",
+            kdyPotrebuji: "Practically always when supplying armed forces or primes; the starting point for AS9100 and AQAP.",
+            trvani: "Implementation and certification usually 3–9 months; cost depends on company size [indicative – VERIFY with a certification body].",
+            kroky: [
+              { krok: "Implement a quality management system", popis: "In-house or with a consultant: processes, documentation, responsibilities." },
+              { krok: "Pick an accredited certification body", popis: "The certificate is issued after an audit by an accredited body." }
+            ]
+          },
+          {
+            id: "as9100",
+            nazev: "AS9100 / EN 9100",
+            coJe: "The aerospace/defence extension of ISO 9001 (hardware).",
+            kdyPotrebuji: "When you manufacture hardware for aerospace/defence supply chains – primes often require it from suppliers.",
+            trvani: "Builds on ISO 9001; months [VERIFY with a certification body].",
+            kroky: [
+              { krok: "Build on ISO 9001 and add EN 9100 requirements", popis: "Certified by accredited bodies; audits are stricter than ISO 9001." }
+            ]
+          },
+          {
+            id: "nspa",
+            nazev: "NSPA registration",
+            coJe: "Entry in the supplier database of the NATO Support and Procurement Agency – NATO and many armies buy through it.",
+            kdyPotrebuji: "To take part in NSPA tenders; requires an NCAGE.",
+            trvani: "Free; online registration.",
+            kroky: [
+              { krok: "Register on the NSPA portal", popis: "Fill in the supplier profile (NCAGE needed) and select commodity areas.", odkaz: "https://www.nspa.nato.int/", odkazText: "nspa.nato.int" }
+            ]
+          },
+          {
+            id: "aqap",
+            nazev: "AQAP (2110/2310)",
+            coJe: "NATO quality requirements in specific contracts; compliance is verified by the state – Government Quality Assurance (GQA) by Úř OSK SOJ.",
+            kdyPotrebuji: "When a specific defence contract requires it – not a certificate 'in advance', it is handled per contract.",
+            trvani: "Per contract.",
+            kroky: [
+              { krok: "Clarify the contract requirement", popis: "Which AQAP the contract requires (2110 development/production, 2310 aerospace…); builds on ISO 9001/EN 9100." },
+              { krok: "Expect state quality assurance", popis: "GQA is performed by Úř OSK SOJ at your production site.", odkaz: "https://urosksoj.mo.gov.cz/", odkazText: "Úř OSK SOJ" }
+            ]
+          },
+          {
+            id: "nsn",
+            nazev: "Item codification (NSN)",
+            coJe: "Entering a specific product into the NATO catalogue (NATO Stock Number) – without an NSN, armies can't stock the item.",
+            kdyPotrebuji: "When you have a supply contract with the Czech MoD / armed forces – codification is part of the delivery.",
+            trvani: "Handled per contract; codification agencies (e.g. AURA) help prepare the data.",
+            kroky: [
+              { krok: "A MoD contract is the precondition", popis: "Codification starts from the supply contract; the office assigns the NSN (and NCAGE if needed).", odkaz: "https://urosksoj.mo.gov.cz/", odkazText: "Úř OSK SOJ" }
+            ]
+          }
+        ]
+      },
+      {
+        id: "export",
+        nazev: "Export permits",
+        kdy: "You export (or plan to export) outside Czechia/the EU – dual-use items or military material.",
+        polozky: [
+          {
+            id: "dualuse-povoleni",
+            nazev: "Dual-use export authorisation",
+            coJe: "Authorisation to export Annex I items of Regulation (EU) 2021/821 outside the EU (Annex IV also inside the EU). Types: general authorisations EU001–EU008, global and individual.",
+            kdyPotrebuji: "When your product is on the dual-use control list and crosses borders – check in our dual-use advisor.",
+            trvani: "Individual authorisation weeks to months [VERIFY with the Licensing Authority]; export records for 5 years and semi-annual reporting.",
+            kroky: [
+              { krok: "Classify the product", popis: "Use the dual-use advisor in this app; binding classification is done by the MPO Licensing Authority." },
+              { krok: "Pick the authorisation type and apply at the MPO Licensing Authority", popis: "First check whether a general authorisation EU001–EU008 covers your case (fastest route); otherwise individual/global.", odkaz: "https://www.mpo.gov.cz", odkazText: "MPO Licensing Authority", obrazek: "img/podani/mpo.png" },
+              { krok: "Set up internal compliance", popis: "Export records for at least 5 years, semi-annual reports, end-use screening (catch-all Art. 4 and 5)." }
+            ]
+          },
+          {
+            id: "vojmat-licence",
+            nazev: "Military material permit and licences",
+            coJe: "A two-stage regime under Act 38/1994: first a company permit to trade in military material, then a licence for each specific deal.",
+            kdyPotrebuji: "When the product is on the military list (Decree 210/2012) and you trade it internationally.",
+            trvani: "Permit: months (binding opinions of the foreign, defence and interior ministries); then a licence per deal. Start before the first talks with a foreign partner.",
+            kroky: [
+              { krok: "Apply for the trading permit", popis: "Filed with the MPO Licensing Authority; the office collects ministry opinions.", odkaz: "https://www.mpo.gov.cz", odkazText: "MPO Licensing Authority" },
+              { krok: "Licence per deal", popis: "With the permit, you request a licence for each contract (territory, items, volume)." }
+            ]
+          }
+        ]
+      },
+      {
+        id: "nbu",
+        nazev: "NBÚ security clearances (classified information)",
+        kdy: "Contracts where you handle classified information (Restricted / Confidential / Secret / Top Secret).",
+        polozky: [
+          {
+            id: "nbu-podnikatel",
+            nazev: "Facility security clearance (entrepreneur certificate)",
+            coJe: "Company clearance for access to classified information (industrial security, Act 412/2005). For the Restricted level a simpler regime applies.",
+            kdyPotrebuji: "From the Confidential level up – typically classified defence contracts. Don't apply 'in advance' – apply with a specific contract.",
+            trvani: "Months to over a year depending on level and form of access – plan for it.",
+            kroky: [
+              { krok: "Clarify the level and form of access", popis: "What the contract really requires – it drives the scope of the proceedings." },
+              { krok: "Download the questionnaires and prepare documents", popis: "Questionnaires and annexes are on the NBÚ website; includes a declaration releasing the tax office from confidentiality.", odkaz: "https://nbu.gov.cz/cs/roz-potrebuji-vyridit/pravnicka-osoba-prumyslova-bezpecnost", odkazText: "NBÚ – industrial security", obrazek: "img/podani/nbu.png" },
+              { krok: "File the application", popis: "In person at the NBÚ filing office, by post, or via data box." }
+            ]
+          },
+          {
+            id: "nbu-osoba",
+            nazev: "Personnel security clearance",
+            coJe: "Clearance of the specific people who work with classified information.",
+            kdyPotrebuji: "Alongside the facility clearance – people must be cleared, not just the company.",
+            trvani: "Months, depending on the level.",
+            kroky: [
+              { krok: "Application + personal questionnaire", popis: "Forms and procedure on the NBÚ website.", odkaz: "https://nbu.gov.cz", odkazText: "nbu.gov.cz" }
+            ]
+          }
+        ]
+      },
+      {
+        id: "civil",
+        nazev: "Civilian certifications",
+        kdy: "You (also) sell on the civilian EU market – dual-use companies typically need both worlds.",
+        polozky: [
+          {
+            id: "ce",
+            nazev: "CE marking",
+            coJe: "Declaration of conformity with EU harmonisation legislation (EMC, RED, machinery…). Purely military material typically carries no CE (exclusions, Art. 346 TFEU); dual-use and commercial products do.",
+            kdyPotrebuji: "Before placing a product on the EU market.",
+            trvani: "Weeks to months depending on the directives and notified-body involvement.",
+            kroky: [
+              { krok: "Determine which legislation applies", popis: "EMC, RED (radio), LVD, machinery… – drives the tests and technical documentation." },
+              { krok: "Conformity assessment and EU declaration of conformity", popis: "Self-assessment or via a notified body (per the legislation); then affix CE." }
+            ]
+          },
+          {
+            id: "iso27001",
+            nazev: "ISO 27001 / cybersecurity (NIS2)",
+            coJe: "Information security management certification; NIS2 as transposed into Czech law adds obligations for regulated entities [VERIFY impact on your company].",
+            kdyPotrebuji: "Software and data products for the state and critical infrastructure; large customers often require it in tenders.",
+            trvani: "Months to implement; certification via an accredited body.",
+            kroky: [
+              { krok: "Implement an ISMS and certify", popis: "Similar to ISO 9001 – accredited body after an audit; verify NIS2 duties with NÚKIB.", odkaz: "https://nukib.gov.cz", odkazText: "nukib.gov.cz" }
+            ]
+          }
+        ]
+      }
+    ],
+    zdroj: "Desk research from public sources 9/2026 (nbu.gov.cz, urosksoj.mo.gov.cz, mpo.gov.cz, nspa.nato.int); verify indicative times and costs with the authorities and certification bodies. The Defence Hub will guide you through."
+  },
+
+  // -------------------------------------------------------------------
   // UKRAINE AND TESTING (desk research from public sources, 9/2026)
   // -------------------------------------------------------------------
   ukrajina: {

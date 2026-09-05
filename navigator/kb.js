@@ -994,6 +994,173 @@ window.DH_KB = {
   // WIZARD – otázky průvodce
   // -------------------------------------------------------------------
   // -------------------------------------------------------------------
+  // CERTIFIKACE A POVOLENÍ (katalog s postupy; rešerše 9/2026)
+  // -------------------------------------------------------------------
+  certifikace: {
+    uvod: "Katalog certifikací a povolení pro defence a dual-use firmy: co to je, kdy to potřebujete a jak o to zažádat. Orientační časy a ceny vždy ověřte u úřadu či certifikační společnosti – Defence Hub pomůže s celou cestou.",
+    skupiny: [
+      {
+        id: "nato",
+        nazev: "NATO dodavatelský řetězec",
+        kdy: "Chcete dodávat armádám, do NATO zakázek nebo jako subdodavatel větších obranných firem.",
+        polozky: [
+          {
+            id: "ncage",
+            nazev: "NCAGE kód",
+            coJe: "Identifikátor firmy v kodifikačním systému NATO – obdoba IČO pro NATO svět. Bez něj vás nákupní systémy armád a NSPA „nevidí“.",
+            kdyPotrebuji: "První krok pro jakékoli dodávky armádám a do NATO zakázek; podmínka registrace u NSPA a kodifikace položek.",
+            trvani: "Dny až týdny; zdarma.",
+            kroky: [
+              { krok: "Zažádejte u Úř OSK SOJ", popis: "NCAGE v ČR přiděluje Úřad pro obrannou standardizaci, katalogizaci a státní ověřování jakosti (Ministerstvo obrany). Postup a kontakty na webu úřadu [OVĚŘIT formulář].", odkaz: "https://urosksoj.mo.gov.cz/", odkazText: "Úř OSK SOJ", obrazek: "img/podani/urosksoj.png" },
+              { krok: "Ověřte přidělení v databázi NATO", popis: "Přidělený NCAGE si ověříte ve veřejném NATO Master Catalogue (NMCRL)." }
+            ]
+          },
+          {
+            id: "iso9001",
+            nazev: "ISO 9001",
+            coJe: "Základní certifikace systému řízení kvality. V obranném světě se bere jako minimum serióznosti dodavatele.",
+            kdyPotrebuji: "Prakticky vždy, když chcete dodávat armádám nebo velkým integrátorům; výchozí bod pro AS9100 i AQAP.",
+            trvani: "Zavedení a certifikace obvykle 3–9 měsíců; cena dle velikosti firmy [orientačně desítky až stovky tisíc Kč – OVĚŘIT u certifikační společnosti].",
+            kroky: [
+              { krok: "Zaveďte systém řízení kvality", popis: "Interně nebo s poradcem: procesy, dokumentace, odpovědnosti." },
+              { krok: "Vyberte akreditovanou certifikační společnost", popis: "Certifikát vydává akreditovaný certifikační orgán (v ČR akreditace ČIA) po auditu." }
+            ]
+          },
+          {
+            id: "as9100",
+            nazev: "AS9100 / EN 9100",
+            coJe: "Nadstavba ISO 9001 pro letecký, kosmický a obranný průmysl (hardware).",
+            kdyPotrebuji: "Když vyrábíte hardware pro aerospace/defence dodavatelské řetězce – primes ji od dodavatelů často vyžadují.",
+            trvani: "Navazuje na ISO 9001; měsíce [OVĚŘIT u certifikační společnosti].",
+            kroky: [
+              { krok: "Postavte na ISO 9001 a doplňte požadavky EN 9100", popis: "Certifikují akreditované společnosti; audity jsou přísnější než u ISO 9001." }
+            ]
+          },
+          {
+            id: "nspa",
+            nazev: "Registrace u NSPA",
+            coJe: "Zápis do databáze dodavatelů NATO Support and Procurement Agency – přes ni nakupuje NATO a řada armád.",
+            kdyPotrebuji: "Chcete-li se účastnit tendrů NSPA; podmínkou je NCAGE.",
+            trvani: "Zdarma; online registrace.",
+            kroky: [
+              { krok: "Zaregistrujte se na portálu NSPA", popis: "Vyplníte profil dodavatele (potřebujete NCAGE) a vyberete komoditní oblasti.", odkaz: "https://www.nspa.nato.int/", odkazText: "nspa.nato.int" }
+            ]
+          },
+          {
+            id: "aqap",
+            nazev: "AQAP (2110/2310)",
+            coJe: "Požadavky NATO na řízení kvality v konkrétních kontraktech; plnění ověřuje stát – státní ověřování jakosti (GQA) dělá Úř OSK SOJ.",
+            kdyPotrebuji: "Když to vyžaduje konkrétní obranný kontrakt – nejde o certifikát „do zásoby“, řeší se ke kontraktu.",
+            trvani: "Dle kontraktu.",
+            kroky: [
+              { krok: "Vyjasněte požadavek v kontraktu", popis: "Který AQAP (2110 vývoj/výroba, 2310 aerospace…) kontrakt vyžaduje; navazuje na ISO 9001/EN 9100." },
+              { krok: "Počítejte se státním ověřováním jakosti", popis: "GQA provádí Úř OSK SOJ u vás ve výrobě.", odkaz: "https://urosksoj.mo.gov.cz/", odkazText: "Úř OSK SOJ" }
+            ]
+          },
+          {
+            id: "nsn",
+            nazev: "Kodifikace položky (NSN)",
+            coJe: "Zařazení konkrétního výrobku do katalogu NATO (NATO Stock Number) – bez NSN armády položku nenakoupí do zásob.",
+            kdyPotrebuji: "Když máte smlouvu o dodávkách materiálu pro MO ČR / armádu – kodifikace je součástí dodávky.",
+            trvani: "Řeší se ke konkrétní smlouvě; s přípravou dat pomáhají kodifikační agentury (např. AURA).",
+            kroky: [
+              { krok: "Podmínkou je smlouva s MO", popis: "Kodifikaci zahajuje smlouva o dodávce; úřad v řízení přidělí NSN (a případně NCAGE).", odkaz: "https://urosksoj.mo.gov.cz/", odkazText: "Úř OSK SOJ" }
+            ]
+          }
+        ]
+      },
+      {
+        id: "export",
+        nazev: "Exportní povolení",
+        kdy: "Vyvážíte (nebo plánujete vývoz) mimo ČR/EU – dual-use položky nebo vojenský materiál.",
+        polozky: [
+          {
+            id: "dualuse-povoleni",
+            nazev: "Vývozní povolení dual-use",
+            coJe: "Povolení k vývozu položek přílohy I nařízení (EU) 2021/821 mimo EU (u přílohy IV i uvnitř EU). Typy: všeobecná povolení EU001–EU008, souhrnná a individuální.",
+            kdyPotrebuji: "Když je váš produkt na kontrolním seznamu dual-use a míří za hranice – ověříte v našem dual-use poradci.",
+            trvani: "Individuální povolení týdny až měsíce [OVĚŘIT u Licenční správy]; evidence vývozů 5 let a pololetní hlášení.",
+            kroky: [
+              { krok: "Zatřiďte produkt", popis: "Projděte dual-use poradce v této aplikaci; závazné zatřídění a stanovisko dělá Licenční správa MPO." },
+              { krok: "Zvolte typ povolení a podejte žádost u Licenční správy MPO", popis: "Nejdřív zkontrolujte, jestli se na váš případ nevztahuje všeobecné povolení EU001–EU008 (nejrychlejší cesta); jinak individuální/souhrnné povolení.", odkaz: "https://www.mpo.gov.cz", odkazText: "Licenční správa MPO", obrazek: "img/podani/mpo.png" },
+              { krok: "Nastavte interní compliance", popis: "Evidence vývozů min. 5 let, pololetní hlášení MPO, prověřování koncového užití (catch-all čl. 4 a 5 nařízení)." }
+            ]
+          },
+          {
+            id: "vojmat-licence",
+            nazev: "Povolení a licence na vojenský materiál",
+            coJe: "Dvoustupňový režim podle zákona 38/1994 Sb.: nejdřív povolení k obchodování s vojenským materiálem (firma), pak licence na každý konkrétní obchod.",
+            kdyPotrebuji: "Když je produkt na seznamu vojenského materiálu (vyhláška 210/2012 Sb.) a chcete s ním obchodovat se zahraničím.",
+            trvani: "Povolení: měsíce (závazná stanoviska MZV, MO a MV); licence pak ke každému obchodu. Řešte před prvním jednáním se zahraničním partnerem.",
+            kroky: [
+              { krok: "Žádost o povolení k obchodování", popis: "Podává se u Licenční správy MPO; úřad si vyžádá stanoviska MZV, MO a MV.", odkaz: "https://www.mpo.gov.cz", odkazText: "Licenční správa MPO" },
+              { krok: "Licence na konkrétní obchod", popis: "S povolením žádáte o licenci ke každému kontraktu (teritorium, položky, objem)." }
+            ]
+          }
+        ]
+      },
+      {
+        id: "nbu",
+        nazev: "Prověrky NBÚ (utajované informace)",
+        kdy: "Zakázky, kde přijdete do styku s utajovanými informacemi (stupně Vyhrazené / Důvěrné / Tajné / Přísně tajné).",
+        polozky: [
+          {
+            id: "nbu-podnikatel",
+            nazev: "Osvědčení podnikatele",
+            coJe: "Osvědčení firmy pro přístup k utajovaným informacím (průmyslová bezpečnost, zákon 412/2005 Sb.). Pro stupeň Vyhrazené stačí jednodušší režim bez plného řízení.",
+            kdyPotrebuji: "Od stupně Důvěrné výš – typicky obranné zakázky s utajením. Nežádejte „do zásoby“, ale s konkrétní zakázkou.",
+            trvani: "Měsíce až přes rok podle stupně a formy přístupu – počítejte s tím v harmonogramu.",
+            kroky: [
+              { krok: "Ujasněte stupeň a formu přístupu", popis: "Co zakázka skutečně vyžaduje (stupeň utajení; jestli utajovaná informace u vás vzniká, nebo k ní jen přistupujete) – ovlivňuje rozsah řízení." },
+              { krok: "Stáhněte dotazníky a připravte podklady", popis: "Dotazníky a seznam příloh jsou na webu NBÚ; součástí je i prohlášení zprošťující finanční úřad mlčenlivosti.", odkaz: "https://nbu.gov.cz/cs/roz-potrebuji-vyridit/pravnicka-osoba-prumyslova-bezpecnost", odkazText: "NBÚ – podnikatel (průmyslová bezpečnost)", obrazek: "img/podani/nbu.png" },
+              { krok: "Podejte žádost", popis: "Osobně na podatelně NBÚ, poštou nebo datovou schránkou (předmět: „Žádost o vydání osvědčení podnikatele“)." }
+            ]
+          },
+          {
+            id: "nbu-osoba",
+            nazev: "Osvědčení fyzické osoby",
+            coJe: "Prověrka konkrétních lidí, kteří s utajovanými informacemi pracují.",
+            kdyPotrebuji: "Souběžně s osvědčením podnikatele – prověření musí být lidé, ne jen firma.",
+            trvani: "Podle stupně: měsíce.",
+            kroky: [
+              { krok: "Žádost + dotazník fyzické osoby", popis: "Formuláře a postup na webu NBÚ.", odkaz: "https://nbu.gov.cz", odkazText: "nbu.gov.cz" }
+            ]
+          }
+        ]
+      },
+      {
+        id: "civil",
+        nazev: "Civilní certifikace",
+        kdy: "Prodáváte (i) na civilní trh v EU – dual-use firmy typicky potřebují obojí svět.",
+        polozky: [
+          {
+            id: "ce",
+            nazev: "CE značení",
+            coJe: "Prohlášení shody s harmonizačními předpisy EU (EMC, RED, strojní směrnice…). Čistě vojenský materiál CE zpravidla nenese (vyloučení, čl. 346 SFEU); dual-use a komerční produkty ano.",
+            kdyPotrebuji: "Před uvedením výrobku na trh EU.",
+            trvani: "Dle směrnic a nutnosti notifikované osoby – týdny až měsíce.",
+            kroky: [
+              { krok: "Určete, které předpisy se na produkt vztahují", popis: "EMC, RED (rádiová zařízení), LVD, strojní nařízení… – podle nich testy a technická dokumentace." },
+              { krok: "Posouzení shody a EU prohlášení o shodě", popis: "Vlastní posouzení, nebo přes notifikovanou osobu (podle předpisu); pak označení CE." }
+            ]
+          },
+          {
+            id: "iso27001",
+            nazev: "ISO 27001 / kyberbezpečnost (NIS2)",
+            coJe: "Certifikace řízení informační bezpečnosti; NIS2 přenesená do českého zákona o kybernetické bezpečnosti přidává povinnosti regulovaným subjektům [OVĚŘIT dopad na vaši firmu].",
+            kdyPotrebuji: "Softwarové a datové produkty pro stát a kritickou infrastrukturu; velcí zákazníci ji často vyžadují v tendrech.",
+            trvani: "Zavedení měsíce; certifikace přes akreditovanou společnost.",
+            kroky: [
+              { krok: "Zaveďte ISMS a certifikujte", popis: "Obdobně jako ISO 9001 – akreditovaný certifikační orgán po auditu; NIS2 povinnosti ověřte u NÚKIB.", odkaz: "https://nukib.gov.cz", odkazText: "nukib.gov.cz" }
+            ]
+          }
+        ]
+      }
+    ],
+    zdroj: "Rešerše z veřejných zdrojů 9/2026 (nbu.gov.cz, urosksoj.mo.gov.cz, mpo.gov.cz, nspa.nato.int); orientační časy a ceny ověřte u úřadů a certifikačních společností. Defence Hub vás celou cestou provede."
+  },
+
+  // -------------------------------------------------------------------
   // UKRAJINA A TESTOVÁNÍ (rešerše z veřejných zdrojů 9/2026)
   // -------------------------------------------------------------------
   ukrajina: {
