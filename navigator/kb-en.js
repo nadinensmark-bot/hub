@@ -634,20 +634,21 @@ window.DH_KB_EN = {
       napovedaParametry: "The exact thresholds (performance, accuracy, sensitivity, key length…) are defined by Annex I for specific items. Compare your product with the Annex text, or answer “not sure” – then an expert classification is needed. Note: customs (TARIC) classification is not the same as control classification.",
       zadna: "None of the categories",
       polozky: [
-        { kod: "0", nazev: "Nuclear materials, facilities and equipment", priklady: ["fissile and special fissile materials", "reactors and their components", "enrichment and reprocessing equipment"] },
-        { kod: "1", nazev: "Special materials and related equipment", priklady: ["special alloys, composites and coatings", "chemical precursors", "protection and detection equipment against chemical and biological agents"] },
-        { kod: "2", nazev: "Materials processing", priklady: ["high-precision CNC machine tools", "isostatic presses", "bearings of special parameters"] },
-        { kod: "3", nazev: "Electronics", priklady: ["radiation-hardened integrated circuits", "high-frequency and microwave components", "fast high-resolution A/D converters"] },
-        { kod: "4", nazev: "Computers", priklady: ["high-performance computing systems above a defined threshold", "computers hardened for extreme conditions"] },
-        { kod: "5", nazev: "Telecommunications (part 1) and information security / encryption (part 2)", priklady: ["radio systems with frequency hopping and adaptive techniques", "interception- and jamming-resistant systems", "cryptography above defined parameters – typically item 5A002"] },
-        { kod: "6", nazev: "Sensors and lasers", priklady: ["thermal and night-vision cameras above defined sensitivity/resolution", "acoustic and underwater sensors (hydrophones)", "radars, gravimeters, lasers above defined power or wavelengths"] },
-        { kod: "7", nazev: "Navigation and avionics", priklady: ["inertial navigation systems and gyroscopes with drift below a defined limit", "jamming-resistant GNSS receivers for high speeds and altitudes"] },
-        { kod: "8", nazev: "Marine", priklady: ["submersible and uncrewed underwater vehicles", "quiet propulsion", "sensors for underwater use"] },
-        { kod: "9", nazev: "Aerospace and propulsion", priklady: ["rocket and jet engines and their components", "UAVs with a defined range/payload", "space technologies"] }
+        { kod: "0", nazev: "Nuclear materials, facilities and equipment", priklady: ["fissile and special fissile materials", "reactors and their components", "enrichment and reprocessing equipment"], podoblasti: [{"nazev":"Fissile and special fissile materials","rozhoduje":"type and quantity of material"}, {"nazev":"Reactors and their components","rozhoduje":"designed for a nuclear reactor"}, {"nazev":"Enrichment and reprocessing technologies","rozhoduje":"type of technology"}] },
+        { kod: "1", nazev: "Special materials and related equipment", priklady: ["special alloys, composites and coatings", "chemical precursors", "protection and detection equipment against chemical and biological agents"], podoblasti: [{"nazev":"Special alloys, composites, fibres","rozhoduje":"strength, modulus, heat resistance"}, {"nazev":"Coatings and camouflage materials","rozhoduje":"type and purpose of coating"}, {"nazev":"Chemical precursors","rozhoduje":"the specific substance per the control lists"}, {"nazev":"CBRN protection and detection","rozhoduje":"purpose and detection sensitivity"}] },
+        { kod: "2", nazev: "Materials processing", priklady: ["high-precision CNC machine tools", "isostatic presses", "bearings of special parameters"], podoblasti: [{"nazev":"High-precision CNC machine tools","rozhoduje":"number of controlled axes, positioning accuracy"}, {"nazev":"Isostatic presses","rozhoduje":"working pressure, chamber diameter"}, {"nazev":"Special bearings and production equipment","rozhoduje":"precision, material"}] },
+        { kod: "3", nazev: "Electronics", priklady: ["radiation-hardened integrated circuits", "high-frequency and microwave components", "fast high-resolution A/D converters"], podoblasti: [{"nazev":"Radiation-hardened integrated circuits","rozhoduje":"radiation dose tolerance"}, {"nazev":"High-frequency and microwave components","rozhoduje":"operating frequency, power"}, {"nazev":"Fast A/D converters","rozhoduje":"resolution combined with sampling rate"}] },
+        { kod: "4", nazev: "Computers", priklady: ["high-performance computing systems above a defined threshold", "computers hardened for extreme conditions"], podoblasti: [{"nazev":"High-performance computing systems","rozhoduje":"aggregate compute performance"}, {"nazev":"Computers hardened for extreme conditions","rozhoduje":"temperature range, radiation tolerance"}] },
+        { kod: "5", nazev: "Telecommunications (part 1) and information security / encryption (part 2)", priklady: ["radio systems with frequency hopping and adaptive techniques", "interception- and jamming-resistant systems", "cryptography above defined parameters – typically item 5A002"], podoblasti: [{"nazev":"Radios with frequency hopping / adaptive techniques","rozhoduje":"bandwidth, techniques used"}, {"nazev":"Interception- and jamming-resistant systems","rozhoduje":"resilience techniques used"}, {"nazev":"Cryptography and encryption products (typically 5A002)","rozhoduje":"algorithm type, key length, who controls the encryption"}] },
+        { kod: "6", nazev: "Sensors and lasers", priklady: ["thermal and night-vision cameras above defined sensitivity/resolution", "acoustic and underwater sensors (hydrophones)", "radars, gravimeters, lasers above defined power or wavelengths"], podoblasti: [{"nazev":"Thermal and night-vision cameras, image sensors","rozhoduje":"sensitivity, resolution, frame rate"}, {"nazev":"Acoustic and underwater sensors (hydrophones, sonars)","rozhoduje":"sensitivity, operating frequency and depth"}, {"nazev":"Radars","rozhoduje":"frequency bands, power, signal-processing techniques"}, {"nazev":"Lasers","rozhoduje":"power, wavelength, pulse energy"}, {"nazev":"Gravimeters and magnetometers","rozhoduje":"accuracy, noise"}] },
+        { kod: "7", nazev: "Navigation and avionics", priklady: ["inertial navigation systems and gyroscopes with drift below a defined limit", "jamming-resistant GNSS receivers for high speeds and altitudes"], podoblasti: [{"nazev":"Inertial navigation, gyroscopes, accelerometers","rozhoduje":"drift, bias stability"}, {"nazev":"Jamming-resistant GNSS receivers","rozhoduje":"techniques used, speed and altitude limits"}, {"nazev":"Avionics","rozhoduje":"purpose and parameters per the entry"}] },
+        { kod: "8", nazev: "Marine", priklady: ["submersible and uncrewed underwater vehicles", "quiet propulsion", "sensors for underwater use"], podoblasti: [{"nazev":"Submersible and uncrewed underwater vehicles","rozhoduje":"operating depth, autonomy"}, {"nazev":"Quiet propulsion","rozhoduje":"noise level, propulsion type"}, {"nazev":"Sensors for underwater use","rozhoduje":"sensitivity, operating depth"}] },
+        { kod: "9", nazev: "Aerospace and propulsion", priklady: ["rocket and jet engines and their components", "UAVs with a defined range/payload", "space technologies"], podoblasti: [{"nazev":"Rocket and jet engines and components","rozhoduje":"thrust, specific propulsion parameters"}, {"nazev":"Uncrewed aerial vehicles (UAVs)","rozhoduje":"range, payload, endurance"}, {"nazev":"Space systems and components","rozhoduje":"designed for space use"}, {"nazev":"Refractory and thermal-protection systems","rozhoduje":"operating temperatures, material"}] }
       ]
     },
     verdikty: {
       vojensky: {
+        semafor: "cervena", stitek: "MILITARY MATERIAL – STRICT REGIME",
         nazev: "Likely military material (Act 38/1994 Coll.)",
         text: "A product specially designed or modified for military use usually falls on the military material list (Decree 210/2012 Coll., per the EU Common Military List). The regime is stricter than dual-use: two-tier (company permit + a licence for each deal). Trading without permit and licence is a criminal offence (Sec. 265 of the Czech Criminal Code).",
         dalsiKroky: [
@@ -660,6 +661,7 @@ window.DH_KB_EN = {
         ]
       },
       listed: {
+        semafor: "cervena", stitek: "LIKELY DUAL-USE – EXPORT AUTHORISATION REQUIRED",
         nazev: "Likely a controlled dual-use item (Annex I)",
         text: "Based on your answers the product reaches the parameters of controlled items in Annex I of Regulation (EU) 2021/821. For exports outside the EU you will need an export authorisation from the MPO Licensing Authority (procedure per Act No. 594/2004 Coll.).",
         dalsiKroky: [
@@ -674,6 +676,7 @@ window.DH_KB_EN = {
         ]
       },
       zatrideni: {
+        semafor: "zluta", stitek: "BETTER CHECK – HAVE THE PRODUCT CLASSIFIED",
         nazev: "Needs an expert classification",
         text: "Without comparing against the exact technical thresholds of Annex I this cannot be decided – the most common situation for technology companies and nothing to worry about. But self-classification applies: the responsibility is yours, and a wrong classification = unauthorised export.",
         dalsiKroky: [
@@ -686,6 +689,7 @@ window.DH_KB_EN = {
         ]
       },
       unlisted: {
+        semafor: "zelena", stitek: "PARAMETERS BELOW CONTROL THRESHOLDS – LIKELY NOT LISTED",
         nazev: "Likely outside the control lists",
         text: "Based on your answers the product does not reach the parameters of controlled items. The catch-all clauses still apply: an authorisation may be required even for a non-listed item because of end use – weapons of mass destruction (Art. 4), military use in an embargoed country (Art. 4), cyber-surveillance items with repression risk (Art. 5), national extensions of control (Art. 9, 10).",
         dalsiKroky: [
