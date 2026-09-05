@@ -7,6 +7,10 @@ on:
         description: "Adresa backendu"
         required: false
         default: "https://dh-kompas-backend.onrender.com"
+      test_lead:
+        description: "Poslat testovací kontakt (ano/ne) – ověří cestu server → Google tabulka"
+        required: false
+        default: "ne"
 
 jobs:
   health:
@@ -27,3 +31,11 @@ jobs:
           done
           echo "❌ Backend neodpověděl {\"ok\":true}."
           exit 1
+      - name: Testovací lead (ověření cesty do Google tabulky)
+        if: ${{ github.event.inputs.test_lead == 'ano' }}
+        run: |
+          URL="${{ github.event.inputs.url || 'https://dh-kompas-backend.onrender.com' }}/api/lead"
+          ODP=$(curl -sS --max-time 90 -X POST "$URL" -H 'Content-Type: application/json' \
+            -d '{"firma":"TEST – kontrolní workflow","email":"test@dhkompas.test","profil":"Testovací záznam – smazat","souhlas":true,"lang":"cs"}')
+          echo "Odpověď: $ODP"
+          echo "$ODP" | grep -q '"ok":true' && echo "✅ Server lead přijal. Zkontrolujte řádek TEST v Google tabulce – pokud tam není, chybí/nesedí LEADS_WEBHOOK_URL v Renderu." || exit 1
