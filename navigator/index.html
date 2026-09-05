@@ -209,7 +209,8 @@ cs: {
   vysledky:"Doporučené programy", vysledkySub:"seřazeno podle shody s vaším profilem",
   wizZpet:"← Zpět", wizUpravit:"Upravit odpovědi",
   velikostL:{startup:"startupy",sme:"malé a střední podniky",midcap:"větší firmy",research:"výzkumné organizace a univerzity"},
-  wizSkryto:"{n} programů nezobrazeno – nejsou určené pro váš typ žadatele ({role}).",
+  wizSkryto:"{n} programů nezobrazeno – neodpovídají vašemu zaměření, fázi (TRL), formě podpory, konsorciu nebo typu žadatele. Kompletní přehled je v katalogu Programy.",
+  wizNicPozn:"Podle těchto odpovědí teď žádný program přesně nesedí. Zkuste upravit odpovědi – nebo se ozvěte Defence Hubu, projdeme možnosti společně.",
   zpusobiliL:"Způsobilí žadatelé",
   kdeKriteriaL:"Kde najít výzvu a hodnoticí kritéria",
   duSpec:"<strong style=\"color:var(--navy)\">Máte hotovou technickou specifikaci?</strong> Nemusíte se testem trápit – pošlete ji Defence Hubu a projdeme zatřídění s vámi. Připravujeme verzi, kde specifikaci rovnou nahrajete a systém navrhne zatřídění automaticky (vyžaduje serverovou část – další fáze).",
@@ -257,6 +258,7 @@ cs: {
   duParamPlaceholder:"Např.: rozlišení 640×512, citlivost <30 mK, dosah 2 km…",
   duShrnuti:"Shrnutí pro konzultaci", duShrnutiPozn:"Zkopírujte a pošlete týmu Defence Hubu (defencehub.gov.cz) – projdeme zatřídění s vámi.",
   duKopirovat:"Zkopírovat shrnutí", duZkopirovano:"✓ Zkopírováno",
+  porPrepnoutAI:"🤖 Zkusit AI režim (demo – na vašem Claude účtu)", porPrepnoutLite:"Zpět na chat bez AI",
   duRezimyEmpty:"Z odpovědí zatím nevyplývá žádný specifický režim – ale projděte to s odborníkem.",
   duKdy:"Kdy se týká:", duAkce:"Co udělat:",
   duZnovu:"Vyplnit znovu", duTestNedokonceno:"Verdikt se zobrazí po zodpovězení všech otázek.",
@@ -317,7 +319,8 @@ en: {
   vysledky:"Recommended programmes", vysledkySub:"ranked by fit with your profile",
   wizZpet:"← Back", wizUpravit:"Edit answers",
   velikostL:{startup:"startups",sme:"small and medium enterprises",midcap:"larger companies",research:"research organisations and universities"},
-  wizSkryto:"{n} programmes not shown – they are not open to your applicant type ({role}).",
+  wizSkryto:"{n} programmes not shown – they don't match your focus, stage (TRL), form of support, consortium answer or applicant type. The full overview is in the Programmes catalogue.",
+  wizNicPozn:"With these answers no programme is an exact fit right now. Try adjusting the answers – or contact the Defence Hub and we'll go through the options together.",
   zpusobiliL:"Eligible applicants",
   kdeKriteriaL:"Where to find the call and evaluation criteria",
   duSpec:"<strong style=\"color:var(--navy)\">Already have a technical specification?</strong> You don't have to struggle through the test – send it to the Defence Hub and we'll go through the classification with you. We are preparing a version where you upload the specification and the system proposes a classification automatically (requires a server component – a later phase).",
@@ -365,6 +368,7 @@ en: {
   duParamPlaceholder:"E.g.: resolution 640×512, sensitivity <30 mK, range 2 km…",
   duShrnuti:"Consultation summary", duShrnutiPozn:"Copy and send it to the Defence Hub team (defencehub.gov.cz) – we'll go through the classification with you.",
   duKopirovat:"Copy summary", duZkopirovano:"✓ Copied",
+  porPrepnoutAI:"🤖 Try AI mode (demo – on your Claude account)", porPrepnoutLite:"Back to the no-AI chat",
   duRezimyEmpty:"The answers do not point to any specific regime yet – but do go through it with an expert.",
   duKdy:"When it applies:", duAkce:"What to do:",
   duZnovu:"Fill in again", duTestNedokonceno:"The verdict appears once all questions are answered.",
@@ -588,10 +592,23 @@ function skoreProgramu(p, o){
 
 function renderVysledky(el, kb){
   const o = state.odpovedi;
-  // programy s jenInfo (např. SAFE – nástroj pro státy) se nedoporučují, zůstávají jen v katalogu;
-  // jenPro = tvrdá způsobilost: co není pro daný typ žadatele, průvodce vůbec neukáže
+  // Tvrdé filtry: co nevyhovuje, se vůbec neukáže (jenInfo, typ žadatele,
+  // zaměření, TRL fáze, konsorcium, forma podpory). Zbytek se řadí skóre.
+  const [tmin, tmax] = o.trl.split("-").map(Number);
+  const typOk = p => o.typ === "vse"
+    || (o.typ === "grant" && (p.typ === "grant" || p.typ === "mix" || p.typ === "akcelerator"))
+    || (o.typ === "equity" && (p.typ === "equity" || p.typ === "mix"))
+    || (o.typ === "akcelerator" && (p.typ === "akcelerator" || p.typ === "mix"));
+  const zamereniOk = p => o.zamereni === "nevim" || o.zamereni === "dual"
+    || p.zamereni === "dual" || p.zamereni === o.zamereni;
   const nabidka = kb.programy.filter(p=>!p.jenInfo);
-  const povolene = nabidka.filter(p=>!p.jenPro || p.jenPro.includes(o.velikost));
+  const povolene = nabidka.filter(p =>
+    (!p.jenPro || p.jenPro.includes(o.velikost)) &&
+    zamereniOk(p) &&
+    (tmax >= p.trl[0] && tmin <= p.trl[1]) &&
+    !(p.konsorcium && o.konsorcium === "ne") &&
+    typOk(p)
+  );
   const skryto = nabidka.length - povolene.length;
   const vysledky = povolene.map(p=>({p, ...skoreProgramu(p,o)})).sort((a,b)=>b.skore-a.skore);
   const div = document.createElement("div");
@@ -601,6 +618,12 @@ function renderVysledky(el, kb){
   if(skryto > 0){
     div.insertAdjacentHTML("beforeend",
       `<div style="font-size:12.5px;color:var(--muted);background:var(--mist);border-radius:10px;padding:8px 13px;margin-bottom:12px">ℹ ${esc(t("wizSkryto",{n:skryto,role:t("velikostL")[o.velikost]||o.velikost}))}</div>`);
+  }
+  if(vysledky.length === 0){
+    div.insertAdjacentHTML("beforeend",
+      `<div class="card" style="background:var(--blueSoft);border-color:#C9D8F2">${esc(t("wizNicPozn"))} ${esc(kb.meta.kontakt)}</div>`);
+    el.appendChild(div);
+    return;
   }
   vysledky.forEach((v,idx)=>{
     const c = v.skore>=70 ? "var(--green)" : v.skore>=45 ? "var(--steel)" : "var(--clay)";
@@ -1147,9 +1170,13 @@ function renderPrekladac(el, kb){
 // =====================================================================
 // 4c) PORADCE – chatbot a analýza specifikace (vyžaduje backend)
 // =====================================================================
-function backendUrl(){
-  if(window.DH_AI_RUNTIME) return "demo"; // demo režim: AI přes Claude runtime artefaktu (viz bundle adaptér)
-  return (window.DH_CONFIG && window.DH_CONFIG.backendUrl || "").replace(/\/+$/, "");
+function backendUrl(){ return (window.DH_CONFIG && window.DH_CONFIG.backendUrl || "").replace(/\/+$/, ""); }
+// Režim AI poradce: "backend" (ostrý server), "demo" (Claude runtime artefaktu,
+// jen když si ho uživatel zapne přepínačem) – jinak null = chat bez AI (výchozí).
+function aiRezim(){
+  if(backendUrl()) return "backend";
+  if(window.DH_AI_RUNTIME && state.porAI) return "demo";
+  return null;
 }
 
 // mini-markdown: escapuje HTML a převede **tučné**, nadpisy a odrážky
@@ -1175,7 +1202,7 @@ function mdHtml(text){
 }
 
 async function poradceDotaz(cesta, telo){
-  if(window.DH_AI_RUNTIME) return await window.DH_AI_RUNTIME(cesta, telo);
+  if(aiRezim() === "demo") return await window.DH_AI_RUNTIME(cesta, telo);
   const res = await fetch(backendUrl() + cesta, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -1315,9 +1342,43 @@ function botOdpoved(dotaz, kb, docs){
       T("Cesta univerzity k nim vede přes spin-off nebo partnerství s firmou – s obojím pomůže Defence Hub.", "A university's route to those is a spin-off or a partnership with a company – the Defence Hub helps with both."),
       tlacitka: [btnPruvodce, ...proUni.slice(0,2).map(p => ({ t: p.nazev.split(" –")[0].split(" (")[0], route: { view: "program", param: p.id } }))] };
   }
+  // 2c) fazetové dotazy (kdy / kolik / pro koho / jak / kritéria) – k programu
+  // z dotazu, nebo k naposledy zmíněnému programu (kontext konverzace)
+  const facet =
+    ma("kdy ","termin","uzaverk","deadline","when ") ? "terminy" :
+    ma("kolik","castk","vyse podpory","amount","how much") ? "castka" :
+    ma("pro koho","kdo muze","kdo se muze","who can","who is it for","zpusobil","eligib") ? "proKoho" :
+    ma("jak funguje","jak to funguje","jak probiha","how does","how it works") ? "jakFunguje" :
+    ma("kriteri","hodnoti","criteria","evaluat") ? "kdeKriteria" : null;
+  const cilId = nalezene.length === 1 ? nalezene[0] : (!nalezene.length ? state.botKontext : null);
+  if(facet && cilId){
+    const p = kb.programy.find(x => x.id === cilId);
+    if(p){
+      state.botKontext = p.id;
+      const btns = [{ t: t("detailBtn"), route: { view: "program", param: p.id } }];
+      let text = "**" + p.nazev + "**\n";
+      if(facet === "terminy"){
+        text += "📅 " + p.terminy;
+        const vy = aktivniVyzvy(kb, p.id).filter(x => x.s.rank < 4);
+        if(vy.length) text += "\n" + vy.map(x => "- " + x.v.nazev + " — " + x.s.text).join("\n");
+        btns.push(btnVyzvy);
+      } else if(facet === "castka"){
+        text += "💶 " + p.castka + (p.overit ? " _[" + (en ? "verify" : "ověřit") + "]_" : "");
+      } else if(facet === "proKoho"){
+        text += p.proKoho;
+        if(p.jenPro) text += "\n" + T("Způsobilí žadatelé: ", "Eligible applicants: ") + p.jenPro.map(v => t("velikostL")[v] || v).join(", ") + ".";
+      } else if(facet === "jakFunguje"){
+        text += (p.jakFunguje || []).map(x => "- " + x).join("\n");
+      } else {
+        text += "📋 " + (p.kdeKriteria || p.terminy);
+      }
+      return { text, tlacitka: btns };
+    }
+  }
   // 3) konkrétní program(y)
   if(nalezene.length === 1){
     const p = kb.programy.find(x => x.id === nalezene[0]);
+    state.botKontext = p.id;
     return { text: botProgramText(p, en) + (p.kdeKriteria ? "\n\n📋 " + p.kdeKriteria : ""),
       tlacitka: [
         { t: t("detailBtn"), route: { view: "program", param: p.id } },
@@ -1401,11 +1462,17 @@ function botOdpoved(dotaz, kb, docs){
       "Non-dilutive grants come mainly from DIANA, EDF/EUDIS, the EIC grant component, PRODEF and OP TAK. The 5-question wizard tells you which fits you (focus, TRL, consortium…)."),
       tlacitka: [btnPruvodce, btnVyzvy] };
   }
-  // 16) fallback: vyhledávání
+  // 16) fallback: odpověď textem z nejbližšího místa KB + související karty
   const vysledky = hledejKB(docs, dotaz);
   if(vysledky.length){
-    return { text: T("Tohle jsem k tomu ve znalostní bázi našel:", "Here's what I found in the knowledge base:"),
-      karty: vysledky.slice(0, 3).map(({d}) => ({ titul: d.titul, stitek: d.stitek, ukazka: String(d.ukazka||"").slice(0,160), route: d.route })) };
+    const top = vysledky[0].d;
+    if(top.route && top.route.view === "program") state.botKontext = top.route.param;
+    return {
+      text: T("Ze znalostní báze:", "From the knowledge base:") + "\n**" + top.titul + "**\n" +
+        String(top.ukazka || top.text || "").slice(0, 300),
+      tlacitka: top.route ? [{ t: t("liteOtevrit"), route: top.route }] : [],
+      karty: vysledky.slice(1, 4).map(({d}) => ({ titul: d.titul, stitek: d.stitek, ukazka: String(d.ukazka||"").slice(0,160), route: d.route }))
+    };
   }
   return { text: t("liteNic"), tlacitka: [btnPruvodce] };
 }
@@ -1489,22 +1556,28 @@ function renderLite(el, kb){
 
 function vPoradce(el){
   const kb = KB();
-  header(el, backendUrl() ? t("porKicker") : (state.lang === "en" ? "Advisor · Beta" : "Poradce · Beta"), t("porTitle"), backendUrl() ? t("porSub") : t("liteSub"));
+  const rezim = aiRezim();
+  header(el, rezim ? t("porKicker") : (state.lang === "en" ? "Advisor · Beta" : "Poradce · Beta"), t("porTitle"), rezim ? t("porSub") : t("liteSub"));
 
-  if(!backendUrl()){
+  if(!rezim){
     renderLite(el, kb);
-    el.insertAdjacentHTML("beforeend", `<div class="card" style="border-style:dashed;color:var(--muted);font-size:12.5px;line-height:1.55">${esc(t("liteAnalyza"))}</div>`);
+    if(window.DH_AI_RUNTIME){
+      el.insertAdjacentHTML("beforeend",
+        `<div style="margin-top:4px"><span class="chip" onclick="state.porAI=true;save();go('poradce')">${esc(t("porPrepnoutAI"))}</span></div>`);
+    }
+    el.insertAdjacentHTML("beforeend", `<div class="card" style="border-style:dashed;color:var(--muted);font-size:12.5px;line-height:1.55;margin-top:10px">${esc(t("liteAnalyza"))}</div>`);
     if(state.admin) el.insertAdjacentHTML("beforeend", `<div class="card" style="background:#FDF3DC;border-color:#EAD9A8;color:#9A7B1E;font-size:12.5px;line-height:1.55">${esc(t("porSetup"))}</div>`);
     return;
   }
 
   if(!state.porTab) state.porTab = "chat";
   el.insertAdjacentHTML("beforeend",
-    `<div style="display:flex;gap:9px;margin-bottom:18px;flex-wrap:wrap">
+    `<div style="display:flex;gap:9px;margin-bottom:18px;flex-wrap:wrap;align-items:center">
        <div class="subtab ${state.porTab==="chat"?"active":""}" onclick="state.porTab='chat';save();go('poradce')">${esc(t("porTabChat"))}</div>
        <div class="subtab ${state.porTab==="analyza"?"active":""}" onclick="state.porTab='analyza';save();go('poradce')">${esc(t("porTabAnalyza"))}</div>
+       ${rezim==="demo"?`<span class="chip" onclick="state.porAI=false;save();go('poradce')">${esc(t("porPrepnoutLite"))}</span>`:""}
      </div>`);
-  if(window.DH_AI_DEMO){
+  if(rezim==="demo"){
     el.insertAdjacentHTML("beforeend", `<div class="card" style="background:var(--blueSoft);border-color:#C9D8F2;font-size:12.5px;line-height:1.55">${
       state.lang==="en"
         ? "🧪 <strong>Demo mode:</strong> answers run on the Claude account of whoever is viewing this page (their own usage, with a one-time consent prompt). The production version will run on the Defence Hub server."
@@ -1658,8 +1731,8 @@ function aplikujAdmin(){
   if(location.hash === "#admin"){ state.admin = true; save(); }
   if(location.hash === "#noadmin"){ state.admin = false; save(); }
   document.getElementById("navKb").style.display = state.admin ? "" : "none";
-  // Poradce je veřejný vždy: bez backendu jako vyhledávání v KB, s backendem jako AI chat
-  document.getElementById("porBadge").textContent = backendUrl() ? "AI" : "BETA";
+  // Poradce je veřejný vždy: výchozí je chat bez AI, AI jen s backendem/přepínačem
+  document.getElementById("porBadge").textContent = aiRezim() ? "AI" : "BETA";
   if(!state.admin && state.view === "kb"){ state.view = "wizard"; save(); go("wizard"); }
 }
 window.addEventListener("hashchange", aplikujAdmin);
