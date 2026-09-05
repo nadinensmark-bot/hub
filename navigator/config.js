@@ -6,5 +6,5 @@
 // (tým ji vidí v admin režimu #admin s návodem na aktivaci).
 // =====================================================================
 window.DH_CONFIG = {
-  backendUrl: ""
+  backendUrl: "https://dh-kompas-backend.onrender.com"
 };
