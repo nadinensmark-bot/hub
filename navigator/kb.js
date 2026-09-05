@@ -1016,6 +1016,17 @@ window.DH_KB = {
             ]
           },
           {
+            id: "duns",
+            nazev: "DUNS / UEI – identifikátory pro zahraniční řetězce",
+            coJe: "DUNS je globální identifikátor firmy od Dun & Bradstreet – chtějí ho zahraniční partneři, primes a banky. Pozor: pro americké federální zakázky DUNS od dubna 2022 nahradil UEI (Unique Entity ID), který se přiděluje zdarma při registraci na SAM.gov.",
+            kdyPotrebuji: "Když vstupujete do zahraničních dodavatelských řetězců (DUNS), nebo míříte na americké vládní zakázky a granty (UEI přes SAM.gov).",
+            trvani: "DUNS: zdarma, dny až týdny [OVĚŘIT u D&B]. UEI: zdarma při registraci na SAM.gov; česká firma potřebuje nejdřív NCAGE.",
+            kroky: [
+              { krok: "DUNS: požádejte zdarma u Dun & Bradstreet", popis: "Nejdřív si ověřte, jestli DUNS už nemáte (D&B ho firmám často přiděluje automaticky); jinak o něj požádáte na webu D&B.", odkaz: "https://www.dnb.com/duns.html", odkazText: "dnb.com – D-U-N-S Number", obrazek: "img/podani/duns.png" },
+              { krok: "UEI pro americké zakázky: registrace na SAM.gov", popis: "UEI dostanete zdarma registrací firmy na SAM.gov (System for Award Management). Pořadí pro českou firmu: nejdřív NCAGE (viz výše, Úř OSK SOJ), pak registrace v SAM.gov – bez NCAGE zahraniční firmu nezaregistrují.", odkaz: "https://sam.gov/", odkazText: "sam.gov", obrazek: "img/podani/sam.png" }
+            ]
+          },
+          {
             id: "iso9001",
             nazev: "ISO 9001",
             coJe: "Základní certifikace systému řízení kvality. V obranném světě se bere jako minimum serióznosti dodavatele.",
