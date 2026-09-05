@@ -42,7 +42,20 @@ const CFG = {
   maxSpecChars: 60000          // max délka specifikace
 };
 
-const client = CFG.mock ? null : new Anthropic(); // klíč z ANTHROPIC_API_KEY
+// Klient se vytváří líně: server nastartuje i bez klíče (health funguje,
+// AI dotazy vrací srozumitelnou chybu) – žádný crash-loop při nasazování.
+let _client = null;
+function ziskejKlienta() {
+  if (!_client) {
+    if (!process.env.ANTHROPIC_API_KEY) {
+      const e = new Error("Server nemá nastavený ANTHROPIC_API_KEY.");
+      e.kod = "chybi_klic";
+      throw e;
+    }
+    _client = new Anthropic();
+  }
+  return _client;
+}
 
 // ---------------- znalostní báze ----------------
 // KB se čte přímo ze souborů aplikace – jeden zdroj pravdy s frontendem.
@@ -227,7 +240,7 @@ async function zavolejClaude({ model, maxTokens, system, messages }) {
   if (CFG.mock) {
     return { text: "[MOCK] Toto je testovací odpověď bez volání Claude API. Server běží správně; pro ostrý provoz nastavte ANTHROPIC_API_KEY a vypněte MOCK_AI.", usage: { input_tokens: 0, output_tokens: 0, cache_read_input_tokens: 0 } };
   }
-  const response = await client.messages.create({ model, max_tokens: maxTokens, system, messages });
+  const response = await ziskejKlienta().messages.create({ model, max_tokens: maxTokens, system, messages });
   if (response.stop_reason === "refusal") {
     return { text: null, refusal: true };
   }
@@ -268,7 +281,7 @@ const server = http.createServer(async (req, res) => {
 
   try {
     if (req.method === "GET" && req.url === "/api/health") {
-      return json(res, 200, { ok: true, mock: CFG.mock, modelChat: CFG.modelChat, modelAnalyza: CFG.modelAnalyza, znalostniSoubory: ZNALOSTI.pocet });
+      return json(res, 200, { ok: true, mock: CFG.mock, klicNastaven: !!process.env.ANTHROPIC_API_KEY, modelChat: CFG.modelChat, modelAnalyza: CFG.modelAnalyza, znalostniSoubory: ZNALOSTI.pocet });
     }
 
     if (req.method === "POST" && req.url === "/api/chat") {
