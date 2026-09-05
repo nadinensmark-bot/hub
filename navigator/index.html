@@ -141,6 +141,11 @@ table.zmeny td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-ali
         <span style="flex:1" data-nav="dualuse"></span>
         <span class="mono" style="font-size:8px;letter-spacing:.08em;background:rgba(140,170,114,.2);color:#A8C48E;padding:2px 6px;border-radius:5px">BETA</span>
       </div>
+      <div class="navitem" data-view="certifikace" onclick="go('certifikace')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="9" r="6"/><path d="M8.5 14.5 7 22l5-3 5 3-1.5-7.5"/><path d="M9.5 9l1.8 1.8L14.8 7"/></svg>
+        <span style="flex:1" data-nav="certifikace"></span>
+        <span class="mono" style="font-size:8px;letter-spacing:.08em;background:rgba(140,170,114,.2);color:#A8C48E;padding:2px 6px;border-radius:5px">NOVÉ</span>
+      </div>
       <div class="navitem" data-view="poradce" id="navPoradce" style="display:none" onclick="go('poradce')">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12a8 8 0 0 1-8 8H5l-2 2V12a8 8 0 0 1 8-8h2a8 8 0 0 1 8 8z"/><path d="M9 11h.01M12.5 11h.01M16 11h.01"/></svg>
         <span style="flex:1" data-nav="poradce"></span>
@@ -182,7 +187,15 @@ if(!state.lang) state.lang = "cs";
 const UI = {
 cs: {
   navKicker:"Pro startupy",
-  nav:{konzultant:"Konzultant",wizard:"Průvodce",programy:"Programy",vyzvy:"Výzvy",prihlaska:"Přihláška",dualuse:"Dual-use",poradce:"Poradce",kb:"Knowledge base"},
+  nav:{konzultant:"Konzultant",wizard:"Průvodce",programy:"Programy",vyzvy:"Výzvy",prihlaska:"Přihláška",dualuse:"Dual-use",certifikace:"Certifikace",poradce:"Poradce",kb:"Knowledge base"},
+  certKicker:"Certifikace a povolení", certTitle:"Jaké certifikace potřebujete a jak na ně",
+  certSub:"Osobní doporučení podle profilu vaší firmy + katalog s postupy krok za krokem: NATO dodavatelský řetězec, exportní povolení, prověrky NBÚ a civilní certifikace.",
+  certDoporuceni:"Doporučeno pro vás",
+  certDoporuceniPozn:"Pořadí odpovídá obvyklé cestě – čím výš, tím dřív začít. Sestaveno z profilu firmy (Konzultant) a odpovědí v dual-use poradci.",
+  certDoporuceniChybi:"Zatím o vás nic nevíme. Vyplňte profil v Konzultantovi a projděte dual-use poradce – doporučení se sestaví samo.",
+  certPostup:"Postup", certKdy:"Kdy potřebuji:", certTrvani:"Jak dlouho a za kolik:",
+  miniPlaceholderCert:"Např.: co je AQAP? jak dlouho trvá prověrka NBÚ?…",
+  uaNadpis:"Testování a cesty přes Ukrajinu",
   konKicker:"Váš konzultant", konTitle:"Konzultant pro vaši firmu",
   konSub:"Vyplňte jednou profil firmy – konzultant sestaví akční plán, doporučí programy, pohlídá uzávěrky a předá kontakt týmu Defence Hubu.",
   konProfilNadpis:"Profil firmy", konFirma:"Název firmy", konEmail:"Kontaktní e-mail",
@@ -300,6 +313,7 @@ cs: {
   duKdy:"Kdy se týká:", duAkce:"Co udělat:",
   duZnovu:"Vyplnit znovu", duTestNedokonceno:"Verdikt se zobrazí po zodpovězení všech otázek.",
   ano:"Ano", ne:"Ne", nevim:"Nevím",
+  konPlanCert:"Projít certifikace a povolení – seřazený seznam podle vašeho profilu je v záložce Certifikace",
   konChatKrok:"Krok 2 · Zeptejte se konzultanta",
   konChatPozn:"Doplňující otázky k plánu, programům, přihlášce i dual-use – konzultant zná váš profil.",
   priPodani:"Jak podat přihlášku – krok za krokem",
@@ -331,7 +345,15 @@ cs: {
 },
 en: {
   navKicker:"For startups",
-  nav:{konzultant:"Consultant",wizard:"Wizard",programy:"Programmes",vyzvy:"Open calls",prihlaska:"Application",dualuse:"Dual-use",poradce:"Advisor",kb:"Knowledge base"},
+  nav:{konzultant:"Consultant",wizard:"Wizard",programy:"Programmes",vyzvy:"Open calls",prihlaska:"Application",dualuse:"Dual-use",certifikace:"Certifications",poradce:"Advisor",kb:"Knowledge base"},
+  certKicker:"Certifications and permits", certTitle:"Which certifications you need and how to get them",
+  certSub:"Personal recommendations based on your company profile + a catalogue with step-by-step procedures: NATO supply chain, export permits, NBÚ clearances and civilian certifications.",
+  certDoporuceni:"Recommended for you",
+  certDoporuceniPozn:"The order matches the usual journey – the higher, the sooner to start. Built from your company profile (Consultant) and dual-use advisor answers.",
+  certDoporuceniChybi:"We don't know anything about you yet. Fill in the profile in the Consultant and go through the dual-use advisor – the recommendation builds itself.",
+  certPostup:"Procedure", certKdy:"When I need it:", certTrvani:"How long and how much:",
+  miniPlaceholderCert:"E.g.: what is AQAP? how long does an NBÚ clearance take?…",
+  uaNadpis:"Testing and routes via Ukraine",
   konKicker:"Your consultant", konTitle:"A consultant for your company",
   konSub:"Fill in your company profile once – the consultant builds an action plan, recommends programmes, watches deadlines and hands your contact to the Defence Hub team.",
   konProfilNadpis:"Company profile", konFirma:"Company name", konEmail:"Contact e-mail",
@@ -449,6 +471,7 @@ en: {
   duKdy:"When it applies:", duAkce:"What to do:",
   duZnovu:"Fill in again", duTestNedokonceno:"The verdict appears once all questions are answered.",
   ano:"Yes", ne:"No", nevim:"Not sure",
+  konPlanCert:"Go through certifications and permits – your ordered list is in the Certifications tab",
   konChatKrok:"Step 2 · Ask the consultant",
   konChatPozn:"Follow-up questions about the plan, programmes, the application or dual-use – the consultant knows your profile.",
   priPodani:"How to submit – step by step",
@@ -516,7 +539,7 @@ function applyChrome(){
 }
 
 // ---------------- routing ----------------
-const views = { konzultant: vKonzultant, wizard: vWizard, programy: vProgramy, vyzvy: vVyzvy, prihlaska: vPrihlaska, dualuse: vDualUse, poradce: vPoradce, kb: vKB, program: vProgramDetail };
+const views = { konzultant: vKonzultant, wizard: vWizard, programy: vProgramy, vyzvy: vVyzvy, prihlaska: vPrihlaska, dualuse: vDualUse, certifikace: vCertifikace, poradce: vPoradce, kb: vKB, program: vProgramDetail };
 function go(view, param){
   state.view = view; state.viewParam = param; save();
   document.querySelectorAll(".navitem").forEach(n=>n.classList.toggle("active", n.dataset.view===view || (view==="program" && n.dataset.view==="programy")));
@@ -756,6 +779,123 @@ function vProgramy(el){
          <div style="color:var(--muted);font-size:13px;margin-top:7px">${esc(p.kratce)}</div>
        </div>`);
   });
+
+  // viditelná sekce Ukrajina a testování (obsah z kb.ukrajina)
+  if(kb.ukrajina){
+    const ua = document.createElement("div");
+    ua.className = "card";
+    ua.innerHTML = `<div class="kicker" style="margin-bottom:4px">${esc(t("uaNadpis"))}</div>
+      <div style="color:var(--muted);font-size:12.5px;line-height:1.55;margin-bottom:6px">${esc(kb.ukrajina.uvod)}</div>`;
+    kb.ukrajina.cesty.forEach(c=>{
+      ua.insertAdjacentHTML("beforeend",
+        `<div style="padding:9px 0;border-top:1px solid var(--line);cursor:${c.program?"pointer":"default"}" ${c.program?`onclick="go('program','${esc(c.program)}')"`:""}>
+           <strong style="font-size:13.5px">${esc(c.nazev)}</strong>
+           <div style="color:var(--muted);font-size:12.5px;margin-top:3px;line-height:1.5">${esc(c.popis)}</div>
+         </div>`);
+    });
+    ua.insertAdjacentHTML("beforeend", `<div style="font-size:12px;color:var(--muted);margin-top:8px;line-height:1.5">${esc(kb.ukrajina.akce)} ${esc(kb.ukrajina.overeno)}</div>`);
+    el.appendChild(ua);
+  }
+}
+
+// =====================================================================
+// CERTIFIKACE: katalog s postupy + osobní doporučení z profilu
+// =====================================================================
+function certDoporuceni(kb){
+  const f = state.firma || {};
+  const du = (state.duTest2 || {}).odpovedi || {};
+  const mapa = {};
+  (kb.certifikace.skupiny || []).forEach(s => s.polozky.forEach(p => { mapa[p.id] = p; }));
+  const dop = [];
+  const pridej = id => { if(mapa[id] && !dop.some(x => x.p.id === id)) dop.push({ p: mapa[id], duvod: mapa[id].kdyPotrebuji }); };
+  const defence = f.zamereni === "defence" || f.zamereni === "dual" || du.vojenske === "ano";
+  if(du.export === "ano" && du.vojenske === "ano") pridej("vojmat-licence");
+  else if(du.export === "ano") pridej("dualuse-povoleni");
+  if(du.utajeni === "ano"){ pridej("nbu-podnikatel"); pridej("nbu-osoba"); }
+  if(defence){ pridej("ncage"); pridej("iso9001"); pridej("nspa"); pridej("aqap"); }
+  if(f.zamereni === "civil" || f.zamereni === "dual" || du.civilni === "ano") pridej("ce");
+  if(du.dataai === "ano") pridej("iso27001");
+  return dop;
+}
+function vCertifikace(el){
+  const kb = KB();
+  const cert = kb.certifikace;
+  if(!cert){ el.insertAdjacentHTML("beforeend", `<div class="card" style="color:var(--muted)">[KB: certifikace missing]</div>`); return; }
+  if(!state.certOtevrene) state.certOtevrene = {};
+  header(el, t("certKicker"), t("certTitle"), t("certSub"));
+  el.insertAdjacentHTML("beforeend", `<div class="card" style="color:var(--muted);font-size:12.5px;line-height:1.55">${esc(cert.uvod)}</div>`);
+
+  // osobní doporučení z profilu firmy a odpovědí v dual-use poradci
+  const dop = certDoporuceni(kb);
+  const dcard = document.createElement("div");
+  dcard.className = "card";
+  dcard.style.cssText = "background:var(--blueSoft);border-color:#C9D8F2";
+  dcard.innerHTML = `<div class="kicker" style="margin-bottom:6px;color:var(--blue)">${esc(t("certDoporuceni"))}</div>`;
+  if(!dop.length){
+    dcard.insertAdjacentHTML("beforeend",
+      `<div style="font-size:13px;line-height:1.55">${esc(t("certDoporuceniChybi"))}</div>
+       <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+         <button class="btn ghost" style="padding:7px 14px;font-size:12.5px;background:#fff" onclick="go('konzultant')">${esc(t("nav").konzultant)}</button>
+         <button class="btn ghost" style="padding:7px 14px;font-size:12.5px;background:#fff" onclick="state.duTab='test';save();go('dualuse')">${esc(t("duTabTest"))}</button>
+       </div>`);
+  } else {
+    dop.forEach((d, i)=>{
+      const radek = document.createElement("div");
+      radek.style.cssText = "display:flex;gap:12px;align-items:flex-start;padding:8px 0;line-height:1.5";
+      radek.innerHTML = `<span class="mono" style="flex:none;width:24px;height:24px;border-radius:50%;background:#fff;color:var(--blue);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600">${i+1}</span>
+        <div style="flex:1;min-width:0"><strong style="font-size:13.5px">${esc(d.p.nazev)}</strong>
+          <div style="font-size:12.5px;color:var(--muted);margin-top:2px">${esc(d.duvod)}</div></div>
+        <button class="btn ghost" style="padding:6px 12px;font-size:12px;flex:none;background:#fff">${esc(t("certPostup"))}</button>`;
+      radek.querySelector("button").onclick = ()=>{
+        state.certOtevrene[d.p.id] = true; save(); go("certifikace");
+        setTimeout(()=>{ const x = document.getElementById("cert-" + d.p.id); if(x) x.scrollIntoView({ behavior: "smooth", block: "start" }); }, 60);
+      };
+      dcard.appendChild(radek);
+    });
+    dcard.insertAdjacentHTML("beforeend", `<div style="font-size:11.5px;color:var(--muted);margin-top:6px">${esc(t("certDoporuceniPozn"))}</div>`);
+  }
+  el.appendChild(dcard);
+
+  // katalog: skupiny s rozklikávacími položkami (kroky jako u přihlášek)
+  cert.skupiny.forEach(sk=>{
+    const g = document.createElement("div");
+    g.className = "card";
+    g.innerHTML = `<div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px">${esc(sk.nazev)}</div>
+      <div style="color:var(--muted);font-size:12.5px;margin:3px 0 6px;line-height:1.5">${esc(sk.kdy)}</div>`;
+    sk.polozky.forEach(p=>{
+      const otevrena = !!state.certOtevrene[p.id];
+      const box = document.createElement("div");
+      box.id = "cert-" + p.id;
+      box.style.cssText = "border-top:1px solid var(--line);padding:10px 0";
+      box.innerHTML = `<div style="display:flex;align-items:center;gap:10px;cursor:pointer" data-cert-toggle>
+          <strong style="flex:1;font-size:13.5px">${esc(p.nazev)}</strong>
+          <span class="mono" style="font-size:13px;color:var(--muted)">${otevrena ? "−" : "+"}</span>
+        </div>`;
+      if(otevrena){
+        box.insertAdjacentHTML("beforeend", `
+          <div style="font-size:13px;line-height:1.55;margin-top:8px">${esc(p.coJe)}</div>
+          <div style="font-size:12.5px;margin-top:6px;line-height:1.5"><span style="color:var(--muted)">${esc(t("certKdy"))}</span> ${esc(p.kdyPotrebuji)}</div>
+          ${p.trvani ? `<div style="font-size:12.5px;margin-top:3px;line-height:1.5"><span style="color:var(--muted)">${esc(t("certTrvani"))}</span> ${esc(p.trvani)}</div>` : ""}
+          ${(p.kroky && p.kroky.length) ? `<div class="kicker" style="margin:10px 0 2px">${esc(t("certPostup"))}</div>` : ""}
+          ${(p.kroky || []).map((k, i)=>`
+            <div style="display:flex;gap:12px;padding:8px 0;line-height:1.5">
+              <span class="mono" style="flex:none;width:24px;height:24px;border-radius:50%;background:var(--blueSoft);color:var(--blue);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600">${i+1}</span>
+              <div style="flex:1;min-width:0">
+                <strong style="font-size:13px">${esc(k.krok)}</strong>
+                <div style="font-size:12.5px;color:var(--muted);margin-top:2px">${esc(k.popis || "")}</div>
+                ${k.odkaz ? `<a href="${esc(k.odkaz)}" target="_blank" rel="noopener" style="display:inline-block;font-size:12px;margin-top:5px;color:var(--blue)">${esc(k.odkazText || k.odkaz)} ↗</a>` : ""}
+                ${k.obrazek ? `<img src="${esc(k.obrazek)}" alt="" loading="lazy" style="display:block;max-width:100%;border:1px solid var(--line);border-radius:10px;margin-top:8px" onerror="this.style.display='none'">` : ""}
+              </div>
+            </div>`).join("")}`);
+      }
+      box.querySelector("[data-cert-toggle]").onclick = ()=>{ state.certOtevrene[p.id] = !otevrena; save(); go("certifikace"); };
+      g.appendChild(box);
+    });
+    el.appendChild(g);
+  });
+
+  el.insertAdjacentHTML("beforeend", `<div class="card" style="border-style:dashed;color:var(--muted);font-size:12px;line-height:1.5">${esc(cert.zdroj)}</div>`);
+  vlozMiniPoradce(el, kb, "certifikace", t("miniPlaceholderCert"), null);
 }
 
 function vProgramDetail(el, id){
@@ -1079,6 +1219,9 @@ function vKonzultant(el){
       btn: { t: t("prihlaskaBtn"), route: { view:"prihlaska", prihlaskaProgram: top[0].p.id } } });
     kroky.push({ text: duShody.length ? t("konPlanDU", { k: duShody[0].k.kod + " – " + duShody[0].k.nazev }) : t("konPlanDU0"),
       btn: { t: t("duTabTest"), route: { view:"dualuse", duTab:"test", duPopis: f.popis } } });
+    if(certDoporuceni(kb).length){
+      kroky.push({ text: t("konPlanCert"), btn: { t: t("nav").certifikace, route: { view: "certifikace" } } });
+    }
     kroky.push({ text: t("konPlanAI") + kb.meta.kontakt });
     el.insertAdjacentHTML("beforeend",
       `<div class="card"><div class="kicker" style="margin-bottom:10px">${esc(t("konPlan"))}</div>
@@ -1611,6 +1754,7 @@ function aplikujRoute(r){
   }
   if(r.domena){ state.du = { smer: "d2k", domena: r.domena, popis: (state.du||{}).popis || "" }; }
   if(r.prihlaskaProgram !== undefined){ state.prihlaskaProgram = r.prihlaskaProgram; }
+  if(r.certOtevrit){ if(!state.certOtevrene) state.certOtevrene = {}; state.certOtevrene[r.certOtevrit] = true; }
   save();
   go(r.view, r.param);
 }
@@ -1653,6 +1797,11 @@ function sestavIndexKB(kb){
     ukazka: String(w.text || "").slice(0, 160) + (w.stazeno ? " (" + (state.lang === "en" ? "fetched " : "staženo ") + w.stazeno + ")" : ""),
     route: w.program ? { view: "program", param: w.program } : { view: "programy" }
   }));
+  (((kb.certifikace || {}).skupiny) || []).forEach(sk => sk.polozky.forEach(p => docs.push({
+    titul: p.nazev, stitek: state.lang === "en" ? "certification" : "certifikace",
+    text: [p.coJe, p.kdyPotrebuji, p.trvani, (p.kroky||[]).map(k=>k.krok+" "+(k.popis||"")).join(" ")].join(" "),
+    ukazka: p.coJe, route: { view: "certifikace", certOtevrit: p.id }
+  })));
   ((kb.ukrajina || {}).cesty || []).forEach(c => docs.push({
     titul: c.nazev, stitek: state.lang === "en" ? "Ukraine/testing" : "Ukrajina/testování",
     text: c.popis, ukazka: c.popis.slice(0, 160),
@@ -1933,10 +2082,12 @@ function botOdpoved(dotaz, kb, docs){
     const rez = kb.dualUseTest.rezimy.find(r => r.id === "nbu");
     return { text: "**" + rez.nazev + "**\n" + rez.kdy + ".\n\n" + rez.akce, tlacitka: [btnTest] };
   }
-  // 9) certifikace / NATO řetězec
-  if(ma("certifik","ncage","nspa","aqap","stanag","kodifik","as9100"," iso ","nsn","dodavatel")){
+  // 9) certifikace / NATO řetězec → nová záložka Certifikace
+  if(ma("certifik","ncage","nspa","aqap","stanag","kodifik","as9100"," iso ","nsn","dodavatel","proverk","clearance")){
     const rez = kb.dualUseTest.rezimy.find(r => r.id === "nato-retezec");
-    return { text: "**" + rez.nazev + "**\n" + rez.akce, tlacitka: [btnTest] };
+    return { text: "**" + rez.nazev + "**\n" + rez.akce + "\n\n" +
+      T("Kompletní katalog certifikací s postupy krok za krokem najdete v záložce Certifikace.", "The full certification catalogue with step-by-step procedures is in the Certifications tab."),
+      tlacitka: [{ t: t("nav").certifikace, route: { view: "certifikace" } }, btnTest] };
   }
   // 10) dual-use / export obecně
   if(ma("dual","zatrid","export","vyvoz","licenc","klasifikac","classif","kontrolni seznam","vojensky material")){
