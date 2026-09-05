@@ -1,28 +1,89 @@
 // =====================================================================
-// DH Kompas – knowledge base, ENGLISH version
+// DH Kompas – knowledge base, ENGLISH
 // ---------------------------------------------------------------------
-// English mirror of kb.js. Maintain BOTH files together: any change in
-// kb.js (programmes, calls, checklists…) should be mirrored here.
-// The in-app editor (Knowledge base tab) edits the language currently
-// selected and stores changes in the browser only; a permanent change
-// means uploading a new kb-en.js to the repository.
-//
-// IMPORTANT: items flagged overit:true carry amounts/deadlines that
-// must be checked against official sources before launch. The app
-// shows them with a "verify" tag.
+// English mirror of kb.js (source: Knowledge-Base-Ultimate, 2026-09-04,
+// + defencehub.gov.cz programme catalogue). Maintain BOTH files
+// together: any change in kb.js should be mirrored here.
+// Items flagged overit:true / [VERIFY] carry the flags of the source
+// knowledge base – check against official sources before use.
 // =====================================================================
 
 window.DH_KB_EN = {
 
   meta: {
-    verze: "0.1 (concept)",
-    aktualizovano: "2026-09-04",
-    kontakt: "Defence Hub CzechInvest – our team will personally help you pick a programme and prepare the application."
+    verze: "0.2 (KB Ultimate)",
+    aktualizovano: "2026-09-05",
+    kontakt: "Defence Hub CzechInvest – our team will personally help you pick a programme and prepare the application. Book a free consultation at defencehub.gov.cz."
   },
 
-  // The stavRucne field overrides the automatic status computation –
-  // useful for states like "under evaluation" that dates can't express.
   vyzvy: [
+    {
+      program: "edf",
+      nazev: "EDF – 2026 calls (~€1bn, 10 calls / 31 topics)",
+      otevreniOd: "",
+      uzaverka: "2026-09-29",
+      odkaz: "https://defence-industry-space.ec.europa.eu",
+      pozn: "Consortia of min. 3 entities from 3 countries; Czech co-financing via TAČR PRODEF PP1.",
+      priklad: false
+    },
+    {
+      program: "eudis",
+      nazev: "EUDIS Open Call – up to €6m development / €4m research",
+      otevreniOd: "",
+      uzaverka: "2026-09-29",
+      odkaz: "https://eudis.europa.eu",
+      pozn: "Consortium of 3 companies from 3 states, from TRL 4.",
+      priklad: false
+    },
+    {
+      program: "eic-step-defence",
+      nazev: "EIC STEP Scale Up Defence – equity €10–30m",
+      otevreniOd: "2026-06-30",
+      uzaverka: "2026-10-28",
+      odkaz: "https://eic.ec.europa.eu",
+      pozn: "Equity only, no grant; requires investor pre-commitment. Results early 2027.",
+      priklad: false
+    },
+    {
+      program: "eic-accelerator",
+      nazev: "EIC Accelerator (dual-use) – rolling submission",
+      otevreniOd: "",
+      uzaverka: "",
+      stavRucne: "short application can be submitted any time",
+      odkaz: "https://eic.ec.europa.eu",
+      pozn: "Open to defence and dual-use technologies since 17 June 2026.",
+      priklad: false
+    },
+    {
+      program: "eudis",
+      nazev: "EUDIS Accelerator – quarterly calls",
+      otevreniOd: "",
+      uzaverka: "",
+      stavRucne: "running, calls every quarter",
+      odkaz: "https://eudis.europa.eu",
+      pozn: "6-month accelerator: business coaching, matchmaking with primes, Test in Ukraine.",
+      priklad: false
+    },
+    {
+      program: "edip",
+      nazev: "EDIP – 2026–27 work programme calls (€1.5bn)",
+      otevreniOd: "2026-03-31",
+      uzaverka: "",
+      stavRucne: "calls open on the Funding & Tenders portal",
+      odkaz: "https://defence-industry-space.ec.europa.eu",
+      pozn: "Individual call deadlines [VERIFY on the portal].",
+      priklad: false
+    },
+    {
+      program: "horizon-cl3",
+      nazev: "Horizon Europe Cluster 3 – 2026 calls (€131m)",
+      otevreniOd: "2026-05-06",
+      uzaverka: "",
+      stavRucne: "calls launched 6 May 2026",
+      odkaz: "https://ec.europa.eu/info/funding-tenders/opportunities/portal/",
+      pozn: "Topic deadlines [VERIFY on the portal].",
+      priklad: false
+    },
     {
       program: "diana",
       nazev: "DIANA – call for the 2027 cohort",
@@ -43,21 +104,12 @@ window.DH_KB_EN = {
       priklad: false
     },
     {
-      program: "edf",
-      nazev: "EDF calls [ADD year]",
-      otevreniOd: "[ADD]",
-      uzaverka: "[ADD]",
-      odkaz: "https://defence-industry-space.ec.europa.eu",
-      pozn: "Deadlines to be added by the DH team from the current work programme.",
-      priklad: false
-    },
-    {
-      program: "eic-accelerator",
-      nazev: "EIC Accelerator – next cut-off [ADD]",
-      otevreniOd: "[ADD]",
-      uzaverka: "[ADD]",
-      odkaz: "https://eic.ec.europa.eu",
-      pozn: "The short application can be submitted any time; the cut-off applies to the full application.",
+      program: "prodef",
+      nazev: "TAČR PRODEF PP1 – EDF co-financing (call planned 10/2026)",
+      otevreniOd: "2026-10-01",
+      uzaverka: "",
+      odkaz: "https://tacr.gov.cz/program/program-prodef/",
+      pozn: "Indicative date [VERIFY at tacr.gov.cz].",
       priklad: false
     }
   ],
@@ -67,127 +119,195 @@ window.DH_KB_EN = {
     {
       id: "diana",
       nazev: "NATO DIANA Accelerator",
-      kratce: "NATO's accelerator for dual-use deep tech. Czechia has its own accelerator site hosted by the Defence Hub.",
+      kratce: "NATO's accelerator for dual-use deep tech. Defence Hub CzechInvest is the Czech accelerator site – the main entry gate for Czech startups into DIANA.",
       typ: "akcelerator",
       zamereni: "dual",
       trl: [4, 7],
       konsorcium: false,
       velikost: ["startup", "sme"],
-      castka: "€100,000 grant in phase 1; selected companies advance to phase 2 with a €300,000 grant",
-      overit: false,
-      proKoho: "Startups from NATO member countries with technology usable both in civilian and defence contexts (dual-use). A single company applies – no consortium needed.",
+      castka: "Phase 1 grant up to ~€100,000, with the follow-on phase up to ~€300,000 or more in total; non-dilutive (NATO takes no equity or IP)",
+      overit: true,
+      proKoho: "Dual-use and deep tech startups and small companies from NATO member countries. A single company applies to a specific challenge. The 2026 cohort (largest ever): 150 companies from 24 countries across 10 challenge areas.",
       jakFunguje: [
-        "Calls (challenges) are published for topics defined by NATO – e.g. sensing, energy, secure communications, autonomy.",
-        "Six-month acceleration programme: grant, mentoring, access to test centres and a network of end users across NATO.",
-        "The best companies advance to phase 2 and gain visibility with the NATO Innovation Fund and allied customers."
+        "NATO publishes challenges in defined areas – e.g. advanced communications and contested electromagnetic environments, autonomy and uncrewed systems, energy and power, biotech and human resilience, critical infrastructure and logistics.",
+        "Selected companies go through a ~6-month acceleration programme: grant, mentoring, access to a network of 200+ test centres in 32 nations and 16 accelerator sites.",
+        "Czech site: Defence Hub CzechInvest – focus on space, advanced materials, AI, ecotech. Network of 230+ defence suppliers (AOBP) and 600+ European entities (EEN).",
+        "Alumni gain visibility with the NATO Innovation Fund and allied customers (not automatic)."
       ],
       vhodnyKdyz: [
         "You have a working prototype or technology close to deployment (roughly TRL 4+).",
-        "Your technology has both civilian and defence uses and you can demonstrate it.",
-        "You want to reach defence end users but lack the contacts."
+        "Your technology has both civilian and defence uses and matches a published challenge.",
+        "You want non-dilutive money, defence validation and contacts – without giving up equity."
       ],
       nevhodnyKdyz: [
         "The technology is purely a weapon (lethal) – DIANA focuses on dual-use.",
         "You are at the pure-research stage with no prototype."
       ],
-      terminy: "Calls typically once a year. The last call (2027 cohort) ran in June 2026 and is under evaluation; the next call opens in June 2027.",
+      terminy: "The call for the 2027 cohort ran in June 2026 and is being evaluated; the next call opens in June 2027.",
       terminyOverit: false,
       odkaz: "https://www.diana.nato.int",
-      pomocDH: "The Defence Hub hosts the Czech DIANA accelerator – we are right at the source. Talk to us before you apply."
+      kdeKriteria: "The applicant guide and specific challenges on diana.nato.int while a call is open. The Czech DH team has the materials for the current call.",
+      pomocDH: "The Defence Hub is a DIANA accelerator site – we are right at the source. Talk to us before you apply."
+    },
+
+    {
+      id: "nif",
+      nazev: "NATO Innovation Fund (NIF)",
+      kratce: "A €1bn+ venture fund of NATO countries – Czechia is one of the 24 investor states. Equity investment into deep tech; no calls, no deadlines.",
+      typ: "equity",
+      zamereni: "dual",
+      trl: [4, 9],
+      konsorcium: false,
+      velikost: ["startup"],
+      castka: "Equity Seed to Series B; initial investment up to ~€15m per company, with reserves for follow-on rounds",
+      overit: false,
+      proKoho: "Deep tech and dual-use companies headquartered in one of the fund's 24 investor countries – Czechia is among them. Areas: energy, materials science, AI, data and computing, autonomy, quantum, biotechnology, space.",
+      jakFunguje: [
+        "No calls, deadlines or evaluation criteria – it is a fund: the investment team decides based on the fund's focus and the quality of the company.",
+        "Standard VC process: pitch deck → a series of meetings → due diligence → investment for a stake. The fund often leads rounds and takes board involvement.",
+        "Closely tied to DIANA – accelerator alumni are more visible to NIF, but investment is not automatic."
+      ],
+      vhodnyKdyz: [
+        "You don't want a grant project but an investor who understands the defence market and opens doors to government customers.",
+        "You have standard investor materials ready (deck, data room, financials) and demonstrable traction."
+      ],
+      nevhodnyKdyz: [
+        "You don't want to dilute the founders' stake – then stick with grants (DIANA, EUDIS, EIC grant).",
+        "You are looking for research money without a company and product – VCs invest in companies, not projects."
+      ],
+      terminy: "Ongoing – no deadlines, standard investment process.",
+      terminyOverit: false,
+      odkaz: "https://www.nif.fund",
+      kdeKriteria: "No evaluation criteria exist – NIF is a fund, not a call. Your guide is the fund's focus on nif.fund and the quality of standard investor materials.",
+      pomocDH: "A cold e-mail to a fund almost never works – through the DIANA network we can broker a warm intro."
+    },
+
+    {
+      id: "eic-accelerator",
+      nazev: "EIC Accelerator (dual-use)",
+      kratce: "The EU's flagship deep tech instrument: grant + equity. Open to defence and dual-use technologies for the first time since 17 June 2026.",
+      typ: "mix",
+      zamereni: "dual",
+      trl: [6, 8],
+      konsorcium: false,
+      velikost: ["startup", "sme"],
+      castka: "Blended finance: grant up to €2.5m (non-dilutive) + equity investment up to €10m (via the EIC Fund)",
+      overit: false,
+      proKoho: "Individual startups and SMEs from the EU with technology at TRL 6–8. Defence opening target areas: air and missile defence, drones and counter-drones, other critical defence technologies; plus AI, quantum, advanced materials and robotics with dual-use potential.",
+      jakFunguje: [
+        "Step 1: short proposal (pitch deck of max 10 slides, video) – submitted on a rolling basis, any time.",
+        "Step 2: full application by a fixed cut-off date.",
+        "Step 3: jury interview. Winners receive a grant, an investment, or both.",
+        "Don't confuse the tools: equity of €10–30m is the separate EIC STEP Scale Up Defence instrument, not the regular Accelerator."
+      ],
+      vhodnyKdyz: [
+        "You have validated technology (TRL 6+) and a clear commercial plan – EIC is a business-plan competition, not just research.",
+        "You are a single company and want a combination of non-dilutive grant and capital."
+      ],
+      nevhodnyKdyz: [
+        "You are pre-prototype – look at EIC Pathfinder/Transition or TAČR.",
+        "You need equity above €10m – that is EIC STEP Scale Up Defence."
+      ],
+      terminy: "Short application any time; full applications by cut-off dates per the EIC 2026 work programme.",
+      terminyOverit: true,
+      odkaz: "https://eic.ec.europa.eu",
+      kdeKriteria: "The EIC 2026 work programme on eic.ec.europa.eu + templates and criteria on the EU Funding & Tenders portal (evaluated on excellence, impact, implementation and level of risk).",
+      pomocDH: "We connect you with the national EIC contacts and with companies that have been through EIC."
+    },
+
+    {
+      id: "eic-step-defence",
+      nazev: "EIC STEP Scale Up Defence",
+      kratce: "New EIC instrument for large defence scale-ups: pure equity of €10–30m, no grant. Budget €100m, deadline 28 October 2026.",
+      typ: "equity",
+      zamereni: "defence",
+      trl: [7, 9],
+      konsorcium: false,
+      velikost: ["startup", "sme", "midcap"],
+      castka: "Direct equity €10–30m (dilutive), no grant component; the total round is expected to be at least 3–5× larger (co-investment)",
+      overit: false,
+      proKoho: "Scale-ups in critical defence technologies from EU member states, EEA countries associated to Horizon Europe, and Ukraine. Requires a pre-commitment from a private investor.",
+      jakFunguje: [
+        "Part of the EIC opening to defence (work programme amendment of 17 June 2026); STEP = Strategic Technologies for Europe Platform.",
+        "Applications from 30 June to 28 October 2026, results early 2027.",
+        "The EIC invests €10–30m as part of a larger investment round alongside private investors."
+      ],
+      vhodnyKdyz: [
+        "You are scaling the production/deployment of a critical defence technology and assembling a large round.",
+        "You have a lead investor or private-capital pre-commitment."
+      ],
+      nevhodnyKdyz: [
+        "You are early stage – start with DIANA, EUDIS or the EIC Accelerator.",
+        "You don't want to dilute – this is pure equity."
+      ],
+      terminy: "Opened 30 June 2026, deadline 28 October 2026, results early 2027.",
+      terminyOverit: false,
+      odkaz: "https://eic.ec.europa.eu",
+      kdeKriteria: "The call and conditions in the EIC 2026 work programme on eic.ec.europa.eu; applications via the EU Funding & Tenders portal.",
+      pomocDH: "We help with investor connections (pre-commitment) through the DH and DIANA network."
     },
 
     {
       id: "edf",
       nazev: "EDF – European Defence Fund",
-      kratce: "The EU's main grant programme for defence R&D. Large projects in international consortia.",
+      kratce: "The EU's main defence R&D grant programme: €7.3bn (2021–27). 2026 calls: ~€1bn across 10 calls and 31 topics, deadline 29 September 2026.",
       typ: "grant",
       zamereni: "defence",
       trl: [2, 8],
       konsorcium: true,
       velikost: ["sme", "midcap", "research"],
-      castka: "Grants from single to tens of millions € per project; research actions funded up to 100%, development actions co-financed",
-      overit: true,
-      proKoho: "Companies and research organisations from the EU/Norway. Requires a consortium of at least 3 entities from 3 different eligible countries. Selected topics carry SME bonuses.",
+      castka: "Non-dilutive grants; research actions funded up to 100% of eligible costs. Bonuses for SMEs, mid-caps and PESCO links",
+      overit: false,
+      proKoho: "Consortia of at least 3 independent entities from 3 member states or EDF-associated countries (disruptive-technology exception: 2 entities from 2 countries suffice). Applicants must be established in the EU with executive management in the EU and not controlled by a non-associated third country.",
       jakFunguje: [
-        "The European Commission (DG DEFIS) publishes annual calls in thematic categories (sensing, cyber, air and ground systems, materials…).",
-        "The consortium submits the application; evaluation covers excellence, impact and quality of implementation.",
-        "Development actions usually require support from the ministries of defence of the participating states."
+        "The European Commission (DG DEFIS) publishes annual calls; research actions target lower TRL, development actions higher [VERIFY the TRL band per topic].",
+        "For a startup EDF is hard to reach directly – in practice you enter via a consortium (led by an integrator or research organisation) and via EUDIS.",
+        "Czech participants can obtain national co-financing via TAČR PRODEF PP1."
       ],
       vhodnyKdyz: [
-        "You target the defence market and are ready to work in an international consortium.",
-        "You have the capacity for a multi-year project and the administration of a European grant.",
-        "You can plug into a larger system integrator (including as a subcontractor/partner)."
+        "You target the defence market, have partners (or let us help find them) and capacity for a multi-year project.",
+        "You can plug into a larger system integrator, including as a subcontractor."
       ],
       nevhodnyKdyz: [
-        "You need money fast (from call to grant signature typically takes over a year).",
-        "You can't or won't share the project with partners from other countries."
+        "You need money fast – from call to grant signature typically over a year.",
+        "You want to apply alone – then EUDIS, EIC or AGILE (from 2027)."
       ],
-      terminy: "Calls once a year, usually with an autumn deadline. Current dates to be added by the DH team.",
-      terminyOverit: true,
+      terminy: "2026 calls with a deadline of 29 September 2026.",
+      terminyOverit: false,
       odkaz: "https://defence-industry-space.ec.europa.eu/eu-defence-industry/european-defence-fund-edf_en",
-      pomocDH: "We help with consortium building (matchmaking) and connect you with the national focal point."
+      kdeKriteria: "The EU Funding & Tenders portal – each topic has call documents including the evaluation criteria; summarised in the annual EDF work programme.",
+      pomocDH: "We help with consortium building (matchmaking) and connect you with the national focal point (AOBP) and PRODEF PP1."
     },
 
     {
       id: "eudis",
       nazev: "EUDIS – EU Defence Innovation Scheme",
-      kratce: "An umbrella of support for startups and SMEs in defence: business accelerator, matchmaking, hackathons, cascade funding.",
+      kratce: "The SME branch of EDF (~€120m in the 2026 programme): an accelerator with quarterly calls and an Open Call with grants up to €6m.",
       typ: "mix",
       zamereni: "dual",
-      trl: [3, 8],
+      trl: [4, 8],
       konsorcium: false,
       velikost: ["startup", "sme"],
-      castka: "Depends on the instrument – from free participation (accelerator, matchmaking) to grants from cascade funding",
-      overit: true,
-      proKoho: "Startups and SMEs from the EU/Norway that want to enter the defence sector but can't yet reach a full EDF project.",
+      castka: "Accelerator: 6-month programme (coaching, matchmaking, Test in Ukraine). Open Call: up to €6m for development / €4m for research",
+      overit: false,
+      proKoho: "Startups and SMEs from the EU/Norway. Accelerator: single companies, quarterly calls. Open Call: consortium of 3 companies from 3 states, from TRL 4, deadline 29 September 2026.",
       jakFunguje: [
-        "Business accelerator: coaching and preparing companies for the defence market.",
-        "Matchmaking events: connections to large players and integrators (a path to EDF consortia).",
-        "Cascade funding: smaller grants via intermediaries – faster and simpler than full EDF.",
-        "Hackathons and innovation prizes."
+        "EUDIS Accelerator: 6-month acceleration – business coaching, matchmaking with large players (primes), Test in Ukraine option.",
+        "EUDIS Open Call: grants for development (up to €6m) and research (up to €4m) for smaller consortia – simpler than full EDF.",
+        "Path to EDF: through EUDIS you gain references and partners for later large consortia."
       ],
       vhodnyKdyz: [
         "You are at the start of your defence journey and need contacts, references and a smaller grant.",
-        "You want to get into an EDF consortium over time."
+        "You are at TRL 4+ and have two partner companies from other EU states (for the Open Call)."
       ],
       nevhodnyKdyz: [
-        "You are after a single large amount of funding – that's rather EDF or investment."
+        "You are after a single large amount of funding – that's EDF, EIC or investment."
       ],
-      terminy: "Each instrument has its own calendar – ongoing through the year.",
-      terminyOverit: true,
+      terminy: "Accelerator: quarterly calls. Open Call: deadline 29 September 2026.",
+      terminyOverit: false,
       odkaz: "https://eudis.europa.eu",
+      kdeKriteria: "On eudis.europa.eu for the specific instrument; cascade-funding calls carry their criteria in the intermediary's documentation.",
       pomocDH: "We track EUDIS calls continuously – tell us what you work on and we'll watch the relevant deadlines."
-    },
-
-    {
-      id: "eic-accelerator",
-      nazev: "EIC Accelerator",
-      kratce: "The EU's flagship instrument for deep tech scale-ups: grant + equity investment. Newly open to dual-use technologies.",
-      typ: "mix",
-      zamereni: "dual",
-      trl: [5, 9],
-      konsorcium: false,
-      velikost: ["startup", "sme"],
-      castka: "Grant up to €2.5m + equity investment from the EIC Fund (single millions €, more for strategic technologies)",
-      overit: true,
-      proKoho: "Individual innovative SMEs/startups from the EU with technology around TRL 5–8 and the ambition to scale on the European/global market.",
-      jakFunguje: [
-        "Step 1: short application (pitch deck, video, brief description) – submitted any time.",
-        "Step 2: full application by a fixed cut-off date.",
-        "Step 3: jury interview. Winners receive a grant, an investment, or both (blended finance)."
-      ],
-      vhodnyKdyz: [
-        "You have validated technology and a clear commercial plan – EIC is a business-plan competition, not just research.",
-        "Your technology is dual-use with a primarily civilian market."
-      ],
-      nevhodnyKdyz: [
-        "The project is purely defence/weapons – that belongs to EDF/EUDIS.",
-        "You are pre-prototype (look at EIC Pathfinder/Transition)."
-      ],
-      terminy: "Short application any time; full applications by cut-off dates several times a year.",
-      terminyOverit: true,
-      odkaz: "https://eic.ec.europa.eu/eic-funding-opportunities/eic-accelerator_en",
-      pomocDH: "We connect you with the national EIC contacts and with companies that have been through EIC."
     },
 
     {
@@ -204,7 +324,8 @@ window.DH_KB_EN = {
       proKoho: "Research teams and spin-offs at the start of development. Pathfinder Open typically a consortium; Challenges and Transition also allow single applicants.",
       jakFunguje: [
         "Pathfinder: high-risk research with a vision of a future technology.",
-        "Transition: builds on results (Pathfinder/ERC) and moves them towards a prototype and a first business plan."
+        "Transition: builds on results (Pathfinder/ERC) and moves them towards a prototype and a first business plan.",
+        "A company that matures through Horizon research can continue into the EIC Accelerator."
       ],
       vhodnyKdyz: [
         "You are a university team / spin-off with a breakthrough idea far before the market."
@@ -212,55 +333,29 @@ window.DH_KB_EN = {
       nevhodnyKdyz: [
         "You already have a product and customers – that's EIC Accelerator or DIANA."
       ],
-      terminy: "Calls per the EIC work programme – current dates to be added by the DH team.",
+      terminy: "Calls per the EIC 2026 work programme [VERIFY dates].",
       terminyOverit: true,
       odkaz: "https://eic.ec.europa.eu/eic-funding-opportunities/eic-pathfinder_en",
+      kdeKriteria: "The EIC work programme on eic.ec.europa.eu; full call texts on the EU Funding & Tenders portal.",
       pomocDH: "We'll advise whether Pathfinder, Transition or Accelerator comes first for you."
-    },
-
-    {
-      id: "nif",
-      nazev: "NATO Innovation Fund (NIF)",
-      kratce: "A billion-euro venture fund of NATO countries. It doesn't buy projects, it buys stakes – equity investment into deep tech and dual-use startups.",
-      typ: "equity",
-      zamereni: "dual",
-      trl: [4, 9],
-      konsorcium: false,
-      velikost: ["startup"],
-      castka: "Equity investment typically in early rounds (pre-seed to series B), amount per round",
-      overit: true,
-      proKoho: "Startups headquartered in participating NATO countries. Czech participation in the fund to be verified – [ADD status].",
-      jakFunguje: [
-        "Standard VC process: pitch, due diligence, investment for a stake in the company.",
-        "Invests directly into startups as well as into other funds; closely tied to DIANA (alumni gain visibility)."
-      ],
-      vhodnyKdyz: [
-        "You don't want a grant project but an investor who understands the defence market and opens doors to government customers."
-      ],
-      nevhodnyKdyz: [
-        "You don't want to dilute the founders' stake – then stick with grants."
-      ],
-      terminy: "Ongoing – no deadlines, standard investment process.",
-      terminyOverit: false,
-      odkaz: "https://www.nif.fund",
-      pomocDH: "Through the DIANA network we can broker a first contact."
     },
 
     {
       id: "horizon-cl3",
       nazev: "Horizon Europe – Cluster 3 (Civil Security)",
-      kratce: "Research for civil security: protection of citizens, critical infrastructure, cybersecurity, borders. Exclusively civilian applications.",
+      kratce: "Civil security research: 2026 calls worth €131m, emphasis on high TRL (6–8) and field demonstrations. Exclusively civilian applications.",
       typ: "grant",
       zamereni: "civil",
-      trl: [3, 8],
+      trl: [4, 8],
       konsorcium: true,
       velikost: ["sme", "midcap", "research"],
-      castka: "Grants of single millions € per consortium project",
-      overit: true,
-      proKoho: "Consortia of companies, research organisations and end users (police, fire services, infrastructure operators). Projects must be exclusively civilian.",
+      castka: "2026 calls: €131m – fighting crime and terrorism 40.7 / border management 21.3 / resilient infrastructure 22.7 / disaster-resilient society 32.5 / strengthened security research 13.8 (€m)",
+      overit: false,
+      proKoho: "Consortia of companies, research organisations and – mandatorily – practitioners (security forces, critical infrastructure operators). Projects must be exclusively civilian.",
       jakFunguje: [
-        "Annual calls by destination (resilient infrastructure, fighting crime, cybersecurity, disaster management…).",
-        "Strong emphasis on involving end users in the consortium."
+        "Annual calls by destination; 2026 calls launched 6 May 2026.",
+        "Strong emphasis on higher TRL (6, 7, 8) and field demonstrations.",
+        "For dual-use technologies Cluster 4 (digital, industry, space) is also relevant [VERIFY 2026 topics]."
       ],
       vhodnyKdyz: [
         "Your technology has a security (not military) use – or you want to fund the civilian branch of a dual-use technology separately."
@@ -268,37 +363,162 @@ window.DH_KB_EN = {
       nevhodnyKdyz: [
         "The output is to be military – that belongs to EDF."
       ],
-      terminy: "Calls once a year per the work programme.",
+      terminy: "2026 calls launched 6 May 2026; topic deadlines [VERIFY on the portal].",
       terminyOverit: true,
       odkaz: "https://ec.europa.eu/info/funding-tenders/opportunities/portal/",
+      kdeKriteria: "The EU Funding & Tenders portal – the topic text + the General Annexes of the Horizon Europe work programme (standard criteria: excellence, impact, implementation).",
       pomocDH: "We'll point you to the national contact point for Horizon Europe (TC Prague)."
     },
 
     {
       id: "edip",
-      nazev: "EDIP and follow-up instruments (watch)",
-      kratce: "The upcoming EU programme to strengthen defence production and joint procurement. More relevant for established manufacturers – but worth watching.",
-      typ: "grant",
+      nazev: "EDIP – European Defence Industry Programme",
+      kratce: "The approved EU programme to strengthen defence production: €1.5bn work programme (2026–27), calls running since 31 March 2026. For startups mainly the FAST fund and BraveTech EU.",
+      typ: "mix",
       zamereni: "defence",
-      trl: [7, 9],
+      trl: [6, 9],
       konsorcium: true,
-      velikost: ["sme", "midcap"],
-      castka: "[ADD] – programme parameters were being finalised when this KB was prepared",
-      overit: true,
-      proKoho: "Manufacturers and suppliers in defence supply chains. For startups mostly indirectly – as a signal of where demand will flow.",
+      velikost: ["startup", "sme", "midcap"],
+      castka: "€1.5bn: €700m+ production of key components (counter-drones, missiles, ammunition), €325m projects of common interest, €260m support for Ukraine, €240m joint procurement, €100m equity for startups/SMEs (FAST fund), €35.3m BraveTech EU",
+      overit: false,
+      proKoho: "Member states, Norway, Ukraine, procurement consortia, defence startups and SMEs. Joint procurement: grant up to €20m per project.",
       jakFunguje: [
-        "Follows the temporary instruments ASAP (ammunition) and EDIRPA (joint procurement).",
-        "Call details will be added by the DH team once the work programme is published."
+        "Political agreement 17 October 2025, final Council approval 8 December 2025; work programme adopted 30 March 2026.",
+        "Calls on the EU Funding & Tenders portal since 31 March 2026.",
+        "For startups: equity support via the FAST fund (€100m) and the BraveTech EU innovation programme (€50m EU + €50m Ukraine, Seed and Scale Up phases)."
       ],
       vhodnyKdyz: [
-        "You have a finished product and are scaling production for defence contracts."
+        "You have a finished product and are scaling production for defence contracts.",
+        "You develop counter-drone systems, ammunition or key components."
       ],
       nevhodnyKdyz: [
         "You are in the development phase – start with EDF/EUDIS/DIANA."
       ],
-      terminy: "[ADD once published]",
+      terminy: "Calls open since 31 March 2026; individual deadlines [VERIFY on the portal].",
       terminyOverit: true,
       odkaz: "https://defence-industry-space.ec.europa.eu",
+      kdeKriteria: "EDIP calls on the EU Funding & Tenders portal (2026–27 work programme).",
+      pomocDH: "We help pick the right EDIP branch (production / FAST / BraveTech) and find partners."
+    },
+
+    {
+      id: "prodef",
+      nazev: "TAČR PRODEF (Czechia)",
+      kratce: "The Czech applied defence research programme: CZK 6.12bn (2024–31). PP1 co-finances Czech EDF participants, PP2 funds research for the Czech Armed Forces.",
+      typ: "grant",
+      zamereni: "defence",
+      trl: [2, 7],
+      konsorcium: false,
+      velikost: ["startup", "sme", "midcap", "research"],
+      castka: "CZK 6.12bn in total, average support intensity 60%",
+      overit: false,
+      proKoho: "Czech companies and research organisations. PP1: Czech participants of EDF consortia (national co-financing). PP2: applied research in emerging technologies for the Czech Armed Forces – defence electronics, uncrewed systems, ammunition.",
+      jakFunguje: [
+        "Administered by TAČR, financed by the Czech Ministry of Defence (approved by the government on 7 May 2024).",
+        "PP1 is the key bridge between the national and European level – if you go for EDF, handle PRODEF PP1 in parallel.",
+        "2026 calls: 3rd PP2 competition indicatively June 2026, PP1 indicatively October 2026 [VERIFY at tacr.gov.cz]."
+      ],
+      vhodnyKdyz: [
+        "You target defence research linked to the Czech Armed Forces (PP2), or you are entering an EDF consortium (PP1).",
+        "You want a Czech grant without an international consortium."
+      ],
+      nevhodnyKdyz: [
+        "You are after growth capital – the national grant line for scale-ups is missing; aim for EIC/NIF."
+      ],
+      terminy: "PP2 indicatively 6/2026 (ran), PP1 indicatively 10/2026 [VERIFY].",
+      terminyOverit: true,
+      odkaz: "https://tacr.gov.cz/program/program-prodef/",
+      kdeKriteria: "The competition documentation at tacr.gov.cz (PRODEF programme).",
+      pomocDH: "We'll advise whether PP1, PP2, or the civilian TAČR programmes (SIGMA, TREND) and OP TAK fit you better."
+    },
+
+    {
+      id: "optak-deeptech",
+      nazev: "OP TAK – Aplikace DEEP TECH (Czechia)",
+      kratce: "Czech Ministry of Industry subsidy for industrial R&D in companies: CZK 2–100m per project, newly covering the defence industry too.",
+      typ: "grant",
+      zamereni: "dual",
+      trl: [3, 8],
+      konsorcium: false,
+      velikost: ["startup", "sme", "midcap"],
+      castka: "Subsidy of CZK 2–100m per project",
+      overit: true,
+      proKoho: "Companies (SME advantage), also in cooperation with research organisations. A civilian programme that newly covers the defence industry – suitable for dual-use development.",
+      jakFunguje: [
+        "Operational Programme Technologies and Applications for Competitiveness (2021–27), EU-funded, managed by the Ministry of Industry (MPO).",
+        "Aplikace activity: industrial research and experimental development in companies.",
+        "A follow-up DEEP TECH call is planned for 2026 [VERIFY parameters at optak.gov.cz]."
+      ],
+      vhodnyKdyz: [
+        "You develop in Czechia and want a national subsidy without an international consortium.",
+        "You are maturing a civilian/dual-use technology (complement: TAČR SIGMA and TREND)."
+      ],
+      nevhodnyKdyz: [
+        "You need to fund a purely military project with classification – that belongs to PRODEF/EDF."
+      ],
+      terminy: "Follow-up 2026 call [VERIFY deadline and parameters].",
+      terminyOverit: true,
+      odkaz: "https://optak.gov.cz",
+      kdeKriteria: "The call text at optak.gov.cz / mpo.gov.cz (Aplikace activity).",
+      pomocDH: "We connect you with the regional CzechInvest office that helps with OP TAK."
+    },
+
+    {
+      id: "safe",
+      nazev: "SAFE – Security Action for Europe",
+      kratce: "An EU loan instrument of up to €150bn for joint procurement of military material. Loans go to states – companies benefit indirectly as suppliers.",
+      typ: "pujcky",
+      zamereni: "defence",
+      trl: [8, 9],
+      konsorcium: true,
+      velikost: ["sme", "midcap"],
+      castka: "Loans of up to €150bn with long maturities – member states only; max. 35% of component costs may come from outside the EU/Ukraine/EEA",
+      overit: false,
+      proKoho: "Directly only member states (aid for 18 states approved in Feb–Apr 2026). Companies participate as suppliers to SAFE-funded procurements.",
+      jakFunguje: [
+        "The regulation has been in force since 29 May 2025; funded from the EU's borrowing capacity (EU-bonds).",
+        "Ukraine and EEA/EFTA countries may take part in joint procurements.",
+        "For a startup: watch where state demand will flow and position yourself in the supply chains."
+      ],
+      vhodnyKdyz: [
+        "You have a delivery-ready product and seek a path into SAFE-funded procurements (via primes or national purchases)."
+      ],
+      nevhodnyKdyz: [
+        "You seek direct development funding – that is EIC, EUDIS, EDIP FAST or BraveTech."
+      ],
+      terminy: "Allocations to states ran Feb–Apr 2026; procurements follow on an ongoing basis.",
+      terminyOverit: false,
+      odkaz: "https://www.consilium.europa.eu/en/policies/safe/",
+      kdeKriteria: "An instrument for member states – companies take part via national procurements; information at consilium.europa.eu and the Czech MoD.",
+      pomocDH: "We help you see which SAFE-funded national purchases are coming and who is buying."
+    },
+
+    {
+      id: "agile",
+      nazev: "AGILE Initiative (watch – launch 2027)",
+      kratce: "An upcoming EU instrument for rapid defence innovation: €115m, up to €5m per project, solo applicant (mainly SMEs), targeting grant within 4 months of submission.",
+      typ: "grant",
+      zamereni: "defence",
+      trl: [4, 8],
+      konsorcium: false,
+      velikost: ["startup", "sme"],
+      castka: "Budget €115m; up to €5m per project",
+      overit: true,
+      proKoho: "Mainly SMEs and startups – no mandatory consortium, with a fast procedure (target: grant within 4 months of submission).",
+      jakFunguje: [
+        "Political agreement so far; launch expected in 2027.",
+        "Details will be added by the DH team once published – we'll add you to the mailing list."
+      ],
+      vhodnyKdyz: [
+        "You want a fast defence grant without a consortium – once launched, this will be the fastest European route."
+      ],
+      nevhodnyKdyz: [
+        "You need money this year – use EUDIS, EIC or PRODEF."
+      ],
+      terminy: "Launch 2027 [ADD once announced].",
+      terminyOverit: true,
+      odkaz: "https://defence-industry-space.ec.europa.eu",
+      kdeKriteria: "[ADD once launched – parameters to be published by the European Commission]",
       pomocDH: "We'll add you to our mailing list – you'll hear from us when the calls are out."
     }
   ],
@@ -306,12 +526,12 @@ window.DH_KB_EN = {
   prihlaska: {
     obecneKroky: [
       {
-        krok: "Get your story straight",
-        popis: "One sentence: what problem you solve, for whom, and why you. Evaluators read dozens of applications – yours must be clear within the first minute."
+        krok: "Get your story straight – and know who it is for",
+        popis: "In defence the customer is a chain of decision-makers: politicians hear impact, buyers price and risk, soldiers reliability, engineers parameters. You must be able to tell the same product several ways."
       },
       {
         krok: "Read the call text twice",
-        popis: "You are scored against the call text, not the general quality of the idea. List the evaluation criteria and prepare an answer to each."
+        popis: "You are scored against the call text, not the general quality of the idea. List the evaluation criteria (the box at the selected programme shows where to find them) and prepare an answer to each."
       },
       {
         krok: "Build the team and partners early",
@@ -319,19 +539,19 @@ window.DH_KB_EN = {
       },
       {
         krok: "Numbers, not adjectives",
-        popis: "A “unique solution” convinces no one. TRL backed by tests, performance metrics, customer LOIs, market size with a source."
+        popis: "A “unique solution” convinces no one. TRL backed by tests, performance metrics, customer LOIs, market size with a source (SIPRI, Global Firepower)."
+      },
+      {
+        krok: "Reduce perceived risk",
+        popis: "In defence nobody wants to approve something that won't work. References, a pilot, a test centre, accelerator membership – these weigh more than performance promises."
       },
       {
         krok: "Build the budget bottom-up",
         popis: "From activities to money, not the other way round. An inflated budget is the most common reason for losing points."
       },
       {
-        krok: "Have an outsider read it",
-        popis: "Ideally someone who has evaluated or written successful applications. The Defence Hub can broker feedback."
-      },
-      {
-        krok: "Submit with a margin",
-        popis: "Portals crash before deadlines. Goal: complete application in the system at least 48 hours early."
+        krok: "Have an outsider read it and submit with a margin",
+        popis: "Ideally someone who has evaluated or written successful applications – the Defence Hub can broker feedback. Portals crash before deadlines: complete application in the system at least 48 hours early."
       }
     ],
     checklisty: {
@@ -341,24 +561,43 @@ window.DH_KB_EN = {
         "Documented state of the technology (demo, video, test results)",
         "Team: who has which competences, who will actually attend the programme",
         "A plan for what you'll do with the grant in 6 months (milestones)",
-        "Willingness to work with NATO test centres and end users"
+        "Willingness to work with NATO test centres and end users",
+        "Consultation with the Defence Hub (Czech accelerator site) before submitting"
       ],
       edf: [
-        "Consortium: min. 3 entities from 3 eligible countries, roles assigned",
+        "Consortium: min. 3 entities from 3 eligible countries (2/2 for disruptive technologies), roles assigned",
         "Fit with the call topic demonstrated point by point",
         "Support of ministries of defence (for development actions) agreed in advance",
+        "Ownership structure: no control by a non-associated third country (or guarantees in place)",
         "Work packages (WPs) with milestones and deliverables",
         "Budget per partner and category, justified",
         "IP handled (consortium agreement at least drafted)",
+        "National co-financing: application to TAČR PRODEF PP1",
         "Security aspects: who needs clearances, how sensitive data is handled"
       ],
       "eic-accelerator": [
-        "Pitch deck (format per the call) and video",
+        "Pitch deck of max 10 slides (EIC requirement) and video",
+        "One slide dedicated to dual-use: civilian and defence use scenario",
         "Short application submitted and approved (step 1)",
         "Financial plan: what is grant, what equity, what own resources",
         "Evidence of traction: customers, LOIs, revenue, pilots",
         "Cap table and company structure ready for investment",
         "Interview preparation: 10-minute pitch + defending the numbers"
+      ],
+      nif: [
+        "Pitch deck (10–15 slides) with a clear dual-use/defence story",
+        "Data room: financials, cap table, key contracts, IP",
+        "Demonstrable traction: customers, pilots, LOIs",
+        "Czech HQ meets the condition (Czechia is a NIF investor country)",
+        "Round plan: how much, for what, who is the lead investor",
+        "Warm intro via the DH/DIANA network – not a cold e-mail"
+      ],
+      eudis: [
+        "The right instrument chosen: Accelerator (single company) vs. Open Call (consortium of 3 companies from 3 states)",
+        "For the Open Call: TRL 4+ documented",
+        "Business plan and defence market entry plan",
+        "Test in Ukraine considered as validation",
+        "Connection to primes (DH/EUDIS matchmaking)"
       ],
       default: [
         "Evaluation criteria of the call answered point by point",
@@ -371,36 +610,29 @@ window.DH_KB_EN = {
     }
   },
 
-  // Dual-use test – preliminary classification against the control lists:
-  // the EU Common Military List and Annex I of Regulation (EU) 2021/821.
-  // The priklady fields are ILLUSTRATIVE examples, not the full list –
-  // the exact technical thresholds are defined by Annex I. Not legal
-  // advice (see disclaimer). Regime conditions: {question:"answer"} =
-  // all must hold; special keys: katAno (≥1 category answered "ano"),
-  // katNevim (≥1 answered "nevim").
   dualUseTest: {
-    uvod: "Classification is done against two control lists: the EU Common Military List and Annex I of Regulation (EU) 2021/821 (dual-use). This test walks you through them and tells you what to verify next. Nothing is sent anywhere.",
+    uvod: "Classification is done against two control lists: the EU Common Military List (implemented in Czechia by Decree No. 210/2012 Coll. under Act No. 38/1994 Coll.) and Annex I of Regulation (EU) 2021/821 (dual-use, categories 0–9). Self-classification applies: the exporter is responsible for correct classification. This test walks you through the lists and tells you what to verify next. Nothing is sent anywhere.",
     otazky: [
-      { id: "vojenske", text: "Is the product designed, developed or specially modified for military use?", napoveda: "The key criterion of the EU Common Military List (categories ML1–ML22): weapons, ammunition, military vehicles and aircraft, fire-control systems, imaging equipment for military use, plus related software and technology. What matters is the design purpose, not who buys it." },
-      { id: "civilni", text: "Will you also sell to civilian customers in the EU?", napoveda: "Because of civilian certifications (CE and sector norms)." },
+      { id: "vojenske", text: "Is the product specially designed or modified for military use?", napoveda: "The decisive criterion of military material (Act 38/1994 Coll., list in Decree 210/2012 Coll., mirroring the EU Common Military List ML1–ML22). An ordinary civilian product that the military simply buys without modification is not military material." },
+      { id: "civilni", text: "Will you also sell to civilian customers in the EU?", napoveda: "Because of civilian certifications (CE and sector norms). Note: purely military material usually carries no CE marking (Art. 346 TFEU exemption)." },
       { id: "dataai", text: "Does the product process personal data or use AI?", napoveda: "Because of GDPR and the EU AI regulation (AI Act)." },
-      { id: "export", text: "Do you plan to sell outside the EU?", napoveda: "For dual-use items an export authorisation applies to exports to third countries; for a sensitive subset (Annex IV of the Regulation) even within the EU." },
-      { id: "usa", text: "Does the product contain US components, software or technology?", napoveda: "Because of the US ITAR/EAR rules – they apply even without exporting from the US." },
-      { id: "utajeni", text: "Do you expect to work with classified information?", napoveda: "E.g. contracts for ministries of defence." }
+      { id: "export", text: "Do you plan to sell outside the EU?", napoveda: "For dual-use items an export authorisation applies to exports to third countries; for a sensitive subset (Annex IV) even within the EU. Note: an e-mail, a cloud upload or giving a person outside the EU access to technical data also counts as export." },
+      { id: "usa", text: "Does the product contain US components, software or technical data?", napoveda: "US ITAR/EAR rules reach Czech companies too: ITAR items “contaminate” the whole product (no percentage threshold); under EAR the de minimis is usually 25% US content. That's why integrators seek “ITAR-free” components." },
+      { id: "utajeni", text: "Do you expect to work with classified information?", napoveda: "E.g. contracts for ministries of defence. Clearances are issued by the Czech NSA – NBÚ (Act 412/2005 Coll.); most dual-use deliveries require no classification at all." }
     ],
     kategorieAnnex: {
       text: "Which categories of Annex I of Regulation (EU) 2021/821 could your product fall into?",
-      napoveda: "Select all relevant categories (0–9). Each category controls items that reach defined technical parameters – for the selected categories the test asks whether your product exceeds them.",
+      napoveda: "Select all relevant categories (0–9). A control number is structured: category (0–9) + type (A equipment, B test/production equipment, C materials, D software, E technology) + number – e.g. 5A002 = information-security/encryption equipment. You are controlled only when the technical thresholds of a specific item are exceeded.",
       otazkaParametry: "Does your product reach or exceed the technical parameters of controlled items in this category?",
-      napovedaParametry: "The exact thresholds (performance, accuracy, sensitivity, key length…) are defined by Annex I for specific items. Compare your product with the Annex text, or answer “not sure” – then an expert classification is needed.",
+      napovedaParametry: "The exact thresholds (performance, accuracy, sensitivity, key length…) are defined by Annex I for specific items. Compare your product with the Annex text, or answer “not sure” – then an expert classification is needed. Note: customs (TARIC) classification is not the same as control classification.",
       zadna: "None of the categories",
       polozky: [
         { kod: "0", nazev: "Nuclear materials, facilities and equipment", priklady: ["fissile and special fissile materials", "reactors and their components", "enrichment and reprocessing equipment"] },
-        { kod: "1", nazev: "Special materials and related equipment", priklady: ["special alloys and composite materials", "chemical precursors", "protection and detection equipment against chemical and biological agents"] },
-        { kod: "2", nazev: "Materials processing", priklady: ["high-precision CNC machine tools", "isostatic presses", "bearings and production equipment of special parameters"] },
+        { kod: "1", nazev: "Special materials and related equipment", priklady: ["special alloys, composites and coatings", "chemical precursors", "protection and detection equipment against chemical and biological agents"] },
+        { kod: "2", nazev: "Materials processing", priklady: ["high-precision CNC machine tools", "isostatic presses", "bearings of special parameters"] },
         { kod: "3", nazev: "Electronics", priklady: ["radiation-hardened integrated circuits", "high-frequency and microwave components", "fast high-resolution A/D converters"] },
         { kod: "4", nazev: "Computers", priklady: ["high-performance computing systems above a defined threshold", "computers hardened for extreme conditions"] },
-        { kod: "5", nazev: "Telecommunications and “information security”", priklady: ["radio systems with frequency hopping and adaptive techniques", "interception- and jamming-resistant systems", "cryptography above defined parameters (algorithm type, key length)"] },
+        { kod: "5", nazev: "Telecommunications (part 1) and information security / encryption (part 2)", priklady: ["radio systems with frequency hopping and adaptive techniques", "interception- and jamming-resistant systems", "cryptography above defined parameters – typically item 5A002"] },
         { kod: "6", nazev: "Sensors and lasers", priklady: ["thermal and night-vision cameras above defined sensitivity/resolution", "acoustic and underwater sensors (hydrophones)", "radars, gravimeters, lasers above defined power or wavelengths"] },
         { kod: "7", nazev: "Navigation and avionics", priklady: ["inertial navigation systems and gyroscopes with drift below a defined limit", "jamming-resistant GNSS receivers for high speeds and altitudes"] },
         { kod: "8", nazev: "Marine", priklady: ["submersible and uncrewed underwater vehicles", "quiet propulsion", "sensors for underwater use"] },
@@ -409,71 +641,75 @@ window.DH_KB_EN = {
     },
     verdikty: {
       vojensky: {
-        nazev: "Likely military material (EU Common Military List)",
-        text: "A product designed or specially modified for military use usually falls on the EU Common Military List – the military-material trade regime, stricter than dual-use. Verify the specific ML category and your obligations before talking to foreign partners.",
+        nazev: "Likely military material (Act 38/1994 Coll.)",
+        text: "A product specially designed or modified for military use usually falls on the military material list (Decree 210/2012 Coll., per the EU Common Military List). The regime is stricter than dual-use: two-tier (company permit + a licence for each deal). Trading without permit and licence is a criminal offence (Sec. 265 of the Czech Criminal Code).",
         dalsiKroky: [
-          "Determine the ML category (1–22) on the EU Common Military List – with an expert or the licensing authority (in Czechia the MPO Licensing Authority).",
-          "Before any foreign business, obtain the military-material trade permit (MPO Licensing Authority) – without it you may not even negotiate a contract with a foreign partner. [VERIFY exact scope with a lawyer]",
-          "Then apply for a licence for each specific deal; expect input from other ministries and lead times of weeks to months.",
+          "Determine the category on the military material list (Decree 210/2012 Coll.) – with an expert or the MPO Licensing Authority.",
+          "Before talks with a foreign partner obtain the military-material trade permit (MPO Licensing Authority) – issued only after binding opinions of the Foreign, Defence and Interior Ministries; any of them can block a deal.",
+          "Then apply for a licence for each specific deal (specific goods, quantity, country, customer); count lead times in weeks to months.",
           "Screen end users and require an end-user certificate.",
-          "Set up internal compliance: who in the company controls what may be sent to whom – including technical data and demos at trade fairs.",
-          "Contact the Defence Hub – we will connect you with experts and with companies that have been through it."
+          "Set up internal compliance: what may be sent to whom, including technical data and trade-fair demos. Fines under Act 38/1994 go up to CZK 50m.",
+          "Contact the Defence Hub – we'll connect you with experts and companies that have been through it."
         ]
       },
       listed: {
         nazev: "Likely a controlled dual-use item (Annex I)",
-        text: "Based on your answers the product reaches the parameters of controlled items in Annex I of Regulation (EU) 2021/821. You will need an export authorisation for exports outside the EU.",
+        text: "Based on your answers the product reaches the parameters of controlled items in Annex I of Regulation (EU) 2021/821. For exports outside the EU you will need an export authorisation from the MPO Licensing Authority (procedure per Act No. 594/2004 Coll.).",
         dalsiKroky: [
-          "Determine the exact item number in Annex I (e.g. 5A002) – everything else follows from it. If unsure, ask the MPO Licensing Authority for a classification.",
-          "Check whether the item is also in Annex IV – then an authorisation is needed even for transfers within the EU.",
-          "Check whether an EU General Export Authorisation (EU001 and others) covers your target countries – exports to many allied countries are then administratively simpler. [VERIFY the current list of authorisations]",
-          "For other countries apply for an individual/global export authorisation with the MPO Licensing Authority – count lead times in weeks.",
-          "Screen end users against sanctions lists and keep documentation (record-keeping obligations).",
-          "Set up an Internal Compliance Programme (ICP) – the Commission has a recommendation for it; it is usually expected for global authorisations.",
-          "Note: “export” includes transfers of technology or software – an e-mail, a cloud share, a talk for a foreign team.",
+          "Determine the exact control number in Annex I (e.g. 5A002) – everything else follows from it. If unsure, ask the MPO Licensing Authority for an opinion.",
+          "Check Annex IV – its items require an authorisation even for transfers within the EU.",
+          "Check whether EU General Export Authorisations (EU001–EU008, Annex II) or a national general authorisation cover your target countries – the administratively simplest route.",
+          "Otherwise apply for an individual or global authorisation with the MPO Licensing Authority; global authorisations require an ICP (internal compliance programme). You will submit an end-user declaration in particular.",
+          "Keep export records for at least 5 years and expect semi-annual reporting to MPO (by the 10th day after each half-year) [VERIFY the form].",
+          "Screen end users against sanctions lists. Fines under Act 594/2004: up to CZK 5m (records), up to CZK 20m for the most serious breaches.",
+          "Note: “export” includes electronic transfers of technology or software – e-mail, cloud, repositories, a talk for a foreign team.",
           "The Defence Hub will connect you with export-control experts."
         ]
       },
       zatrideni: {
         nazev: "Needs an expert classification",
-        text: "Without comparing against the exact technical thresholds of Annex I this cannot be decided – for technology companies this is the most common situation and nothing to worry about.",
+        text: "Without comparing against the exact technical thresholds of Annex I this cannot be decided – the most common situation for technology companies and nothing to worry about. But self-classification applies: the responsibility is yours, and a wrong classification = unauthorised export.",
         dalsiKroky: [
-          "Write up the product's technical parameters (performance, accuracy, sensitivity, cryptography…) in one document.",
-          "Compare them with the Annex I text for the categories you selected – or hand it to an expert straight away.",
-          "Ask the MPO Licensing Authority for a classification opinion – a standard, free procedure. [VERIFY the filing form]",
-          "Until the classification is clear, be careful about sending technical details outside the EU.",
+          "Write up the product's technical parameters (performance, frequency, accuracy, cryptography…) in one document – the control list works with thresholds, not marketing names.",
+          "Compare them with the Annex I text for the selected categories – or hand it to an expert straight away.",
+          "Ask the MPO Licensing Authority for a classification opinion [VERIFY the filing form and lead times].",
+          "Don't forget software (D) and technology/technical data (E) – these are controlled items too.",
+          "Until the classification is clear, be careful about sending technical details outside the EU (including e-mail and cloud).",
           "The Defence Hub will connect you with export-control experts."
         ]
       },
       unlisted: {
         nazev: "Likely outside the control lists",
-        text: "Based on your answers the product does not reach the parameters of controlled items. The catch-all clause (Art. 4 of the Regulation) still applies.",
+        text: "Based on your answers the product does not reach the parameters of controlled items. The catch-all clauses still apply: an authorisation may be required even for a non-listed item because of end use – weapons of mass destruction (Art. 4), military use in an embargoed country (Art. 4), cyber-surveillance items with repression risk (Art. 5), national extensions of control (Art. 9, 10).",
         dalsiKroky: [
-          "Keep a record of the assessment (why the product is not listed) – useful for banks, investors and customs.",
+          "Document the assessment (why the product is not listed) – the due diligence is useful for banks, investors and customs.",
           "Screen unusual enquiries: suspicious end use, embargoed countries, a customer refusing to say what the product is for.",
-          "If in doubt about end use, contact the MPO Licensing Authority – an authorisation can be required even for a non-listed item (catch-all).",
-          "Repeat the classification with every major product change – new features can cross controlled thresholds."
+          "Check sanctions regimes for target countries – they apply regardless of classification.",
+          "If in doubt about end use, contact the MPO Licensing Authority.",
+          "Repeat the classification with every major product change – new features (e.g. added encryption) can cross controlled thresholds."
         ]
       }
     },
     dalsiKrokyNadpis: "What next – step by step",
     rezimy: [
-      { id: "vojmat", nazev: "Military material trade licence", kdy: "Item on the EU Common Military List (ML1–ML22)", akce: "Trading in military material requires permits and licences (in Czechia via the MPO Licensing Authority). Handle before the first business talks with a foreign partner.", podminky: { vojenske: "ano" } },
-      { id: "dualuse-narizeni", nazev: "Export authorisation for dual-use items", kdy: "Annex I item + export outside the EU", akce: "Determine the exact item number under Annex I and apply for an export authorisation with the MPO Licensing Authority. Check whether the item is also in Annex IV (then an authorisation is needed even for intra-EU transfers).", podminky: { katAno: true, export: "ano" } },
-      { id: "zatrideni", nazev: "Expert item classification", kdy: "Uncertainty whether the product reaches controlled parameters", akce: "Request a binding classification from the MPO Licensing Authority or an export-control expert's opinion. The Defence Hub will connect you.", podminky: { katNevim: true } },
-      { id: "catchall", nazev: "Catch-all clause (Art. 4 of Regulation 2021/821)", kdy: "Exports outside the EU – even for non-listed items", akce: "Screen end use and end users; if military use in an embargoed country or a WMD link is suspected, contact the MPO Licensing Authority.", podminky: { export: "ano" } },
-      { id: "itar", nazev: "US ITAR/EAR rules", kdy: "US components or technology in the product", akce: "Map which components fall under US jurisdiction – it restricts who you may sell to, even without exporting from the US.", podminky: { usa: "ano" } },
-      { id: "nbu", nazev: "Classified information and clearances (NSA)", kdy: "Contracts involving classified information", akce: "Facility and personnel clearances (in Czechia via NBÚ) take months – start well in advance.", podminky: { utajeni: "ano" } },
-      { id: "stanag", nazev: "Military standards and NATO codification", kdy: "Supplying armed forces", akce: "Expect requirements for military standards (STANAG, MIL-STD), resilience testing and NATO codification (NCAGE code).", podminky: { vojenske: "ano" } },
-      { id: "ce", nazev: "Civilian certification (CE and sector norms)", kdy: "Selling to civilian customers in the EU", akce: "Check which directives and harmonised standards apply to the product (CE marking, sector certifications).", podminky: { civilni: "ano" } },
-      { id: "gdpr", nazev: "GDPR and the EU AI regulation", kdy: "Product processes personal data or uses AI", akce: "Assess the impact of GDPR and the AI Act on the product's deployment.", podminky: { dataai: "ano" } }
+      { id: "vojmat", nazev: "Military material: permit + licence (Act 38/1994 Coll.)", kdy: "Item on the military material list (Decree 210/2012 Coll.)", akce: "Two-tier regime at the MPO Licensing Authority: first the company permit (after binding opinions of the Foreign, Defence and Interior Ministries), then a licence for each specific deal. Handle before the first talks with a foreign partner.", podminky: { vojenske: "ano" } },
+      { id: "dualuse-narizeni", nazev: "Dual-use export authorisation (Reg. 2021/821 + Act 594/2004 Coll.)", kdy: "Annex I item + export outside the EU", akce: "Determine the control number, check Annex IV (control within the EU too) and the EU001–EU008 general authorisations; otherwise an individual/global authorisation with the MPO Licensing Authority. Records for min. 5 years, semi-annual reporting.", podminky: { katAno: true, export: "ano" } },
+      { id: "zatrideni", nazev: "Expert item classification (self-classification)", kdy: "Uncertainty whether the product reaches controlled parameters", akce: "The exporter bears responsibility for the classification. Write up the technical parameters, compare with Annex I, or ask the MPO Licensing Authority for an opinion. The Defence Hub will connect you with experts.", podminky: { katNevim: true } },
+      { id: "catchall", nazev: "Catch-all clauses (Art. 4, 5, 9, 10 of the Regulation)", kdy: "Exports outside the EU – even for non-listed items", akce: "Screen end use and end users: WMD and military use in embargoes (Art. 4), cyber-surveillance and human rights (Art. 5), national extensions (Art. 9, 10). Contact the MPO Licensing Authority if suspicious.", podminky: { export: "ano" } },
+      { id: "itar", nazev: "US ITAR/EAR rules and re-export", kdy: "US components, software or technical data in the product", akce: "Map the US content: ITAR items (USML) “contaminate” the whole with no percentage threshold; under EAR the de minimis is usually 25%. Re-export may require a US authorisation (DDTC/BIS) even for a Czech company. Consider an “ITAR-free” design.", podminky: { usa: "ano" } },
+      { id: "nbu", nazev: "Classified information and NBÚ clearances (Act 412/2005 Coll.)", kdy: "Contracts involving classified information", akce: "The lowest level (Restricted) is simpler (no full NBÚ proceedings); from Confidential up both personnel and facility clearances from NBÚ are required – proceedings run months to over a year. Don't apply in advance 'just in case' – apply with a specific contract.", podminky: { utajeni: "ano" } },
+      { id: "nato-retezec", nazev: "Entering the NATO supply chain (codification and quality)", kdy: "Supplying armed forces and NATO contracts", akce: "Recommended order: NCAGE code (free, via the Czech codification authority) → ISO 9001 → NSPA supplier registration → AS9100/EN9100 (hardware) → AQAP per contract (2110/2310, verified by the state – GQA) → NSN item codification.", podminky: { vojenske: "ano" } },
+      { id: "ce", nazev: "Civilian certification (CE and sector norms)", kdy: "Selling to civilian customers in the EU", akce: "Check which harmonisation directives and norms apply (CE, EMC, RED…). Note: purely military material usually carries no CE (exclusions + Art. 346 TFEU); dual-use and commercial components carry CE normally.", podminky: { civilni: "ano" } },
+      { id: "gdpr", nazev: "GDPR and the EU AI regulation", kdy: "Product processes personal data or uses AI", akce: "Assess the impact of GDPR and the AI Act; for cyber/surveillance functions also mind the Art. 5 catch-all of Regulation 2021/821.", podminky: { dataai: "ano" } }
     ],
     odkazy: [
       { t: "Regulation (EU) 2021/821 incl. Annex I (dual-use control list)", url: "https://eur-lex.europa.eu/eli/reg/2021/821/oj" },
       { t: "European Commission – dual-use export controls", url: "https://policy.trade.ec.europa.eu/help-exporters-and-importers/exporting-dual-use-items_en" },
-      { t: "MPO Licensing Authority (classification, authorisations, licences)", url: "https://www.mpo.gov.cz" }
+      { t: "MPO Licensing Authority (classification, authorisations, licences)", url: "https://www.mpo.gov.cz" },
+      { t: "NBÚ – clearances and classified information", url: "https://nbu.gov.cz" },
+      { t: "Czech NATO codification authority (NCAGE, NSN, AQAP)", url: "https://okm.mo.gov.cz" }
     ],
-    disclaimer: "A preliminary guide, not legal advice or a binding classification. The category examples are illustrative – what decides is the exact text of Annex I and the Common Military List as currently in force. Always verify the classification with the MPO Licensing Authority or an export-control expert – the Defence Hub will connect you."
+    disclaimer: "A preliminary guide, not legal advice or a binding classification. The category examples are illustrative – what decides is the exact text of Annex I and the military material list as currently in force. Always verify the classification with the MPO Licensing Authority or an export-control expert – the Defence Hub will connect you."
   },
 
   dualUse: {
@@ -591,33 +827,34 @@ window.DH_KB_EN = {
     ],
 
     zmenyDefenceKomercni: [
-      { co: "Customer", z: "State / military – one large customer, long tenders", na: "Companies – more, smaller customers, shorter sales cycle" },
-      { co: "Certification", z: "Military standards (STANAG, MIL-STD), classification", na: "Civilian norms (CE, ISO, sector certifications), GDPR" },
+      { co: "Customer", z: "State / military – a chain of decision-makers, long tenders", na: "Companies – more, smaller customers, shorter sales cycle" },
+      { co: "Certification", z: "Military standards (STANAG, MIL-STD, AQAP), classification", na: "Civilian norms (CE, ISO, sector certifications), GDPR" },
       { co: "Price and margin", z: "Priced for resilience and reliability in extremes", na: "Price pressure – must get cheaper, simpler, scalable" },
       { co: "Product", z: "Bespoke solutions, small series", na: "Standardised product, self-service, support" },
       { co: "Marketing", z: "References and relationships, trade fairs, tenders", na: "Digital marketing, product presentation, public pricing" }
     ],
     zmenyKomercniDefence: [
-      { co: "Customer", z: "Companies – quick decisions, pilot in weeks", na: "State / military – acquisition takes years, tenders, politics" },
-      { co: "Certification", z: "Civilian norms", na: "Military standards, security clearances, classified information" },
+      { co: "Customer", z: "Companies – quick decisions, pilot in weeks", na: "State / military – acquisition takes years; each link of the chain (politician, MoD, buyer, soldier, engineer, lawyer) hears something different" },
+      { co: "Certification", z: "Civilian norms", na: "Military standards (AQAP on top of ISO/AS9100), NATO codification (NCAGE, NSN), possibly NBÚ clearances" },
       { co: "Resilience", z: "Operation in normal conditions", na: "Extreme temperatures, jamming, GPS-denied, EMC – must be proven by tests" },
-      { co: "Supply chain", z: "Global sourcing by price", na: "Verifiable component origin, supply chain security" },
-      { co: "Sales", z: "Marketing and inbound", na: "Relationships with integrators, programmes (DIANA, EDF), long BD" }
+      { co: "Supply chain", z: "Global sourcing by price", na: "Verifiable component origin, “ITAR-free” design, supply chain security" },
+      { co: "Sales", z: "Marketing and inbound", na: "Risk is the main enemy: references, pilots and trust beat performance. Entry often via primes and offsets, tenders via TED/NSPA" }
     ],
 
     dalsiKroky: {
       defenceKomercni: [
         "Pick 1–2 commercial sectors from the map above and validate demand (5–10 customer interviews).",
         "Work out what must be stripped from the product for the price to fit the civilian market.",
-        "Map civilian certifications – what do you already meet thanks to military standards?",
+        "Map civilian certifications (CE, sector norms) – what do you already meet thanks to military standards?",
         "Consider a separate product line / brand for the civilian market.",
-        "The civilian branch can draw on civilian programmes (EIC, Horizon) – a dual-use strategy doubles your funding options."
+        "The civilian branch can draw on civilian programmes (EIC, Horizon, OP TAK, TAČR SIGMA/TREND) – a dual-use strategy doubles your funding options."
       ],
       komercniDefence: [
         "Define the defence use scenario – a specific unit, a specific problem, not “the military in general”.",
-        "Apply to the DIANA or EUDIS accelerator – the fastest path to defence end users.",
-        "Find out what resilience tests await your product and start planning them.",
-        "Find an integrator/patron – startups rarely sell to the military directly.",
+        "Register in the Defence Hub Solutions Database – so primes and investors can find you.",
+        "Apply to DIANA (via the Defence Hub) or the EUDIS accelerator – the fastest path to defence end users; consider Test in Ukraine.",
+        "Take the dual-use test in this app – export control and certification come up sooner than you think.",
+        "Find an integrator/patron – startups rarely sell to the military directly; watch offset opportunities too.",
         "Contact the Defence Hub – we'll map the path with you and make the connections."
       ]
     }
@@ -627,12 +864,12 @@ window.DH_KB_EN = {
     {
       id: "zamereni",
       otazka: "Where is your technology primarily headed?",
-      napoveda: "European programmes split along this line – defence (EDF), dual-use (DIANA, EIC) and civil security (Horizon).",
+      napoveda: "Programmes split along this line – defence (EDF, EDIP, PRODEF), dual-use (DIANA, EIC, EUDIS) and civil security (Horizon, OP TAK).",
       moznosti: [
         { v: "defence", t: "Purely defence use", p: "A product for the military, no civilian market" },
         { v: "dual", t: "Dual-use", p: "Civilian and defence use" },
         { v: "civil", t: "Civilian / security", p: "Civilian market, possibly a security angle" },
-        { v: "nevim", t: "Not sure / need advice", p: "The Dual-use translator in this app can help too" }
+        { v: "nevim", t: "Not sure / need advice", p: "The Dual-use test in this app can help too" }
       ]
     },
     {
@@ -648,10 +885,10 @@ window.DH_KB_EN = {
     {
       id: "typ",
       otazka: "What form of support are you looking for?",
-      napoveda: "",
+      napoveda: "Non-dilutive = a grant without giving up equity. Dilutive = investment in exchange for a stake.",
       moznosti: [
         { v: "grant", t: "A grant", p: "Money without diluting equity" },
-        { v: "equity", t: "An investment", p: "An investor in exchange for a stake" },
+        { v: "equity", t: "An investment", p: "An investor in exchange for a stake (NIF, EIC equity, STEP Defence)" },
         { v: "akcelerator", t: "Acceleration and contacts", p: "Mentoring, access to customers, network" },
         { v: "vse", t: "Anything relevant", p: "Show me all the options" }
       ]
@@ -659,7 +896,7 @@ window.DH_KB_EN = {
     {
       id: "konsorcium",
       otazka: "Could you see yourself in an international consortium project?",
-      napoveda: "Large programmes (EDF, Horizon) require partners from several countries. Smaller instruments take single applicants.",
+      napoveda: "EDF and Horizon require consortia (EDF min. 3 entities from 3 countries). DIANA, EIC, PRODEF or OP TAK take single applicants.",
       moznosti: [
         { v: "ano", t: "Yes", p: "We have partners or can find them" },
         { v: "ne", t: "No / not yet", p: "We want to apply on our own" }
