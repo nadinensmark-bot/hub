@@ -167,7 +167,7 @@ window.DH_KB = {
       vhodnyKdyz: [
         "Máte funkční prototyp nebo technologii blízko nasazení (zhruba TRL 4+).",
         "Technologie má civilní i obranné využití a odpovídá některé vypsané challenge.",
-        "Chcete nezřeďující peníze, obrannou validaci a kontakty – bez odevzdání podílu."
+        "Chcete non-dilutive peníze (grant bez odevzdání podílu), obrannou validaci a kontakty."
       ],
       nevhodnyKdyz: [
         "Technologie je čistě zbraňová (lethal) – DIANA se soustředí na dual-use.",
@@ -234,7 +234,7 @@ window.DH_KB = {
       ],
       vhodnyKdyz: [
         "Máte validovanou technologii (TRL 6+) a jasný komerční plán – EIC je soutěž byznys plánů, ne jen výzkumu.",
-        "Jste jedna firma a chcete kombinaci nezřeďujícího grantu a kapitálu."
+        "Jste jedna firma a chcete kombinaci non-dilutive grantu a equity kapitálu."
       ],
       nevhodnyKdyz: [
         "Jste před prototypem – podívejte se na EIC Pathfinder/Transition nebo TAČR.",
@@ -989,7 +989,7 @@ window.DH_KB = {
       otazka: "Jakou formu podpory hledáte?",
       napoveda: "Non-dilutive = grant bez odevzdání podílu. Dilutive = investice výměnou za podíl.",
       moznosti: [
-        { v: "grant", t: "Grant", p: "Peníze bez ředění podílu" },
+        { v: "grant", t: "Grant", p: "Non-dilutive – bez odevzdání podílu" },
         { v: "equity", t: "Investici", p: "Investor výměnou za podíl (NIF, EIC equity, STEP Defence)" },
         { v: "akcelerator", t: "Akceleraci a kontakty", p: "Mentoring, přístup k zákazníkům, síť" },
         { v: "vse", t: "Cokoli relevantního", p: "Ukažte mi všechny možnosti" }

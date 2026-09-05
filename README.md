@@ -22,6 +22,12 @@
 > Záložka Knowledge base v aplikaci je jen pro tým: v menu se zobrazí po otevření
 > adresy s `#admin` (skryje se přes `#noadmin`) a její editor ukládá pouze lokálně
 > do prohlížeče. Po nasazení na GitHub Pages běží aplikace na adrese `…/navigator/`.
+>
+> **Terminologie (pravidlo pro veškerý obsah):** zavedené anglické termíny se
+> NEPŘEKLÁDAJÍ — píšeme *non-dilutive*, *equity*, *blended finance*, *dual-use*,
+> *scale-up*, *matchmaking*, *primes*, *lead investor* atd. U prvního výskytu na
+> obrazovce se termín krátce vysvětlí česky v závorce (např. „non-dilutive grant
+> — peníze bez odevzdání podílu"). Počeštěné patvary („nezřeďující") nepoužívat.
 
 Followupy, párování poptávek a nabídek, pipeline, kalendář z Microsoft Teams, import z Excelu a AI generování zpráv z pracovních cest. Pro **Defence Hub CzechInvest**.
 
