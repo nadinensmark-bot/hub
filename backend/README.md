@@ -7,7 +7,33 @@ Malý Node.js server, který do aplikace DH Kompas přidává:
 - **POST `/api/analyza`** – předběžné zatřídění vložené technické specifikace
   (profil vojenský/dual-use/civilní, kandidátní kategorie přílohy I, co ověřit,
   vhodné programy). Vždy s disclaimerem – nenahrazuje Licenční správu MPO.
+- **POST `/api/lead`** – sběr kontaktů firem z záložky Konzultant
+  (název, e-mail, profil, GDPR souhlas). Ukládá se do `backend/data/leads.jsonl`
+  (soubor je v .gitignore a na Render free je disk efemérní!) a hlavně se
+  přeposílá na `LEADS_WEBHOOK_URL`, pokud je nastavená – doporučeně Google
+  tabulka přes Apps Script (viz níže).
 - **GET `/api/health`** – kontrola stavu.
+
+## Sběr leadů do Google tabulky (5 minut)
+
+1. Vytvořte Google tabulku (např. „DH Kompas – leady") se záhlavím
+   `kdy | firma | email | profil | lang`.
+2. Rozšíření → Apps Script → vložte:
+   ```js
+   function doPost(e) {
+     const d = JSON.parse(e.postData.contents);
+     SpreadsheetApp.getActiveSpreadsheet().getSheets()[0]
+       .appendRow([d.kdy, d.firma, d.email, d.profil, d.lang]);
+     return ContentService.createTextOutput("ok");
+   }
+   ```
+3. Nasadit → Nová implementace → typ **Webová aplikace** → spouštět jako „já",
+   přístup „kdokoli" → Nasadit → zkopírujte URL.
+4. Na serveru (Render → Environment) nastavte `LEADS_WEBHOOK_URL` na tu URL.
+
+Každý odeslaný kontakt pak přistane jako řádek v tabulce, kterou má tým DH
+pod kontrolou. Text GDPR souhlasu v aplikaci musí před spuštěním ověřit
+právník (v UI je označený).
 
 Znalostní bázi čte přímo ze souborů aplikace (`navigator/kb.js`, `kb-en.js`,
 `vyzvy.js`) – jeden zdroj pravdy, žádná duplicitní správa obsahu.
