@@ -478,8 +478,9 @@ window.DH_KB = {
     {
       id: "safe",
       nazev: "SAFE – Security Action for Europe",
-      kratce: "Úvěrový nástroj EU do 150 mld. € pro společné pořizování vojenského materiálu. Půjčky jdou státům – firmy profitují nepřímo jako dodavatelé.",
+      kratce: "Úvěrový nástroj EU do 150 mld. € pro společné pořizování vojenského materiálu. Nástroj pro státy, ne pro firmy – firmy profitují nepřímo jako dodavatelé.",
       typ: "pujcky",
+      jenInfo: true,
       zamereni: "defence",
       trl: [8, 9],
       konsorcium: true,

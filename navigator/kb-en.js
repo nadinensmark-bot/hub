@@ -466,8 +466,9 @@ window.DH_KB_EN = {
     {
       id: "safe",
       nazev: "SAFE – Security Action for Europe",
-      kratce: "An EU loan instrument of up to €150bn for joint procurement of military material. Loans go to states – companies benefit indirectly as suppliers.",
+      kratce: "An EU loan instrument of up to €150bn for joint procurement of military material. An instrument for states, not companies – companies benefit indirectly as suppliers.",
       typ: "pujcky",
+      jenInfo: true,
       zamereni: "defence",
       trl: [8, 9],
       konsorcium: true,

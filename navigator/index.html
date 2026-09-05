@@ -9,6 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="kb.js"></script>
 <script src="kb-en.js"></script>
+<script src="vyzvy.js"></script>
 <style>
 :root{
   --ink:#0B1530; --navy:#13234E; --navy2:#1C2F63; --blue:#2B5CC4; --blueSoft:#E8EEFA;
@@ -406,8 +407,17 @@ function stavVyzvy(v){
   if(dny <= 30) return { rank:0, text:t("stBrzy",{n:dny,d:fmtDatum(v.uzaverka)}), barva:"var(--clay)", bg:"var(--claySoft)" };
   return { rank:1, text:t("stOtevrena",{d:fmtDatum(v.uzaverka)}), barva:"var(--green)", bg:"var(--greenSoft)" };
 }
+function seznamVyzev(kb){
+  // vyzvy.js (generované z data/vyzvy.csv, případně z Google tabulky)
+  // má přednost před polem vyzvy v kb.js/kb-en.js
+  if(window.DH_VYZVY){
+    const l = window.DH_VYZVY[state.lang==="en" ? "en" : "cs"];
+    if(Array.isArray(l) && l.length) return l;
+  }
+  return kb.vyzvy || [];
+}
 function aktivniVyzvy(kb, programId){
-  return (kb.vyzvy||[])
+  return seznamVyzev(kb)
     .filter(v=>!programId || v.program===programId)
     .map(v=>({v, s:stavVyzvy(v)}))
     .sort((a,b)=>a.s.rank-b.s.rank);
@@ -514,7 +524,8 @@ function skoreProgramu(p, o){
 
 function renderVysledky(el, kb){
   const o = state.odpovedi;
-  const vysledky = kb.programy.map(p=>({p, ...skoreProgramu(p,o)})).sort((a,b)=>b.skore-a.skore);
+  // programy s jenInfo (např. SAFE – nástroj pro státy) se nedoporučují, zůstávají jen v katalogu
+  const vysledky = kb.programy.filter(p=>!p.jenInfo).map(p=>({p, ...skoreProgramu(p,o)})).sort((a,b)=>b.skore-a.skore);
   const div = document.createElement("div");
   div.innerHTML = `<div style="display:flex;align-items:center;gap:10px;margin:26px 0 14px">
     <h2 style="font-size:20px;margin:0">${esc(t("vysledky"))}</h2>

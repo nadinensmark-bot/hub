@@ -7,6 +7,11 @@
 > a dual-use překladač use casů. Dvojjazyčné CZ/EN. Statický web bez serveru; obsah se
 > spravuje v `navigator/kb.js` (česky) a `navigator/kb-en.js` (anglicky) — oba soubory
 > udržovat souběžně; to je skutečná správa obsahu („backend" = tento repozitář).
+> Záznamy **výzev** (termíny, uzávěrky) se spravují v `data/vyzvy.csv` — GitHub Action
+> (`.github/workflows/vyzvy.yml`) z něj denně (a při každé změně CSV) generuje
+> `navigator/vyzvy.js`, který má v aplikaci přednost. Volitelně lze místo CSV v repu
+> nastavit proměnnou `VYZVY_CSV_URL` (Settings → Secrets and variables → Actions →
+> Variables) na Google tabulku publikovanou jako CSV — tým pak edituje jen tabulku.
 > Záložka Knowledge base v aplikaci je jen pro tým: v menu se zobrazí po otevření
 > adresy s `#admin` (skryje se přes `#noadmin`) a její editor ukládá pouze lokálně
 > do prohlížeče. Po nasazení na GitHub Pages běží aplikace na adrese `…/navigator/`.
