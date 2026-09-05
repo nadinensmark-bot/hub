@@ -208,6 +208,9 @@ cs: {
   znovu:"Začít znovu", otazka:"Otázka {n}",
   vysledky:"Doporučené programy", vysledkySub:"seřazeno podle shody s vaším profilem",
   wizZpet:"← Zpět", wizUpravit:"Upravit odpovědi",
+  velikostL:{startup:"startupy",sme:"malé a střední podniky",midcap:"větší firmy",research:"výzkumné organizace a univerzity"},
+  wizSkryto:"{n} programů nezobrazeno – nejsou určené pro váš typ žadatele ({role}).",
+  zpusobiliL:"Způsobilí žadatelé",
   kdeKriteriaL:"Kde najít výzvu a hodnoticí kritéria",
   duSpec:"<strong style=\"color:var(--navy)\">Máte hotovou technickou specifikaci?</strong> Nemusíte se testem trápit – pošlete ji Defence Hubu a projdeme zatřídění s vámi. Připravujeme verzi, kde specifikaci rovnou nahrajete a systém navrhne zatřídění automaticky (vyžaduje serverovou část – další fáze).",
   detailBtn:"Detail programu", prihlaskaBtn:"Jak napsat přihlášku →",
@@ -304,6 +307,9 @@ en: {
   znovu:"Start over", otazka:"Question {n}",
   vysledky:"Recommended programmes", vysledkySub:"ranked by fit with your profile",
   wizZpet:"← Back", wizUpravit:"Edit answers",
+  velikostL:{startup:"startups",sme:"small and medium enterprises",midcap:"larger companies",research:"research organisations and universities"},
+  wizSkryto:"{n} programmes not shown – they are not open to your applicant type ({role}).",
+  zpusobiliL:"Eligible applicants",
   kdeKriteriaL:"Where to find the call and evaluation criteria",
   duSpec:"<strong style=\"color:var(--navy)\">Already have a technical specification?</strong> You don't have to struggle through the test – send it to the Defence Hub and we'll go through the classification with you. We are preparing a version where you upload the specification and the system proposes a classification automatically (requires a server component – a later phase).",
   detailBtn:"Programme detail", prihlaskaBtn:"How to write the application →",
@@ -564,12 +570,20 @@ function skoreProgramu(p, o){
 
 function renderVysledky(el, kb){
   const o = state.odpovedi;
-  // programy s jenInfo (např. SAFE – nástroj pro státy) se nedoporučují, zůstávají jen v katalogu
-  const vysledky = kb.programy.filter(p=>!p.jenInfo).map(p=>({p, ...skoreProgramu(p,o)})).sort((a,b)=>b.skore-a.skore);
+  // programy s jenInfo (např. SAFE – nástroj pro státy) se nedoporučují, zůstávají jen v katalogu;
+  // jenPro = tvrdá způsobilost: co není pro daný typ žadatele, průvodce vůbec neukáže
+  const nabidka = kb.programy.filter(p=>!p.jenInfo);
+  const povolene = nabidka.filter(p=>!p.jenPro || p.jenPro.includes(o.velikost));
+  const skryto = nabidka.length - povolene.length;
+  const vysledky = povolene.map(p=>({p, ...skoreProgramu(p,o)})).sort((a,b)=>b.skore-a.skore);
   const div = document.createElement("div");
   div.innerHTML = `<div style="display:flex;align-items:center;gap:10px;margin:26px 0 14px">
     <h2 style="font-size:20px;margin:0">${esc(t("vysledky"))}</h2>
     <span class="mono" style="font-size:10px;color:var(--muted)">${esc(t("vysledkySub"))}</span></div>`;
+  if(skryto > 0){
+    div.insertAdjacentHTML("beforeend",
+      `<div style="font-size:12.5px;color:var(--muted);background:var(--mist);border-radius:10px;padding:8px 13px;margin-bottom:12px">ℹ ${esc(t("wizSkryto",{n:skryto,role:t("velikostL")[o.velikost]||o.velikost}))}</div>`);
+  }
   vysledky.forEach((v,idx)=>{
     const c = v.skore>=70 ? "var(--green)" : v.skore>=45 ? "var(--steel)" : "var(--clay)";
     const card = document.createElement("div");
@@ -632,6 +646,7 @@ function vProgramDetail(el, id){
         <div><strong>${esc(t("vysePodpory"))}</strong><br>${esc(p.castka)}${overitTag(p.overit)}</div>
         <div><strong>${esc(t("fazeTech"))}</strong><br>TRL ${p.trl[0]}–${p.trl[1]}</div>
         <div><strong>${esc(t("kdoZada"))}</strong><br>${esc(p.konsorcium?t("konsorciumL"):t("jednaFirmaL"))}</div>
+        ${p.jenPro?`<div><strong>${esc(t("zpusobiliL"))}</strong><br>${esc(p.jenPro.map(v=>t("velikostL")[v]||v).join(", "))}</div>`:""}
         <div><strong>${esc(t("terminyL"))}</strong><br>${esc(p.terminy)}${overitTag(p.terminyOverit)}</div>
       </div>
       ${aktivniVyzvy(kb, p.id).length?`<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line)">
@@ -1171,6 +1186,16 @@ function botOdpoved(dotaz, kb, docs){
   // 2) kontakt / konzultace
   if(ma("kontakt","konzultac","poradte","pomoc","pomuzete","contact","consult","help us","who are you","kdo jste")){
     return { text: T("Nejrychlejší cesta: ", "The fastest way: ") + btnKontakt, tlacitka: [btnPruvodce] };
+  }
+  // 2b) role žadatele: univerzita / výzkumná organizace
+  if(ma("univerz","university","universit","vyzkumn","research org","akadem","fakult","spin-off","spin off","spinoff")){
+    const proUni = kb.programy.filter(p => !p.jenInfo && (!p.jenPro || p.jenPro.includes("research")));
+    const jenFirmy = kb.programy.filter(p => !p.jenInfo && p.jenPro && !p.jenPro.includes("research"));
+    return { text: T("Pro univerzity a výzkumné organizace jsou určené tyto programy:", "These programmes are open to universities and research organisations:") + "\n" +
+      proUni.map(p => "- **" + p.nazev + "** — " + p.kratce.split(".")[0] + ".").join("\n") + "\n\n" +
+      T("Naopak jen pro firmy jsou: ", "Company-only, on the other hand: ") + jenFirmy.map(p => p.nazev.split(" –")[0].split(" (")[0]).join(", ") + ". " +
+      T("Cesta univerzity k nim vede přes spin-off nebo partnerství s firmou – s obojím pomůže Defence Hub.", "A university's route to those is a spin-off or a partnership with a company – the Defence Hub helps with both."),
+      tlacitka: [btnPruvodce, ...proUni.slice(0,2).map(p => ({ t: p.nazev.split(" –")[0].split(" (")[0], route: { view: "program", param: p.id } }))] };
   }
   // 3) konkrétní program(y)
   if(nalezene.length === 1){
