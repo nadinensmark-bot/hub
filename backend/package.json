@@ -1,0 +1,14 @@
+{
+  "name": "dh-kompas-backend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Backend DH Kompas: chatbot nad knowledge base a analýza specifikací (Claude API)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "mock": "MOCK_AI=1 node server.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.70.0"
+  }
+}

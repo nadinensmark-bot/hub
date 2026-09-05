@@ -12,6 +12,11 @@
 > `navigator/vyzvy.js`, který má v aplikaci přednost. Volitelně lze místo CSV v repu
 > nastavit proměnnou `VYZVY_CSV_URL` (Settings → Secrets and variables → Actions →
 > Variables) na Google tabulku publikovanou jako CSV — tým pak edituje jen tabulku.
+> **Backend (fáze 2)** je připravený ve složce [`backend/`](backend/): chatbot poradce
+> nad knowledge base a analýza specifikací přes Claude API, s denními limity, stropy
+> délky a prompt cachingem. Aktivace = nasadit server (návod v `backend/README.md`,
+> jde otestovat i bez API klíče v mock režimu) a vyplnit adresu do
+> `navigator/config.js`. Do té doby je záložka Poradce veřejnosti skrytá.
 > Záložka Knowledge base v aplikaci je jen pro tým: v menu se zobrazí po otevření
 > adresy s `#admin` (skryje se přes `#noadmin`) a její editor ukládá pouze lokálně
 > do prohlížeče. Po nasazení na GitHub Pages běží aplikace na adrese `…/navigator/`.
