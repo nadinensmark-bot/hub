@@ -22,6 +22,7 @@
 
 const http = require("http");
 const path = require("path");
+const fs = require("fs");
 const Anthropic = require("@anthropic-ai/sdk");
 
 // ---------------- konfigurace ----------------
@@ -92,6 +93,53 @@ const KB = nactiKB();
 const KB_TEXT = { cs: kbText("cs"), en: kbText("en") };
 console.log("KB načtena: cs", (KB_TEXT.cs.length / 1000).toFixed(0) + "k znaků, en", (KB_TEXT.en.length / 1000).toFixed(0) + "k znaků");
 
+// ---------------- rozšířené znalosti (nahrané soubory) ----------------
+// Cokoli v backend/knowledge/ (markdown/text, i v podsložkách) se přidá
+// do kontextu chatbota i analýzy. Sem patří plná Knowledge-Base-Ultimate –
+// nekomituje se do veřejného repozitáře (gitignore), nahrává se na server.
+const ZNALOSTI_DIR = path.join(__dirname, "knowledge");
+const ZNALOSTI_MAX_CHARS = Number(process.env.ZNALOSTI_MAX_CHARS || 600000);
+function nactiZnalosti() {
+  let soubory = [];
+  try {
+    for (const f of fs.readdirSync(ZNALOSTI_DIR, { recursive: true })) {
+      const nazev = String(f);
+      if (!/\.(md|txt)$/i.test(nazev) || /(^|[\\/])README\.md$/i.test(nazev)) continue;
+      const cely = path.join(ZNALOSTI_DIR, nazev);
+      if (!fs.statSync(cely).isFile()) continue;
+      soubory.push({ nazev, text: fs.readFileSync(cely, "utf8") });
+    }
+  } catch { /* složka nemusí existovat */ }
+  soubory.sort((a, b) => a.nazev.localeCompare(b.nazev));
+  let znaku = 0; const casti = [];
+  for (const s of soubory) {
+    if (znaku + s.text.length > ZNALOSTI_MAX_CHARS) { console.warn("Znalosti: přes limit, přeskakuji", s.nazev); continue; }
+    znaku += s.text.length;
+    casti.push(`===== SOUBOR: ${s.nazev} =====\n${s.text.trim()}`);
+  }
+  return { text: casti.join("\n\n"), pocet: casti.length, znaku };
+}
+const ZNALOSTI = nactiZnalosti();
+console.log(ZNALOSTI.pocet
+  ? `Rozšířené znalosti: ${ZNALOSTI.pocet} souborů, ${(ZNALOSTI.znaku / 1000).toFixed(0)}k znaků`
+  : "Rozšířené znalosti: žádné soubory v backend/knowledge/ (běží se jen s kompaktní KB)");
+
+// Sestaví systémové bloky: instrukce + kompaktní KB + nahrané soubory.
+// cache_control je jen na posledním bloku – cachuje se tím celý prefix.
+function systemBloky(instrukce, lang) {
+  const bloky = [
+    { type: "text", text: instrukce },
+    { type: "text", text: (lang === "en" ? "KNOWLEDGE BASE (app):\n\n" : "ZNALOSTNÍ BÁZE (aplikace):\n\n") + KB_TEXT[lang === "en" ? "en" : "cs"] }
+  ];
+  if (ZNALOSTI.text) {
+    bloky.push({ type: "text", text: (lang === "en"
+      ? "EXTENDED KNOWLEDGE BASE (internal Defence Hub files – draw on them the same way; most are in Czech, translate as needed):\n\n"
+      : "ROZŠÍŘENÁ ZNALOSTNÍ BÁZE (interní podklady Defence Hubu – čerpej z nich stejně jako ze základní báze):\n\n") + ZNALOSTI.text });
+  }
+  bloky[bloky.length - 1].cache_control = { type: "ephemeral", ttl: "1h" };
+  return bloky;
+}
+
 // ---------------- systémové prompty ----------------
 function chatSystem(lang) {
   const instrukce = lang === "en"
@@ -111,10 +159,7 @@ Pravidla:
 - Nikdy nedávej právní rady ani závazné zatřídění pro export – vždy dodej, že zatřídění je nutné ověřit u Licenční správy MPO nebo odborníka na exportní kontrolu.
 - Nevymýšlej si čísla, termíny ani parametry programů. Položky označené [OVĚŘIT] čekají na ověření – řekni to.
 - Odpovídej česky.`;
-  return [
-    { type: "text", text: instrukce },
-    { type: "text", text: (lang === "en" ? "KNOWLEDGE BASE:\n\n" : "ZNALOSTNÍ BÁZE:\n\n") + KB_TEXT[lang === "en" ? "en" : "cs"], cache_control: { type: "ephemeral", ttl: "1h" } }
-  ];
+  return systemBloky(instrukce, lang);
 }
 
 function analyzaSystem(lang) {
@@ -135,10 +180,7 @@ Rules: never invent parameters not present in the specification; if the spec lac
 4. **Relevantní programy Defence Hubu** – které programy/výzvy se na produkt hodí.
 
 Pravidla: nevymýšlej parametry, které ve specifikaci nejsou; pokud klíčové údaje chybí, napiš které. Jde o předběžné vodítko, ne právní radu ani závazné zatřídění – zakonči disclaimerem a pozvánkou na bezplatnou konzultaci DH. Odpovídej česky.`;
-  return [
-    { type: "text", text: instrukce },
-    { type: "text", text: (lang === "en" ? "KNOWLEDGE BASE:\n\n" : "ZNALOSTNÍ BÁZE:\n\n") + KB_TEXT[lang === "en" ? "en" : "cs"], cache_control: { type: "ephemeral", ttl: "1h" } }
-  ];
+  return systemBloky(instrukce, lang);
 }
 
 // ---------------- limity ----------------
@@ -203,7 +245,7 @@ const server = http.createServer(async (req, res) => {
 
   try {
     if (req.method === "GET" && req.url === "/api/health") {
-      return json(res, 200, { ok: true, mock: CFG.mock, modelChat: CFG.modelChat, modelAnalyza: CFG.modelAnalyza });
+      return json(res, 200, { ok: true, mock: CFG.mock, modelChat: CFG.modelChat, modelAnalyza: CFG.modelAnalyza, znalostniSoubory: ZNALOSTI.pocet });
     }
 
     if (req.method === "POST" && req.url === "/api/chat") {
