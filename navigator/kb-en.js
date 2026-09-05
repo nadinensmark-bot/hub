@@ -579,6 +579,80 @@ window.DH_KB_EN = {
         popis: "Ideally someone who has evaluated or written successful applications – the Defence Hub can broker feedback. Portals crash before deadlines: complete application in the system at least 48 hours early."
       }
     ],
+    podani: [
+      {
+        id: "ft",
+        programy: ["edf", "eudis", "edip", "horizon-cl3", "eic-pathfinder", "eic-step-defence"],
+        nazev: "Submitting via the EU Funding & Tenders portal (EDF, EUDIS, EDIP, Horizon and EIC calls)",
+        kroky: [
+          { krok: "Create an EU Login", popis: "Single sign-on for all EU systems: e-mail + password, then enable two-factor authentication in the settings (mandatory for submission).", odkaz: "https://webgate.ec.europa.eu/cas/", odkazText: "EU Login", obrazek: "img/podani/eu-login.png" },
+          { krok: "Register your company and get a PIC", popis: "Register the organisation in the Participant Register – you get a 9-digit PIC. Done once, used for all EU programmes; each consortium partner needs their own.", odkaz: "https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/how-to-participate/participant-register", odkazText: "Participant Register", obrazek: "img/podani/participant-register.png" },
+          { krok: "Find your topic", popis: "Search the programme (EDF, EUDIS…) on the Funding & Tenders portal and open the specific topic – it carries the call documents, templates and evaluation criteria.", odkaz: "https://ec.europa.eu/info/funding-tenders/opportunities/portal/screen/opportunities/calls-for-proposals", odkazText: "F&T portal call search", obrazek: "img/podani/ft-portal.png" },
+          { krok: "Click Start Submission", popis: "On the topic page; the submission system opens with a step-by-step progress bar." },
+          { krok: "Create the proposal and invite partners", popis: "Create proposal: coordinator's PIC, project title and acronym. Consortium partners are invited by the system and confirm under their own EU Login." },
+          { krok: "Fill in Part A, upload Part B", popis: "Part A = online administrative forms (participants, budget). Part B = technical description using the template downloaded from the topic – mind the page limit; excess pages are not read." },
+          { krok: "Validate and submit – at least 48 h before the deadline", popis: "Validate reveals errors, Submit sends. The server timestamp decides and late submissions are rejected automatically. You can resubmit until the deadline – the last version counts." }
+        ],
+        zdroj: "F&T portal Online Manual and IT How To (webgate.ec.europa.eu/funding-tenders-opportunities), verified 9/2026."
+      },
+      {
+        id: "eic-accelerator",
+        programy: ["eic-accelerator"],
+        nazev: "Applying to the EIC Accelerator (4 steps; start with the short proposal any time)",
+        kroky: [
+          { krok: "EU Login + company PIC", popis: "Same base as all EU programmes: EU Login with 2FA and company registration in the Participant Register.", odkaz: "https://webgate.ec.europa.eu/cas/", odkazText: "EU Login", obrazek: "img/podani/eu-login.png" },
+          { krok: "Step 1: short proposal (any time)", popis: "Start from the EIC Accelerator page on the F&T portal. Content: ~12-page form + pitch deck up to 10 slides + 3-minute video. Evaluated in monthly batches (first Tuesday), results in 4–6 weeks.", odkaz: "https://eic.ec.europa.eu/eic-funding-opportunities/eic-accelerator_en", odkazText: "EIC Accelerator – official page", obrazek: "img/podani/eic-accelerator.png" },
+          { krok: "Step 2: full proposal (by cut-off)", popis: "After passing Step 1. 2026 cut-offs: 7 Jan, 4 Mar, 6 May, 8 Jul, 2 Sep, 4 Nov at 17:00 Brussels time. Max 20-page form + deck + video + annexes: financials and cap table, IP/freedom-to-operate, implementation plan with milestones." },
+          { krok: "Step 3: jury interview", popis: "Interviews run 3× per year; prepare the pitch and defend your numbers – the jury digs deep." },
+          { krok: "Step 4: finalisation", popis: "Grant agreement and/or equity negotiation with the EIC Fund. Note: only one live application at a time." }
+        ],
+        zdroj: "eic.ec.europa.eu + EUACC/Segler Consulting guides, verified 9/2026."
+      },
+      {
+        id: "diana",
+        programy: ["diana"],
+        nazev: "Applying to DIANA (via the DIANA website, with Defence Hub support)",
+        kroky: [
+          { krok: "Watch for the call opening", popis: "Challenges open at diana.nato.int – the 2027 cohort closed 3 July 2026, the next call is expected in June 2027. Each challenge has an applicant guide.", odkaz: "https://www.diana.nato.int/accelerator-programme.html", odkazText: "DIANA Accelerator Programme", obrazek: "img/podani/diana.png" },
+          { krok: "Apply online for a specific challenge", popis: "A single company applies, in English, to a specific challenge area. The exact portal differs per call [VERIFY when the call opens]." },
+          { krok: "Talk to the Defence Hub before submitting", popis: "We are the Czech DIANA accelerator site – we have the materials for the current call and will go through your application with you." }
+        ],
+        zdroj: "diana.nato.int, verified 9/2026."
+      },
+      {
+        id: "nif",
+        programy: ["nif"],
+        nazev: "The route to the NATO Innovation Fund (no forms – a standard VC process)",
+        kroky: [
+          { krok: "Prepare investor materials", popis: "Pitch deck, data room, financial plan, cap table – NIF is a fund and evaluates the company as an investor, not an application against criteria." },
+          { krok: "Get a warm intro", popis: "Cold e-mail via nif.fund almost never works. The Defence Hub can broker an introduction through the DIANA network.", odkaz: "https://www.nif.fund/", odkazText: "nif.fund" },
+          { krok: "Standard VC process", popis: "Pitch → meetings → due diligence → equity investment. Expect months; the fund often leads the round and takes a board seat." }
+        ],
+        zdroj: "nif.fund, verified 9/2026."
+      },
+      {
+        id: "prodef",
+        programy: ["prodef"],
+        nazev: "Applying to TAČR PRODEF (ISTA information system)",
+        kroky: [
+          { krok: "Watch for the competition announcement", popis: "PRODEF public competitions are announced at tacr.gov.cz with full documentation.", odkaz: "https://tacr.gov.cz/program/program-prodef/", odkazText: "tacr.gov.cz – PRODEF", obrazek: "img/podani/tacr.png" },
+          { krok: "Create an ISTA account in advance", popis: "Project proposals are submitted via TAČR's information system (ista.tacr.cz); registration takes a while [VERIFY per competition].", odkaz: "https://ista.tacr.cz/", odkazText: "ista.tacr.cz" },
+          { krok: "Proposal per the competition documentation", popis: "For PP2 expect a link to Czech Armed Forces needs (application guarantor); for PP1 you document your EDF consortium participation." }
+        ],
+        zdroj: "tacr.gov.cz, verified 9/2026 (details always in the specific competition documentation)."
+      },
+      {
+        id: "optak-deeptech",
+        programy: ["optak-deeptech"],
+        nazev: "Applying to OP TAK (IS KP21+ monitoring system)",
+        kroky: [
+          { krok: "Watch for the call", popis: "Aplikace/DEEP TECH calls at optak.gov.cz; call IV has closed, no follow-up announced yet.", odkaz: "https://optak.gov.cz/", odkazText: "optak.gov.cz", obrazek: "img/podani/optak.png" },
+          { krok: "Apply via IS KP21+", popis: "OP TAK applications are submitted electronically via the IS KP21+ monitoring system (requires an electronic signature) [VERIFY per call].", odkaz: "https://iskp21.mssf.cz/", odkazText: "iskp21.mssf.cz" },
+          { krok: "Use the regional CzechInvest office", popis: "Regional CzechInvest offices help with OP TAK applications – we will connect you." }
+        ],
+        zdroj: "optak.gov.cz, verified 9/2026."
+      }
+    ],
     checklisty: {
       diana: [
         "The application responds to a specific published challenge (not generically)",

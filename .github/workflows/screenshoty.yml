@@ -1,0 +1,53 @@
+name: Printscreeny podacích portálů (DH Kompas)
+
+on:
+  schedule:
+    - cron: "0 6 1 * *"    # 1. den v měsíci (portály se občas mění)
+  workflow_dispatch:
+    inputs:
+      prekreslit:
+        description: "Přefotit i existující obrázky (ano/ne)"
+        required: false
+        default: "ne"
+
+permissions:
+  contents: write
+
+jobs:
+  screenshoty:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Nainstalovat Playwright + Chromium
+        run: |
+          npm init -y > /dev/null
+          npm install --no-save playwright > /dev/null
+          npx playwright install --with-deps chromium
+      - name: Vyfotit stránky z data/screenshoty.csv
+        run: |
+          mkdir -p navigator/img/podani
+          tail -n +2 data/screenshoty.csv | while IFS=, read -r nazev url; do
+            [ -z "$nazev" ] && continue
+            CIL="navigator/img/podani/${nazev}.png"
+            if [ -f "$CIL" ] && [ "${{ github.event.inputs.prekreslit || 'ne' }}" != "ano" ]; then
+              echo "PŘESKAKUJI $nazev (existuje)"; continue
+            fi
+            echo "FOTÍM $nazev ← $url"
+            npx playwright screenshot --viewport-size "1280,900" --wait-for-timeout 6000 "$url" "$CIL" \
+              || echo "SELHALO $nazev – krok se v aplikaci zobrazí bez obrázku"
+          done
+          ls -la navigator/img/podani/ || true
+      - name: Commit při změně
+        run: |
+          git add navigator/img/podani
+          if ! git diff --cached --quiet; then
+            git config user.name "dh-kompas-bot"
+            git config user.email "actions@users.noreply.github.com"
+            git commit -m "Printscreeny podacích portálů"
+            git push
+          else
+            echo "Obrázky beze změny."
+          fi
