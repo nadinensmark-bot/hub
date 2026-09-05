@@ -20,6 +20,14 @@ window.DH_VYZVY = {
       "pozn": "Konsorcium 3 firem ze 3 států, od TRL 4."
     },
     {
+      "program": "edip",
+      "nazev": "BraveTech EU / DefTech Forges – granty 120 000 € (TRL 4+)",
+      "otevreniOd": "",
+      "uzaverka": "2026-09-06",
+      "odkaz": "https://eu.brave1.tech/",
+      "pozn": "Technologické výzvy pro defence startupy z EU a Ukrajiny; navazující financování až 750 000 €. Ověřeno 9/2026."
+    },
+    {
       "program": "eic-step-defence",
       "nazev": "EIC STEP Scale Up Defence – equity 10–30 mil. €",
       "otevreniOd": "2026-06-30",
@@ -28,22 +36,30 @@ window.DH_VYZVY = {
       "pozn": "Jen equity, bez grantu; vyžaduje pre-commitment investora. Výsledky začátkem 2027."
     },
     {
+      "program": "eic-pathfinder",
+      "nazev": "EIC Pathfinder Challenges 2026 – granty do 4 mil. €",
+      "otevreniOd": "",
+      "uzaverka": "2026-10-28",
+      "odkaz": "https://eic.ec.europa.eu",
+      "pozn": "3 challenge témata 2026: materiály pro miniaturní energy harvesting, biotech zdravého stárnutí, důvěryhodná kognitivní AI. Pathfinder Open měl uzávěrku 12. 5. 2026. Ověřeno 9/2026."
+    },
+    {
       "program": "eic-accelerator",
       "nazev": "EIC Accelerator (dual-use) – průběžné podávání",
       "otevreniOd": "",
       "uzaverka": "",
       "odkaz": "https://eic.ec.europa.eu",
-      "pozn": "Od 17. 6. 2026 otevřen obranným a dual-use technologiím.",
-      "stavRucne": "krátkou žádost lze podat kdykoli"
+      "pozn": "Cut-off termíny plných žádostí 2026: 7. 1., 4. 3., 6. 5., 8. 7., 2. 9. a 4. 11. (ověřeno 9/2026). Od 17. 6. 2026 otevřen obranným a dual-use technologiím.",
+      "stavRucne": "krátkou žádost lze podat kdykoli; nejbližší cut-off plných žádostí 4. 11. 2026"
     },
     {
       "program": "eudis",
-      "nazev": "EUDIS Accelerator – kvartální výzvy",
+      "nazev": "EUDIS Accelerator – 2 kohorty ročně",
       "otevreniOd": "",
       "uzaverka": "",
       "odkaz": "https://eudis.europa.eu",
-      "pozn": "6měsíční akcelerátor: business coaching, matchmaking s primes, Test in Ukraine.",
-      "stavRucne": "běží, výzvy každý kvartál"
+      "pozn": "6měsíční akcelerátor: business coaching, matchmaking s primes, Test in Ukraine. Jarní kohorta: přihlášky prosinec–leden; podzimní: květen–červen, start v září (ověřeno 9/2026).",
+      "stavRucne": "běží; přihlášky se otevírají před jarní a podzimní kohortou"
     },
     {
       "program": "edip",
@@ -51,17 +67,16 @@ window.DH_VYZVY = {
       "otevreniOd": "2026-03-31",
       "uzaverka": "",
       "odkaz": "https://defence-industry-space.ec.europa.eu",
-      "pozn": "Uzávěrky jednotlivých výzev [OVĚŘIT na portálu].",
-      "stavRucne": "výzvy otevřené na portálu Funding & Tenders"
+      "pozn": "První vlna uzávěrek říjen 2026, druhá únor 2027 (ověřeno 9/2026); přesné dny u jednotlivých výzev na portálu Funding & Tenders.",
+      "stavRucne": "výzvy otevřené; první uzávěrky říjen 2026, další únor 2027"
     },
     {
       "program": "horizon-cl3",
       "nazev": "Horizont Evropa Klastr 3 – výzvy 2026 (131 mil. €)",
       "otevreniOd": "2026-05-06",
-      "uzaverka": "",
+      "uzaverka": "2026-11-05",
       "odkaz": "https://ec.europa.eu/info/funding-tenders/opportunities/portal/",
-      "pozn": "Uzávěrky jednotlivých témat [OVĚŘIT na portálu].",
-      "stavRucne": "výzvy spuštěny 6. 5. 2026"
+      "pozn": "Všech 21 přímých témat má společnou uzávěrku 5. 11. 2026 v 17:00 bruselského času (ověřeno 9/2026). Kyber témata ECCC už 15. 9. 2026."
     },
     {
       "program": "diana",
@@ -69,8 +84,8 @@ window.DH_VYZVY = {
       "otevreniOd": "",
       "uzaverka": "",
       "odkaz": "https://www.diana.nato.int",
-      "pozn": "Výsledky vyhodnocení oznámí DIANA; sledujeme.",
-      "stavRucne": "probíhá vyhodnocení (výzva proběhla v červnu 2026)"
+      "pozn": "6 challenge oblastí: lidská odolnost, autonomie bezosádkových systémů, senzorika a ISR, operační odolnost, logistika, protivzdušná obrana (ověřeno 9/2026).",
+      "stavRucne": "uzávěrka byla 3. 7. 2026, probíhá vyhodnocení; kohorta startuje v lednu 2027"
     },
     {
       "program": "diana",
@@ -86,7 +101,7 @@ window.DH_VYZVY = {
       "otevreniOd": "2026-10-01",
       "uzaverka": "",
       "odkaz": "https://tacr.gov.cz/program/program-prodef/",
-      "pozn": "Termín orientační [OVĚŘIT na tacr.gov.cz]."
+      "pozn": "TAČR: vyhlášení PP1 je časově navázané na výzvy EDF (uzávěrka EDF 29. 9. 2026); termín orientační [OVĚŘIT na tacr.gov.cz]."
     }
   ],
   "en": [
@@ -107,6 +122,14 @@ window.DH_VYZVY = {
       "pozn": "Consortium of 3 companies from 3 states, from TRL 4."
     },
     {
+      "program": "edip",
+      "nazev": "BraveTech EU / DefTech Forges – €120,000 grants (TRL 4+)",
+      "otevreniOd": "",
+      "uzaverka": "2026-09-06",
+      "odkaz": "https://eu.brave1.tech/",
+      "pozn": "Technology challenges for defence startups from the EU and Ukraine; follow-up funding up to €750,000. Verified 9/2026."
+    },
+    {
       "program": "eic-step-defence",
       "nazev": "EIC STEP Scale Up Defence – equity €10–30m",
       "otevreniOd": "2026-06-30",
@@ -115,22 +138,30 @@ window.DH_VYZVY = {
       "pozn": "Equity only, no grant; requires investor pre-commitment. Results early 2027."
     },
     {
+      "program": "eic-pathfinder",
+      "nazev": "EIC Pathfinder Challenges 2026 – grants up to €4m",
+      "otevreniOd": "",
+      "uzaverka": "2026-10-28",
+      "odkaz": "https://eic.ec.europa.eu",
+      "pozn": "3 challenge topics in 2026: materials for miniaturised energy harvesting, biotech for healthy ageing, trustworthy cognitive AI. Pathfinder Open closed 12 May 2026. Verified 9/2026."
+    },
+    {
       "program": "eic-accelerator",
       "nazev": "EIC Accelerator (dual-use) – rolling submission",
       "otevreniOd": "",
       "uzaverka": "",
       "odkaz": "https://eic.ec.europa.eu",
-      "pozn": "Open to defence and dual-use technologies since 17 June 2026.",
-      "stavRucne": "short application can be submitted any time"
+      "pozn": "2026 full-application cut-offs: 7 Jan, 4 Mar, 6 May, 8 Jul, 2 Sep and 4 Nov (verified 9/2026). Open to defence and dual-use technologies since 17 June 2026.",
+      "stavRucne": "short application any time; next full-application cut-off 4 Nov 2026"
     },
     {
       "program": "eudis",
-      "nazev": "EUDIS Accelerator – quarterly calls",
+      "nazev": "EUDIS Accelerator – 2 cohorts per year",
       "otevreniOd": "",
       "uzaverka": "",
       "odkaz": "https://eudis.europa.eu",
-      "pozn": "6-month accelerator: business coaching, matchmaking with primes, Test in Ukraine.",
-      "stavRucne": "running, calls every quarter"
+      "pozn": "6-month accelerator: business coaching, matchmaking with primes, Test in Ukraine. Spring cohort: applications Dec–Jan; autumn: May–June, starts in September (verified 9/2026).",
+      "stavRucne": "running; applications open before the spring and autumn cohorts"
     },
     {
       "program": "edip",
@@ -138,17 +169,16 @@ window.DH_VYZVY = {
       "otevreniOd": "2026-03-31",
       "uzaverka": "",
       "odkaz": "https://defence-industry-space.ec.europa.eu",
-      "pozn": "Individual call deadlines [VERIFY on the portal].",
-      "stavRucne": "calls open on the Funding & Tenders portal"
+      "pozn": "First wave of deadlines in October 2026, second in February 2027 (verified 9/2026); exact days per call on the Funding & Tenders portal.",
+      "stavRucne": "calls open; first deadlines October 2026, next February 2027"
     },
     {
       "program": "horizon-cl3",
       "nazev": "Horizon Europe Cluster 3 – 2026 calls (€131m)",
       "otevreniOd": "2026-05-06",
-      "uzaverka": "",
+      "uzaverka": "2026-11-05",
       "odkaz": "https://ec.europa.eu/info/funding-tenders/opportunities/portal/",
-      "pozn": "Topic deadlines [VERIFY on the portal].",
-      "stavRucne": "calls launched 6 May 2026"
+      "pozn": "All 21 direct topics share the deadline of 5 Nov 2026, 17:00 Brussels time (verified 9/2026). ECCC cyber topics close 15 Sep 2026."
     },
     {
       "program": "diana",
@@ -156,8 +186,8 @@ window.DH_VYZVY = {
       "otevreniOd": "",
       "uzaverka": "",
       "odkaz": "https://www.diana.nato.int",
-      "pozn": "DIANA will announce the evaluation results; we are tracking it.",
-      "stavRucne": "under evaluation (call ran in June 2026)"
+      "pozn": "6 challenge areas: human survivability, autonomy of uncrewed systems, sensing and ISR, operational resilience, logistics, air defence (verified 9/2026).",
+      "stavRucne": "deadline was 3 July 2026, under evaluation; cohort starts January 2027"
     },
     {
       "program": "diana",
@@ -173,7 +203,7 @@ window.DH_VYZVY = {
       "otevreniOd": "2026-10-01",
       "uzaverka": "",
       "odkaz": "https://tacr.gov.cz/program/program-prodef/",
-      "pozn": "Indicative date [VERIFY at tacr.gov.cz]."
+      "pozn": "TAČR states the PP1 announcement is timed to the EDF calls (EDF deadline 29 Sep 2026); date indicative [VERIFY at tacr.gov.cz]."
     }
   ]
 };
