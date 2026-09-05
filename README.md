@@ -12,7 +12,9 @@
 > `navigator/vyzvy.js`, který má v aplikaci přednost. Volitelně lze místo CSV v repu
 > nastavit proměnnou `VYZVY_CSV_URL` (Settings → Secrets and variables → Actions →
 > Variables) na Google tabulku publikovanou jako CSV — tým pak edituje jen tabulku.
-> **Backend (fáze 2)** je připravený ve složce [`backend/`](backend/): chatbot poradce
+> Záložka **Poradce** funguje veřejně hned a zdarma jako chytré vyhledávání ve
+> znalostní bázi (bez AI, bez účtů a bez nákladů — vše běží v prohlížeči).
+> **Backend (fáze 2, volitelný upgrade)** je připravený ve složce [`backend/`](backend/): chatbot poradce
 > nad knowledge base a analýza specifikací přes Claude API, s denními limity, stropy
 > délky a prompt cachingem. Aktivace = nasadit server (návod v `backend/README.md`,
 > jde otestovat i bez API klíče v mock režimu) a vyplnit adresu do
