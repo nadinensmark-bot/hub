@@ -1185,6 +1185,7 @@ function mdHtml(text){
   let html = "", vSeznamu = false;
   for(let radek of radky){
     radek = radek.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+    radek = radek.replace(/(https?:\/\/[^\s<)]+)/g, "<a href=\"$1\" target=\"_blank\" rel=\"noopener\" style=\"color:var(--blue)\">$1</a>");
     const odrazka = radek.match(/^\s*[-•*]\s+(.*)$/);
     const nadpis = radek.match(/^#{1,4}\s+(.*)$/);
     if(odrazka){
@@ -1255,6 +1256,11 @@ function sestavIndexKB(kb){
     text: d.defence.join(" ") + " " + d.komercni.map(x => x.sektor + " " + x.useCase).join(" "),
     ukazka: d.defence.slice(0,2).join("; ") + " ↔ " + d.komercni.slice(0,2).map(x=>x.sektor).join(", "),
     route: { view: "dualuse", duTab: "preklad", domena: d.id }
+  }));
+  ((kb.ukrajina || {}).cesty || []).forEach(c => docs.push({
+    titul: c.nazev, stitek: state.lang === "en" ? "Ukraine/testing" : "Ukrajina/testování",
+    text: c.popis, ukazka: c.popis.slice(0, 160),
+    route: c.program ? { view: "program", param: c.program } : { view: "programy" }
   }));
   kb.prihlaska.obecneKroky.forEach(k => docs.push({
     titul: k.krok, stitek: state.lang === "en" ? "application" : "přihláška",
@@ -1507,8 +1513,20 @@ function botOdpoved(dotaz, kb, docs){
       "TRL (Technology Readiness Level) is a 1–9 maturity scale: 1–3 research, 4–6 prototype, 7–9 product. Programmes target different bands – the wizard recommends the right ones for your TRL."),
       tlacitka: [btnPruvodce] };
   }
-  // 14) Ukrajina
-  if(ma("ukrajin","ukrain","brave")){
+  // 14) Ukrajina / testování – skládá se z KB sekce ukrajina
+  if(ma("ukrajin","ukrain","brave","testov","testing","otestova","bojist","battlefield","polygon")){
+    if(kb.ukrajina){
+      return {
+        text: "**" + T("Testování a cesty přes Ukrajinu", "Testing and routes via Ukraine") + "**\n" +
+          kb.ukrajina.uvod + "\n\n" + kb.ukrajina.akce + "\n\n" + kb.ukrajina.overeno,
+        karty: kb.ukrajina.cesty.map(c => ({
+          titul: c.nazev, stitek: T("Ukrajina/testování", "Ukraine/testing"),
+          ukazka: c.popis.slice(0, 160),
+          route: c.program ? { view: "program", param: c.program } : { view: "programy" }
+        })),
+        tlacitka: [{ t: "EUDIS", route: { view: "program", param: "eudis" } }, { t: "EDIP", route: { view: "program", param: "edip" } }]
+      };
+    }
     return { text: T("Cesty přes Ukrajinu: EUDIS Accelerator nabízí Test in Ukraine, EDIP zahrnuje program BraveTech EU (50 mil. € EU + 50 mil. € Ukrajina) a platforma BRAVE1 propojuje s ukrajinským defense-tech ekosystémem.",
       "Ukraine routes: the EUDIS Accelerator offers Test in Ukraine, EDIP includes BraveTech EU (€50m EU + €50m Ukraine), and the BRAVE1 platform connects to the Ukrainian defense-tech ecosystem."),
       tlacitka: [{ t: "EUDIS", route: { view: "program", param: "eudis" } }, { t: "EDIP", route: { view: "program", param: "edip" } }] };

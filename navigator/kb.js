@@ -56,19 +56,37 @@ window.DH_KB = {
       nazev: "EIC Accelerator (dual-use) – průběžné podávání",
       otevreniOd: "",
       uzaverka: "",
-      stavRucne: "krátkou žádost lze podat kdykoli",
+      stavRucne: "krátkou žádost lze podat kdykoli; nejbližší cut-off plných žádostí 4. 11. 2026",
       odkaz: "https://eic.ec.europa.eu",
-      pozn: "Od 17. 6. 2026 otevřen obranným a dual-use technologiím.",
+      pozn: "Cut-off termíny plných žádostí 2026: 7. 1., 4. 3., 6. 5., 8. 7., 2. 9. a 4. 11. (ověřeno 9/2026). Od 17. 6. 2026 otevřen obranným a dual-use technologiím.",
+      priklad: false
+    },
+    {
+      program: "eic-pathfinder",
+      nazev: "EIC Pathfinder Challenges 2026 – granty do 4 mil. €",
+      otevreniOd: "",
+      uzaverka: "2026-10-28",
+      odkaz: "https://eic.ec.europa.eu",
+      pozn: "3 challenge témata 2026: materiály pro miniaturní energy harvesting, biotechnologie zdravého stárnutí, důvěryhodná kognitivní AI (DeepRAP). Pathfinder Open měl uzávěrku 12. 5. 2026 – proběhla. Ověřeno 9/2026.",
       priklad: false
     },
     {
       program: "eudis",
-      nazev: "EUDIS Accelerator – kvartální výzvy",
+      nazev: "EUDIS Accelerator – 2 kohorty ročně",
       otevreniOd: "",
       uzaverka: "",
-      stavRucne: "běží, výzvy každý kvartál",
+      stavRucne: "běží; přihlášky se otevírají před jarní a podzimní kohortou",
       odkaz: "https://eudis.europa.eu",
-      pozn: "6měsíční akcelerátor: business coaching, matchmaking s primes, Test in Ukraine.",
+      pozn: "6měsíční akcelerátor: business coaching, matchmaking s primes, Test in Ukraine. Jarní kohorta: přihlášky prosinec–leden; podzimní kohorta: přihlášky květen–červen, start v září (ověřeno 9/2026).",
+      priklad: false
+    },
+    {
+      program: "edip",
+      nazev: "BraveTech EU / DefTech Forges – granty 120 000 € (TRL 4+)",
+      otevreniOd: "",
+      uzaverka: "2026-09-06",
+      odkaz: "https://eu.brave1.tech/",
+      pozn: "Technologické výzvy pro defence startupy z EU a Ukrajiny; navazující financování až 750 000 €. Ověřeno 9/2026.",
       priklad: false
     },
     {
@@ -76,19 +94,18 @@ window.DH_KB = {
       nazev: "EDIP – výzvy pracovního programu 2026–27 (1,5 mld. €)",
       otevreniOd: "2026-03-31",
       uzaverka: "",
-      stavRucne: "výzvy otevřené na portálu Funding & Tenders",
+      stavRucne: "výzvy otevřené; první uzávěrky říjen 2026, další únor 2027",
       odkaz: "https://defence-industry-space.ec.europa.eu",
-      pozn: "Uzávěrky jednotlivých výzev [OVĚŘIT na portálu].",
+      pozn: "První vlna uzávěrek říjen 2026, druhá únor 2027 (ověřeno 9/2026); přesné dny u jednotlivých výzev na portálu Funding & Tenders.",
       priklad: false
     },
     {
       program: "horizon-cl3",
       nazev: "Horizont Evropa Klastr 3 – výzvy 2026 (131 mil. €)",
       otevreniOd: "2026-05-06",
-      uzaverka: "",
-      stavRucne: "výzvy spuštěny 6. 5. 2026",
+      uzaverka: "2026-11-05",
       odkaz: "https://ec.europa.eu/info/funding-tenders/opportunities/portal/",
-      pozn: "Uzávěrky jednotlivých témat [OVĚŘIT na portálu].",
+      pozn: "Všech 21 přímých témat má společnou uzávěrku 5. 11. 2026 v 17:00 bruselského času (ověřeno 9/2026). Kyberbezpečnostní témata spravovaná ECCC mají uzávěrku dřív – 15. 9. 2026.",
       priklad: false
     },
     {
@@ -96,9 +113,9 @@ window.DH_KB = {
       nazev: "DIANA – výzva pro kohortu 2027",
       otevreniOd: "",
       uzaverka: "",
-      stavRucne: "probíhá vyhodnocení (výzva proběhla v červnu 2026)",
+      stavRucne: "uzávěrka byla 3. 7. 2026, probíhá vyhodnocení; kohorta startuje v lednu 2027",
       odkaz: "https://www.diana.nato.int",
-      pozn: "Výsledky vyhodnocení oznámí DIANA; sledujeme.",
+      pozn: "6 challenge oblastí: lidská odolnost, multidoménová autonomie bezosádkových systémů, senzorika a zpracování dat pro ISR, operační odolnost, responzivní logistika, protivzdušná obrana (ověřeno 9/2026). Výsledky oznámí DIANA; sledujeme.",
       priklad: false
     },
     {
@@ -116,7 +133,7 @@ window.DH_KB = {
       otevreniOd: "2026-10-01",
       uzaverka: "",
       odkaz: "https://tacr.gov.cz/program/program-prodef/",
-      pozn: "Termín orientační [OVĚŘIT na tacr.gov.cz].",
+      pozn: "TAČR uvádí, že vyhlášení PP1 je časově navázané na výzvy EDF (uzávěrka EDF 29. 9. 2026); termín orientační [OVĚŘIT na tacr.gov.cz].",
       priklad: false
     }
   ],
@@ -138,8 +155,8 @@ window.DH_KB = {
       konsorcium: false,
       velikost: ["startup", "sme"],
       jenPro: ["startup","sme"],
-      castka: "Grant fáze 1 do cca 100 000 €, s navazující fází celkem do cca 300 000 € i více; non-dilutive (NATO nebere podíl ani IP)",
-      overit: true,
+      castka: "Grant fáze 1: 100 000 €; ve fázi 2 až dalších 300 000 € (celkem tedy až 400 000 €); non-dilutive (NATO nebere podíl ani IP)",
+      overit: false,
       proKoho: "Dual-use a deep tech startupy a malé firmy z členských zemí NATO. Žádá jedna firma na konkrétní challenge. Kohorta 2026 (největší dosud): 150 firem z 24 zemí v 10 challenge oblastech.",
       jakFunguje: [
         "NATO vyhlašuje challenges v definovaných oblastech – např. pokročilé komunikace a rušené elektromagnetické prostředí, autonomie a bezpilotní systémy, energie a napájení, biotech a lidská odolnost, kritická infrastruktura a logistika.",
@@ -156,7 +173,7 @@ window.DH_KB = {
         "Technologie je čistě zbraňová (lethal) – DIANA se soustředí na dual-use.",
         "Jste ve fázi čistého výzkumu bez prototypu."
       ],
-      terminy: "Výzva pro kohortu 2027 proběhla v červnu 2026 a vyhodnocuje se; další výzva se spustí v červnu 2027.",
+      terminy: "Výzva pro kohortu 2027 měla uzávěrku 3. 7. 2026 a vyhodnocuje se; kohorta startuje v lednu 2027. Další výzva se očekává v červnu 2027.",
       terminyOverit: false,
       odkaz: "https://www.diana.nato.int",
       kdeKriteria: "Applicant guide a konkrétní challenges na diana.nato.int v době otevřené výzvy. Český tým DH má podklady k aktuální výzvě.",
@@ -223,8 +240,8 @@ window.DH_KB = {
         "Jste před prototypem – podívejte se na EIC Pathfinder/Transition nebo TAČR.",
         "Potřebujete equity nad 10 mil. € – to je EIC STEP Scale Up Defence."
       ],
-      terminy: "Krátká žádost průběžně; úplné žádosti k cut-off termínům dle pracovního programu EIC 2026.",
-      terminyOverit: true,
+      terminy: "Krátká žádost průběžně; cut-off termíny plných žádostí 2026: 7. 1., 4. 3., 6. 5., 8. 7., 2. 9. a 4. 11.",
+      terminyOverit: false,
       odkaz: "https://eic.ec.europa.eu",
       kdeKriteria: "Pracovní program EIC 2026 na eic.ec.europa.eu + šablony a kritéria na portálu EU Funding & Tenders (hodnotí se excelence, dopad, implementace a míra rizika).",
       pomocDH: "Propojíme vás s národními kontakty pro EIC a s firmami, které EIC prošly."
@@ -336,7 +353,7 @@ window.DH_KB = {
       trl: [1, 5],
       konsorcium: true,
       velikost: ["startup", "sme", "research"],
-      castka: "Pathfinder granty řádově 3–4 mil. €; Transition do ~2,5 mil. €",
+      castka: "Pathfinder granty do 4 mil. € (Open i Challenges; rozpočet 2026: 262 mil. €); Transition do ~2,5 mil. €",
       overit: true,
       proKoho: "Výzkumné týmy a spin-offy na začátku vývoje. Pathfinder Open typicky konsorcium; Challenges a Transition umožňují i jednotlivé žadatele.",
       jakFunguje: [
@@ -350,7 +367,7 @@ window.DH_KB = {
       nevhodnyKdyz: [
         "Už máte produkt a zákazníky – to je EIC Accelerator nebo DIANA."
       ],
-      terminy: "Výzvy podle pracovního programu EIC 2026 [OVĚŘIT data].",
+      terminy: "Pathfinder Open: uzávěrka 12. 5. 2026 (proběhla). Pathfinder Challenges: uzávěrka 28. 10. 2026. Transition dle pracovního programu EIC [OVĚŘIT].",
       terminyOverit: true,
       odkaz: "https://eic.ec.europa.eu/eic-funding-opportunities/eic-pathfinder_en",
       kdeKriteria: "Pracovní program EIC na eic.ec.europa.eu; plné znění výzev na portálu EU Funding & Tenders.",
@@ -380,8 +397,8 @@ window.DH_KB = {
       nevhodnyKdyz: [
         "Výstup má být vojenský – to patří do EDF."
       ],
-      terminy: "Výzvy 2026 spuštěny 6. 5. 2026; uzávěrky jednotlivých témat [OVĚŘIT na portálu].",
-      terminyOverit: true,
+      terminy: "Výzvy 2026 spuštěny 6. 5. 2026; společná uzávěrka všech 21 přímých témat 5. 11. 2026 (kyber témata ECCC už 15. 9. 2026).",
+      terminyOverit: false,
       odkaz: "https://ec.europa.eu/info/funding-tenders/opportunities/portal/",
       kdeKriteria: "Portál EU Funding & Tenders – text topicu + General Annexes pracovního programu Horizont Evropa (standardní kritéria: excelence, dopad, implementace).",
       pomocDH: "Nasměrujeme vás na národní kontaktní bod pro Horizont Evropa (TC Praha)."
@@ -411,7 +428,7 @@ window.DH_KB = {
       nevhodnyKdyz: [
         "Jste ve vývojové fázi – začněte u EDF/EUDIS/DIANA."
       ],
-      terminy: "Výzvy otevřené od 31. 3. 2026; uzávěrky jednotlivých výzev [OVĚŘIT na portálu].",
+      terminy: "Výzvy otevřené od 31. 3. 2026; první vlna uzávěrek říjen 2026, druhá únor 2027 [přesné dny OVĚŘIT na portálu].",
       terminyOverit: true,
       odkaz: "https://defence-industry-space.ec.europa.eu",
       kdeKriteria: "Výzvy EDIP na portálu EU Funding & Tenders (pracovní program 2026–27).",
@@ -433,7 +450,7 @@ window.DH_KB = {
       jakFunguje: [
         "Administruje TAČR, financuje Ministerstvo obrany ČR (schváleno vládou 7. 5. 2024).",
         "PP1 je nejdůležitější můstek mezi národní a evropskou úrovní – jdete-li do EDF, řešte PRODEF PP1 souběžně.",
-        "Výzvy 2026: 3. veřejná soutěž PP2 orientačně červen 2026, PP1 orientačně říjen 2026 [OVĚŘIT na tacr.gov.cz]."
+        "Výzvy 2026: 2. veřejná soutěž PP2 proběhla (příjem návrhů 4. 6. – 22. 7. 2026); PP1 je časově navázaná na výzvy EDF – orientačně podzim 2026 [OVĚŘIT na tacr.gov.cz]."
       ],
       vhodnyKdyz: [
         "Míříte na obranný výzkum s vazbou na AČR (PP2), nebo vstupujete do EDF konsorcia (PP1).",
@@ -442,7 +459,7 @@ window.DH_KB = {
       nevhodnyKdyz: [
         "Hledáte růstový kapitál na škálování – národní grantová linka na scale-up chybí, miřte na EIC/NIF."
       ],
-      terminy: "PP2 orientačně 6/2026 (proběhla), PP1 orientačně 10/2026 [OVĚŘIT].",
+      terminy: "PP2: 2. veřejná soutěž proběhla (4. 6. – 22. 7. 2026). PP1: navázaná na EDF, orientačně podzim 2026 [OVĚŘIT].",
       terminyOverit: true,
       odkaz: "https://tacr.gov.cz/program/program-prodef/",
       kdeKriteria: "Zadávací dokumentace veřejných soutěží na tacr.gov.cz (program PRODEF).",
@@ -459,12 +476,12 @@ window.DH_KB = {
       konsorcium: false,
       velikost: ["startup", "sme", "midcap"],
       castka: "Dotace 2–100 mil. Kč na projekt",
-      overit: true,
+      overit: false,
       proKoho: "Podniky (zvýhodnění pro SME), i ve spolupráci s výzkumnými organizacemi. Civilní program, který nově pokrývá i obranný průmysl – vhodné pro dual-use vývoj.",
       jakFunguje: [
         "Operační program Technologie a aplikace pro konkurenceschopnost (2021–27), financováno z fondů EU, spravuje MPO.",
         "Aktivita Aplikace: průmyslový výzkum a experimentální vývoj ve firmách.",
-        "Navazující výzva DEEP TECH plánovaná na 2026 [OVĚŘIT parametry na optak.gov.cz]."
+        "Výzva IV DEEP TECH: příjem žádostí 29. 10. 2025 – 19. 2. 2026 (proběhla), alokace 2 mld. Kč. Další výzva zatím nevyhlášena [OVĚŘIT na optak.gov.cz]."
       ],
       vhodnyKdyz: [
         "Vyvíjíte v ČR a chcete národní dotaci bez mezinárodního konsorcia.",
@@ -473,7 +490,7 @@ window.DH_KB = {
       nevhodnyKdyz: [
         "Potřebujete financovat čistě vojenský projekt s utajením – tam patří PRODEF/EDF."
       ],
-      terminy: "Navazující výzva 2026 [OVĚŘIT uzávěrku a parametry].",
+      terminy: "Výzva IV proběhla (uzávěrka 19. 2. 2026); další výzva zatím nevyhlášena [OVĚŘIT na optak.gov.cz].",
       terminyOverit: true,
       odkaz: "https://optak.gov.cz",
       kdeKriteria: "Text výzvy na optak.gov.cz / mpo.gov.cz (aktivita Aplikace).",
@@ -525,7 +542,8 @@ window.DH_KB = {
       overit: true,
       proKoho: "Hlavně SME a startupy – bez povinného konsorcia, s rychlým řízením (cíl: grant do 4 měsíců od podání).",
       jakFunguje: [
-        "Zatím politická dohoda; spuštění se čeká v roce 2027.",
+        "Politická dohoda Evropského parlamentu a Rady z července 2026; spuštění a první výzvy se čekají začátkem roku 2027.",
+        "AGILE má podpořit 20–30 projektů se 100% financováním způsobilých nákladů.",
         "Detaily doplní tým DH po zveřejnění – zařadíme vás do rozesílky."
       ],
       vhodnyKdyz: [
@@ -534,7 +552,7 @@ window.DH_KB = {
       nevhodnyKdyz: [
         "Potřebujete peníze letos – použijte EUDIS, EIC nebo PRODEF."
       ],
-      terminy: "Spuštění 2027 [DOPLNIT po vyhlášení].",
+      terminy: "Spuštění a první výzvy začátkem 2027 [DOPLNIT přesná data po vyhlášení].",
       terminyOverit: true,
       odkaz: "https://defence-industry-space.ec.europa.eu",
       kdeKriteria: "[DOPLNIT po spuštění – parametry zveřejní Evropská komise]",
@@ -898,6 +916,52 @@ window.DH_KB = {
   // -------------------------------------------------------------------
   // WIZARD – otázky průvodce
   // -------------------------------------------------------------------
+  // -------------------------------------------------------------------
+  // UKRAJINA A TESTOVÁNÍ (rešerše z veřejných zdrojů 9/2026)
+  // -------------------------------------------------------------------
+  ukrajina: {
+    uvod: "Ukrajina je dnes nejrychlejší cesta, jak ověřit obrannou technologii v reálném nasazení – a EU na to má konkrétní nástroje. Hlavní vstupy pro české firmy:",
+    cesty: [
+      {
+        nazev: "Test in Ukraine (Brave1)",
+        program: "eudis",
+        popis: "Platforma ukrajinského defence-tech inkubátoru Brave1 (spuštěna 17. 7. 2025): zahraniční firmy testují technologie v reálných bojových podmínkách a dostávají přímou zpětnou vazbu od ukrajinských vojáků. K 11/2025 přihlášeno 126 zahraničních firem ze 17 zemí. Pro TRL 4+. Web: brave1.gov.ua"
+      },
+      {
+        nazev: "BraveTech EU (EU + Ukrajina)",
+        program: "edip",
+        popis: "Společná aliance EU a Ukrajiny: 100 mil. € (50/50 Evropská komise a ukrajinská vláda). Fáze 1: hackathony a technologické výzvy; fáze 2 (2026, 35 mil. €, provozně řídí Evropská obranná agentura EDA): škálování nejlepších řešení a přístup do EUDIS akcelerátorů a EDF. Web: eu.brave1.tech"
+      },
+      {
+        nazev: "DefTech Forges – technologické výzvy BraveTech EU",
+        program: "edip",
+        popis: "Série soutěží pro defence startupy z EU a Ukrajiny (TRL 4+): granty 120 000 € s možností navazujícího financování až 750 000 €. Přihlášky do 6. 9. 2026 na eu.brave1.tech."
+      },
+      {
+        nazev: "EUDIS Accelerator – modul Test in Ukraine",
+        program: "eudis",
+        popis: "Účastníci EUDIS akcelerátoru mohou technologii otestovat v podmínkách replikujících ukrajinské bojiště, po boku vojenských operátorů a v reálných omezeních. Pro TRL 4+."
+      },
+      {
+        nazev: "Brave International – společné grantové fondy",
+        program: "eudis",
+        popis: "Mezinárodní větev Brave1: grantové fondy 50/50 s partnerskými zeměmi, celkem přes 100 mil. € (schváleno vládou Ukrajiny 6/2026). Soutěže otevřené ukrajinským i zahraničním firmám; podmínkou je validace řešení na bojišti přes Test in Ukraine."
+      },
+      {
+        nazev: "EDIP – podpora ukrajinského obranného průmyslu",
+        program: "edip",
+        popis: "EDIP vyčleňuje 260 mil. € na integraci ukrajinského obranného průmyslu do evropského; BraveTech EU je jeho součástí."
+      },
+      {
+        nazev: "DIANA – síť testovacích center",
+        program: "diana",
+        popis: "Mimo Ukrajinu: účastníci akcelerátoru DIANA mají přístup k síti 200+ testovacích center ve 32 zemích NATO."
+      }
+    ],
+    akce: "Nejbližší akce: summit Defence Tech Valley 2026 ve Lvově (září 2026); hackathony BraveTech EU 2026 proběhly také v Estonsku a Francii.",
+    overeno: "Rešerše z veřejných zdrojů 9/2026 – před podáním přihlášky ověřte aktuální podmínky na uvedených webech; tým DH rád pomůže."
+  },
+
   wizard: [
     {
       id: "zamereni",
