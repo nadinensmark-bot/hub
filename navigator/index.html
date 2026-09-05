@@ -1328,8 +1328,9 @@ function botOdpoved(dotaz, kb, docs){
       "Hello! I'm the Defence Hub advisor. Ask about funding programmes, open calls, export control, certifications or application prep – I answer straight from the knowledge base."),
       tlacitka: [btnVyzvy, btnPruvodce, btnTest] };
   }
-  // 2) kontakt / konzultace
-  if(ma("kontakt","konzultac","poradte","pomoc","pomuzete","contact","consult","help us","who are you","kdo jste")){
+  // 2) kontakt / konzultace – ale ne když se ptají na program nebo přihlášku
+  if(!nalezene.length && !ma("prihlask","application") &&
+     ma("kontakt","konzultac","poradte","pomoc","pomuzete","contact","consult","help us","who are you","kdo jste")){
     return { text: T("Nejrychlejší cesta: ", "The fastest way: ") + btnKontakt, tlacitka: [btnPruvodce] };
   }
   // 2b) role žadatele: univerzita / výzkumná organizace
@@ -1341,6 +1342,50 @@ function botOdpoved(dotaz, kb, docs){
       T("Naopak jen pro firmy jsou: ", "Company-only, on the other hand: ") + jenFirmy.map(p => p.nazev.split(" –")[0].split(" (")[0]).join(", ") + ". " +
       T("Cesta univerzity k nim vede přes spin-off nebo partnerství s firmou – s obojím pomůže Defence Hub.", "A university's route to those is a spin-off or a partnership with a company – the Defence Hub helps with both."),
       tlacitka: [btnPruvodce, ...proUni.slice(0,2).map(p => ({ t: p.nazev.split(" –")[0].split(" (")[0], route: { view: "program", param: p.id } }))] };
+  }
+  // 2c0) „do jaké kategorie dual-use spadám?" – zatřídění podle přílohy I
+  // Skóruje dotaz proti názvům, příkladům a podoblastem kategorií 0–9 z KB
+  // (+ synonyma běžných výrazů, které v textu KB nejsou doslova).
+  if(ma("kategori","categor","spadam","spadame","zatrid","zarazeni","zaradit") || (ma("dual") && ma("jaka","jake","jsem","jsme","which","what category"))){
+    const kats = kb.dualUseTest.kategorieAnnex.polozky;
+    const synonyma = {
+      "0": ["jader","nuklear","reaktor","uran"],
+      "1": ["slitin","kompozit","chemick","povlak","material","cbrn","detekce latek"],
+      "2": ["cnc","obrabe","lis ","lozisk","vyrobni stroj"],
+      "3": ["cip","polovodic","obvod","elektronik","prevodnik","mikrovln"],
+      "4": ["pocitac","server","vypocet","computing","superpocitac"],
+      "5": ["sifr","krypt","encrypt","radio","komunikac","telekom","vpn","anten"],
+      "6": ["senzor","kamer","termo","noktoviz","radar","lidar","laser","sonar","hydrofon","optick"],
+      "7": ["navigac","gps","gnss","gyroskop","akcelerometr","avionik","inercial"],
+      "8": ["ponork","podvodni","namorni","lod "],
+      "9": ["dron","uav","bezpilot","letadl","raket","motor","satelit","vesmir","kosm","space"]
+    };
+    const skoruj = k => {
+      const txt = bezDiakritiky(k.nazev + " " + k.priklady.join(" ") + " " + (k.podoblasti||[]).map(p=>p.nazev+" "+p.rozhoduje).join(" "));
+      let s = 0;
+      for(const w of bezDiakritiky(dotaz).split(/[^a-z0-9]+/)){ if(w.length > 3 && txt.includes(w)) s += 1; }
+      for(const syn of (synonyma[k.kod]||[])){ if(q.includes(syn)) s += 3; }
+      return s;
+    };
+    const shody = kats.map(k => ({ k, s: skoruj(k) })).filter(x => x.s > 0).sort((a,b) => b.s - a.s).slice(0, 2);
+    const aiPozn = ma(" ai ","umela intel","machine learning"," software","software ") ?
+      T("\n\nPozn.: software a technologie nemají samostatnou kategorii – v každé kategorii mají vlastní položky (D = software, E = technologie) vázané na tamní parametry. Rozhoduje tedy, k čemu software slouží (šifrování → 5, zpracování dat ze senzorů → 6, řízení dronů → 7/9…).",
+        "\n\nNote: software and technology have no category of their own – each category has its own entries for them (D = software, E = technology), tied to that category's parameters. What matters is what the software does (encryption → 5, sensor data processing → 6, drone control → 7/9…).") : "";
+    const zaver = aiPozn + T("\n\n⚠️ Přesné technické prahy definuje u každé položky příloha I nařízení 2021/821 – jestli je překračujete, ukáže dual-use test (semafor). Závazné zatřídění dělá Licenční správa MPO.",
+      "\n\n⚠️ The exact technical thresholds are defined per item in Annex I of Regulation 2021/821 – whether you exceed them, the dual-use test shows (traffic light). Binding classification is done by the MPO Licensing Authority.");
+    if(shody.length){
+      const text = T("Podle popisu to zní na:", "From your description this sounds like:") + "\n\n" +
+        shody.map(({k}) =>
+          "**" + T("Kategorie ", "Category ") + k.kod + " – " + k.nazev + "**\n" +
+          T("Patří sem např.: ", "Includes e.g.: ") + k.priklady.join("; ") + ".\n" +
+          T("Rozhodující parametry:", "Deciding parameters:") + "\n" +
+          (k.podoblasti||[]).map(p => "- " + p.nazev + " → " + p.rozhoduje).join("\n")
+        ).join("\n\n") + zaver;
+      return { text, tlacitka: [btnTest] };
+    }
+    return { text: T("Z tohohle popisu kategorii bohužel nepoznám – nechci hádat. Napište mi, co technicky děláte (např. „senzory“, „šifrování“, „drony“), nebo projděte dual-use test – provede vás všemi 10 kategoriemi přílohy I i vojenským seznamem.",
+      "I can't tell the category from this description – I won't guess. Tell me what you technically do (e.g. “sensors”, “encryption”, “drones”), or take the dual-use test – it walks you through all 10 Annex I categories and the military list.") + zaver,
+      tlacitka: [btnTest] };
   }
   // 2c) fazetové dotazy (kdy / kolik / pro koho / jak / kritéria) – k programu
   // z dotazu, nebo k naposledy zmíněnému programu (kontext konverzace)
@@ -1388,6 +1433,12 @@ function botOdpoved(dotaz, kb, docs){
   if(nalezene.length > 1){
     return { text: T("Týká se to několika programů – který vás zajímá?", "That touches several programmes – which one do you mean?"),
       tlacitka: nalezene.slice(0,4).map(id => { const p = kb.programy.find(x=>x.id===id); return { t: p.nazev, route: { view: "program", param: id } }; }) };
+  }
+  // 3b) „jaký program se mi hodí / kam se přihlásit?" → průvodce
+  if(ma("jaky program","ktery program","kam se prihlasit","kam se mam","kam mam","se mi hodi","se nam hodi","doporuc","co mame delat","co mam delat","which programme","which program","recommend","where to apply","what should")){
+    return { text: T("Na tohle je nejlepší průvodce: 5 otázek (zaměření, TRL, forma podpory, konsorcium, kdo jste) a ukáže jen programy, které pro vás dávají smysl – ostatní rovnou skryje. Můžete se pak doptat na detaily tady v chatu.",
+      "The wizard is best for this: 5 questions (focus, TRL, form of support, consortium, who you are) and it shows only the programmes that make sense for you – the rest is hidden. You can then ask me for details here."),
+      tlacitka: [btnPruvodce, btnVyzvy] };
   }
   // 4) výzvy / termíny
   if(ma("vyzv","uzaverk","termin","deadline","calls","otevren","open call","bezi","aktualni")){
@@ -1437,6 +1488,12 @@ function botOdpoved(dotaz, kb, docs){
       "EDF requires a consortium (min. 3 entities from 3 countries), as does Horizon; the EUDIS Open Call needs 3 companies from 3 states. You apply alone to DIANA, EIC, PRODEF or OP TAK. The Defence Hub helps with partner search (matchmaking), as do EUDIS events."),
       tlacitka: [{ t: "EDF", route: { view: "program", param: "edf" } }, { t: "EUDIS", route: { view: "program", param: "eudis" } }, btnPruvodce] };
   }
+  // 11b) délka hodnocení / vyplácení – ověřená čísla v KB nejsou, nelhat
+  if(ma("jak dlouho","how long","doba hodnoceni","doba schval","kdy dostanu penize","kdy prijdou penize")){
+    return { text: T("Délka hodnocení se u každého programu liší a ověřená čísla ve znalostní bázi zatím nemám – nebudu je odhadovat. Orientační průběh najdete v detailu programu (sekce Jak to funguje), závazné lhůty v dokumentaci konkrétní výzvy. S časováním pomůže i tým: ",
+      "Evaluation timelines differ per programme and I don't have verified figures in the knowledge base – I won't guess. See the programme detail (How it works) for the rough flow and the call documentation for binding deadlines. The team can help with timing too: ") + btnKontakt,
+      tlacitka: [btnVyzvy, btnPruvodce] };
+  }
   // 12) přihláška
   if(ma("prihlask","zadost","napsat","application","apply","proposal","podat")){
     const kroky = kb.prihlaska.obecneKroky.slice(0, 3);
@@ -1462,9 +1519,11 @@ function botOdpoved(dotaz, kb, docs){
       "Non-dilutive grants come mainly from DIANA, EDF/EUDIS, the EIC grant component, PRODEF and OP TAK. The 5-question wizard tells you which fits you (focus, TRL, consortium…)."),
       tlacitka: [btnPruvodce, btnVyzvy] };
   }
-  // 16) fallback: odpověď textem z nejbližšího místa KB + související karty
+  // 16) fallback: odpověď textem z nejbližšího místa KB + související karty.
+  // Slabá shoda (skóre < 4) není odpověď – to radši přiznat, že nevíme,
+  // a nabídnout související témata jen jako karty.
   const vysledky = hledejKB(docs, dotaz);
-  if(vysledky.length){
+  if(vysledky.length && vysledky[0].skore >= 4){
     const top = vysledky[0].d;
     if(top.route && top.route.view === "program") state.botKontext = top.route.param;
     return {
@@ -1472,6 +1531,14 @@ function botOdpoved(dotaz, kb, docs){
         String(top.ukazka || top.text || "").slice(0, 300),
       tlacitka: top.route ? [{ t: t("liteOtevrit"), route: top.route }] : [],
       karty: vysledky.slice(1, 4).map(({d}) => ({ titul: d.titul, stitek: d.stitek, ukazka: String(d.ukazka||"").slice(0,160), route: d.route }))
+    };
+  }
+  if(vysledky.length){
+    return {
+      text: T("Na tohle přímou odpověď ve znalostní bázi nemám – nechci si vymýšlet. Zkuste otázku položit jinak (např. s názvem programu nebo technologie), nebo se obraťte na tým: ",
+        "I don't have a direct answer to this in the knowledge base – I won't make one up. Try rephrasing (e.g. with a programme or technology name), or ask the team: ") + btnKontakt,
+      tlacitka: [btnPruvodce, btnTest],
+      karty: vysledky.slice(0, 3).map(({d}) => ({ titul: d.titul, stitek: d.stitek, ukazka: String(d.ukazka||"").slice(0,160), route: d.route }))
     };
   }
   return { text: t("liteNic"), tlacitka: [btnPruvodce] };
