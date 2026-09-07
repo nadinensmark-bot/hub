@@ -42,6 +42,15 @@ aside{flex:none;width:252px;background:radial-gradient(120% 90% at 20% 0%,#1B2D5
 .langbtn.active{background:rgba(43,92,196,.4);color:#fff}
 main{flex:1;overflow-y:auto;padding:34px 40px 60px}
 .wrap{max-width:880px;margin:0 auto}
+#drobky{align-items:center;gap:7px;padding:14px 0 10px;flex-wrap:wrap}
+.drobbtn{width:27px;height:27px;border-radius:8px;border:1px solid var(--line);background:#fff;color:var(--navy);cursor:pointer;font-size:13px;line-height:1;display:inline-flex;align-items:center;justify-content:center;flex:none}
+.drobbtn:hover:not(:disabled){background:var(--blueSoft);border-color:var(--blue)}
+.drobbtn:disabled{opacity:.35;cursor:default}
+.drobtrail{display:flex;align-items:center;gap:5px;flex-wrap:wrap;font-size:12px;margin-left:3px}
+.drobek{color:var(--muted);cursor:pointer;padding:3px 8px;border-radius:7px;white-space:nowrap}
+.drobek:hover{background:var(--mist);color:var(--ink)}
+.drobek.aktualni{background:var(--blueSoft);color:var(--blue);font-weight:600;cursor:default}
+.drobsep{color:#B8C2D6;font-size:11px}
 
 .card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin-bottom:14px}
 .btn{display:inline-flex;align-items:center;gap:8px;background:var(--blue);color:#fff;border:none;border-radius:11px;padding:11px 20px;font-family:'IBM Plex Sans',sans-serif;font-size:13.5px;font-weight:600;cursor:pointer}
@@ -171,7 +180,10 @@ table.zmeny td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-ali
   </aside>
 
   <!-- ============ CONTENT ============ -->
-  <main class="cscroll"><div class="wrap" id="app"></div></main>
+  <main class="cscroll">
+    <div class="wrap" id="drobky" style="display:none"></div>
+    <div class="wrap" id="app"></div>
+  </main>
 </div>
 
 <script>
@@ -186,12 +198,14 @@ let state = load();
 function load(){ try{ return JSON.parse(localStorage.getItem(LS)) || {}; }catch(e){ return {}; } }
 function save(){ try{ localStorage.setItem(LS, JSON.stringify(state)); }catch(e){} }
 if(!state.lang) state.lang = "cs";
+if(!Array.isArray(state.hist)){ state.hist = []; state.histPos = -1; }
 
 // ---------------- slovník rozhraní ----------------
 const UI = {
 cs: {
   navKicker:"Pro startupy",
   nav:{konzultant:"Konzultant",wizard:"Průvodce",programy:"Programy",vyzvy:"Výzvy",prihlaska:"Přihláška",dualuse:"Dual-use",certifikace:"Certifikace",ukrajina:"Ukrajina",poradce:"Poradce",kb:"Knowledge base"},
+  drobZpet:"Zpět", drobVpred:"Vpřed",
   uaKicker:"Testování v reálném nasazení",
   miniPlaceholderUa:"Např.: jak funguje Test in Ukraine? co je BraveTech?…",
   certKicker:"Certifikace a povolení", certTitle:"Jaké certifikace potřebujete a jak na ně",
@@ -353,6 +367,7 @@ cs: {
 en: {
   navKicker:"For startups",
   nav:{konzultant:"Consultant",wizard:"Wizard",programy:"Programmes",vyzvy:"Open calls",prihlaska:"Application",dualuse:"Dual-use",certifikace:"Certifications",ukrajina:"Ukraine",poradce:"Advisor",kb:"Knowledge base"},
+  drobZpet:"Back", drobVpred:"Forward",
   uaKicker:"Real-deployment testing",
   miniPlaceholderUa:"E.g.: how does Test in Ukraine work? what is BraveTech?…",
   certKicker:"Certifications and permits", certTitle:"Which certifications you need and how to get them",
@@ -550,14 +565,60 @@ function applyChrome(){
 
 // ---------------- routing ----------------
 const views = { konzultant: vKonzultant, wizard: vWizard, programy: vProgramy, vyzvy: vVyzvy, prihlaska: vPrihlaska, dualuse: vDualUse, certifikace: vCertifikace, ukrajina: vUkrajina, poradce: vPoradce, kb: vKB, program: vProgramDetail };
-function go(view, param){
+function go(view, param, zHistorie){
+  if(!zHistorie){
+    const akt = state.hist[state.histPos];
+    if(!akt || akt.view !== view || akt.param !== param){
+      state.hist = state.hist.slice(0, state.histPos + 1);
+      state.hist.push({view, param});
+      if(state.hist.length > 30) state.hist = state.hist.slice(-30);
+      state.histPos = state.hist.length - 1;
+    }
+  }
   state.view = view; state.viewParam = param; save();
   document.querySelectorAll(".navitem").forEach(n=>n.classList.toggle("active", n.dataset.view===view || (view==="program" && n.dataset.view==="programy")));
   const el = document.getElementById("app");
   el.innerHTML = ""; el.className = "wrap fade";
   (views[view]||vWizard)(el, param);
+  vykresliDrobky();
   document.querySelector("main").scrollTop = 0;
   void el.offsetWidth;
+}
+
+// ---------------- drobečky: historie procházení ----------------
+function drobekLabel(z){
+  if(z.view === "program"){
+    const p = (KB().programy||[]).find(x=>x.id===z.param);
+    const n = p ? p.nazev : String(z.param||"");
+    return n.length > 26 ? n.slice(0,24) + "…" : n;
+  }
+  return t("nav")[z.view] || z.view;
+}
+function goHist(pos){
+  if(pos < 0 || pos >= state.hist.length || pos === state.histPos) return;
+  state.histPos = pos; save();
+  const z = state.hist[pos];
+  go(z.view, z.param, true);
+}
+function vykresliDrobky(){
+  const el = document.getElementById("drobky");
+  if(!el) return;
+  const n = state.hist.length;
+  if(n < 2){ el.style.display = "none"; el.innerHTML = ""; return; }
+  const od = Math.max(0, state.histPos - 4);
+  const kon = Math.min(n - 1, state.histPos + 2);
+  const kusy = [];
+  if(od > 0) kusy.push(`<span class="drobsep">…</span>`);
+  for(let i = od; i <= kon; i++){
+    if(kusy.length) kusy.push(`<span class="drobsep">›</span>`);
+    kusy.push(`<span class="drobek${i===state.histPos?" aktualni":""}" onclick="goHist(${i})">${esc(drobekLabel(state.hist[i]))}</span>`);
+  }
+  if(kon < n - 1) kusy.push(`<span class="drobsep">…</span>`);
+  el.innerHTML =
+    `<button class="drobbtn" ${state.histPos<=0?"disabled":""} onclick="goHist(state.histPos-1)" title="${esc(t("drobZpet"))}">←</button>` +
+    `<button class="drobbtn" ${state.histPos>=n-1?"disabled":""} onclick="goHist(state.histPos+1)" title="${esc(t("drobVpred"))}">→</button>` +
+    `<span class="drobtrail">${kusy.join("")}</span>`;
+  el.style.display = "flex";
 }
 function header(el, kicker, title, sub){
   el.insertAdjacentHTML("beforeend",
