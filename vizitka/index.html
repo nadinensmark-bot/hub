@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Defence Hub</title>
+<meta name="description" content="Defence Hub — národní brána defence & dual-use inovací. Web, aplikace, LinkedIn, databáze řešení a komunita na jednom místě.">
+<meta name="theme-color" content="#0B1530">
+<meta property="og:title" content="Defence Hub">
+<meta property="og:description" content="Národní brána defence & dual-use inovací — všechny odkazy na jednom místě.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🚀%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0B1530; --navy:#13234E; --navy2:#1C2F63; --blue:#2B5CC4; --blueSoft:#E8EEFA;
+  --green:#8CAA72; --greenDeep:#6E9152; --muted:#8FA0C6; --line:rgba(255,255,255,.10);
+  --card:rgba(255,255,255,.055); --cardHover:rgba(255,255,255,.10);
+  --s2:8px; --s3:16px; --s4:24px; --s5:40px; --s6:64px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  min-height:100svh;
+  background:#0B1530;
+  background:radial-gradient(130% 100% at 20% 0%, #1B2D5E 0%, #0E1B3C 55%, #0B1530 100%) fixed;
+  color:#fff;
+  font-family:'IBM Plex Sans',system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+::selection{background:var(--blue);color:#fff}
+
+/* ---------- hvězdné pozadí ---------- */
+#stars{position:fixed;inset:0;pointer-events:none;z-index:0}
+.star{position:absolute;border-radius:50%;background:#C9D8F2;opacity:.5;animation:twinkle 3.2s ease-in-out infinite}
+@keyframes twinkle{0%,100%{opacity:.16}50%{opacity:.6}}
+
+/* ---------- raketa (intro průlet) ---------- */
+#rocketWrap{
+  position:fixed;left:0;top:0;z-index:50;pointer-events:none;
+  width:96px;height:96px;
+  transform:translate(-18vw,108vh);
+  will-change:transform;
+}
+#rocketWrap.fly{animation:flyby 1.7s cubic-bezier(.45,.02,.35,1) forwards}
+@keyframes flyby{
+  0%  {transform:translate(-18vw,108vh)}
+  100%{transform:translate(112vw,-22vh)}
+}
+#rocketWrap svg{width:100%;height:100%;transform:rotate(45deg)}
+.flame{transform-origin:24px 40px;animation:flick .12s ease-in-out infinite alternate}
+@keyframes flick{from{transform:scaleY(1)}to{transform:scaleY(1.35)}}
+.trail{
+  position:absolute;top:50%;right:62%;height:3px;width:52vw;
+  transform:translateY(-50%) rotate(0deg);transform-origin:right center;rotate:-48.5deg;
+  background:linear-gradient(to left, rgba(140,170,242,.85), rgba(43,92,196,.35), transparent 85%);
+  border-radius:3px;filter:blur(.5px);
+}
+.trail.t2{height:1.5px;width:34vw;top:38%;opacity:.6}
+.trail.t3{height:1.5px;width:30vw;top:62%;opacity:.5}
+
+/* ---------- layout ---------- */
+.wrap{
+  position:relative;z-index:1;
+  max-width:480px;margin:0 auto;
+  padding:var(--s6) var(--s4) var(--s5);
+  display:flex;flex-direction:column;min-height:100svh;
+}
+header{text-align:center;margin-bottom:var(--s5)}
+.kicker{
+  font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:600;
+  letter-spacing:.22em;text-transform:uppercase;color:var(--muted);
+  margin-bottom:var(--s3);
+}
+.logo-rocket{
+  width:58px;height:58px;margin:0 auto var(--s3);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  border:none;background:rgba(43,92,196,.18);border-radius:50%;
+  box-shadow:0 0 0 1px var(--line), 0 0 34px rgba(43,92,196,.35);
+  transition:transform .25s ease, box-shadow .25s ease;
+}
+.logo-rocket:hover{transform:translateY(-3px);box-shadow:0 0 0 1px var(--line),0 0 46px rgba(43,92,196,.55)}
+.logo-rocket:focus-visible{outline:2px solid var(--green);outline-offset:3px}
+.logo-rocket svg{width:32px;height:32px;transform:rotate(45deg)}
+h1{
+  font-family:'Space Grotesk',sans-serif;font-weight:700;letter-spacing:-.015em;
+  font-size:clamp(30px,8.5vw,38px);margin:0 0 10px;
+}
+.tagline{color:var(--muted);font-size:14.5px;line-height:1.55;margin:0 auto;max-width:34ch}
+
+/* ---------- odkazy ---------- */
+nav{display:flex;flex-direction:column;gap:12px}
+.link{
+  display:flex;align-items:center;gap:var(--s3);
+  min-height:64px;padding:14px var(--s3) 14px 14px;
+  background:var(--card);
+  border:1px solid var(--line);border-radius:16px;
+  color:#fff;text-decoration:none;
+  transition:transform .2s ease, background .2s ease, border-color .2s ease;
+}
+.link:hover{background:var(--cardHover);border-color:rgba(255,255,255,.22);transform:translateY(-2px)}
+.link:active{transform:translateY(0)}
+.link:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+.icon{
+  flex:none;width:44px;height:44px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+}
+.icon svg{width:22px;height:22px}
+.i-web{background:rgba(43,92,196,.28);color:#9FBAF0}
+.i-app{background:rgba(140,170,242,.16);color:#C9D8F2}
+.i-in{background:rgba(43,92,196,.28);color:#9FBAF0}
+.i-db{background:rgba(140,170,114,.22);color:#B9CFA1}
+.i-wa{background:rgba(140,170,114,.22);color:#B9CFA1}
+.link b{display:block;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:16px;letter-spacing:-.01em}
+.link small{display:block;color:var(--muted);font-size:12.5px;margin-top:2px;line-height:1.4}
+.link .arrow{margin-left:auto;flex:none;color:var(--muted);transition:transform .2s ease}
+.link:hover .arrow{transform:translateX(3px);color:#fff}
+.link.hi{border-color:rgba(140,170,114,.45);background:rgba(140,170,114,.10)}
+.link.hi:hover{background:rgba(140,170,114,.16);border-color:rgba(140,170,114,.65)}
+
+footer{
+  margin-top:auto;padding-top:var(--s6);text-align:center;
+  font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.16em;
+  text-transform:uppercase;color:#5E6E96;
+}
+
+/* ---------- vstupní animace obsahu ---------- */
+.reveal{opacity:0;transform:translateY(14px);animation:up .55s ease forwards}
+@keyframes up{to{opacity:1;transform:translateY(0)}}
+header.reveal{animation-delay:.85s}
+.link:nth-child(1){animation-delay:1.05s}
+.link:nth-child(2){animation-delay:1.15s}
+.link:nth-child(3){animation-delay:1.25s}
+.link:nth-child(4){animation-delay:1.35s}
+.link:nth-child(5){animation-delay:1.45s}
+footer.reveal{animation-delay:1.6s}
+
+@media (prefers-reduced-motion: reduce){
+  #rocketWrap{display:none}
+  .reveal{opacity:1;transform:none;animation:none}
+  .star{animation:none}
+  .link,.arrow,.logo-rocket{transition:none}
+}
+@media (min-width:560px){
+  .wrap{padding-top:88px}
+}
+</style>
+</head>
+<body>
+
+<div id="stars" aria-hidden="true"></div>
+
+<!-- prolétající raketa -->
+<div id="rocketWrap" aria-hidden="true">
+  <span class="trail"></span>
+  <span class="trail t2"></span>
+  <span class="trail t3"></span>
+  <svg viewBox="0 0 48 48" fill="none">
+    <!-- plamen -->
+    <path class="flame" d="M24 39c-2.6 0-4-1.8-4-1.8S21 45 24 47c3-2 4-9.8 4-9.8S26.6 39 24 39Z" fill="#EAD9A8"/>
+    <path class="flame" d="M24 39c-1.4 0-2.2-.9-2.2-.9S22.4 43 24 44.4C25.6 43 26.2 38.1 26.2 38.1S25.4 39 24 39Z" fill="#BD6B4B"/>
+    <!-- tělo -->
+    <path d="M24 2c6 4.6 9 11.2 9 19 0 5.4-1.6 10.6-4.4 15H19.4C16.6 31.6 15 26.4 15 21c0-7.8 3-14.4 9-19Z" fill="#F3F5F9"/>
+    <path d="M24 2c6 4.6 9 11.2 9 19 0 5.4-1.6 10.6-4.4 15h-4.1C26.8 31.6 28 26.4 28 21c0-7.2-1.5-13.4-4-19Z" fill="#C7D0E6"/>
+    <!-- okénko -->
+    <circle cx="24" cy="17" r="4.6" fill="#13234E" stroke="#2B5CC4" stroke-width="2"/>
+    <!-- křidélka -->
+    <path d="M15.5 26C11.5 28.4 9.5 32 9 37c3.4-.6 6.2-2 8.4-4.2A29 29 0 0 1 15.5 26Z" fill="#6E9152"/>
+    <path d="M32.5 26c4 2.4 6 6 6.5 11-3.4-.6-6.2-2-8.4-4.2A29 29 0 0 0 32.5 26Z" fill="#6E9152"/>
+  </svg>
+</div>
+
+<div class="wrap">
+  <header class="reveal">
+    <p class="kicker">Defence &amp; Dual-Use Innovations</p>
+    <button class="logo-rocket" id="replay" type="button" aria-label="Přehrát animaci rakety znovu" title="Znovu odpálit 🚀">
+      <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
+        <path d="M24 2c6 4.6 9 11.2 9 19 0 5.4-1.6 10.6-4.4 15H19.4C16.6 31.6 15 26.4 15 21c0-7.8 3-14.4 9-19Z" fill="#F3F5F9"/>
+        <circle cx="24" cy="17" r="4.6" fill="#13234E" stroke="#2B5CC4" stroke-width="2"/>
+        <path d="M15.5 26C11.5 28.4 9.5 32 9 37c3.4-.6 6.2-2 8.4-4.2A29 29 0 0 1 15.5 26Z" fill="#6E9152"/>
+        <path d="M32.5 26c4 2.4 6 6 6.5 11-3.4-.6-6.2-2-8.4-4.2A29 29 0 0 0 32.5 26Z" fill="#6E9152"/>
+        <path d="M24 39c-2.6 0-4-1.8-4-1.8S21 45 24 47c3-2 4-9.8 4-9.8S26.6 39 24 39Z" fill="#EAD9A8"/>
+      </svg>
+    </button>
+    <h1>Defence Hub</h1>
+    <p class="tagline">Národní brána defence &amp; dual-use inovací. Všechno důležité na jeden dotek.</p>
+  </header>
+
+  <nav aria-label="Odkazy Defence Hub">
+    <a class="link reveal" href="https://defencehub.gov.cz/" target="_blank" rel="noopener">
+      <span class="icon i-web" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9S14.5 18.4 12 21c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3Z"/></svg>
+      </span>
+      <span><b>Web Defence Hub</b><small>defencehub.gov.cz — vše o nás na jednom místě</small></span>
+      <svg class="arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+    </a>
+
+    <a class="link reveal" href="https://nadinensmark-bot.github.io/hub/navigator/" target="_blank" rel="noopener">
+      <span class="icon i-app" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5 13.7 13.7 8.5 15.5l1.8-5.2 5.2-1.8Z"/></svg>
+      </span>
+      <span><b>DH Kompas — demo</b><small>Průvodce programy a financováním pro startupy</small></span>
+      <svg class="arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+    </a>
+
+    <a class="link reveal" href="https://www.linkedin.com/company/defence-hub-czechinvest/" target="_blank" rel="noopener">
+      <span class="icon i-in" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5ZM.24 8.31h4.52V23H.24V8.31Zm7.44 0h4.33v2h.06c.6-1.14 2.08-2.34 4.28-2.34 4.58 0 5.42 3.01 5.42 6.93V23h-4.51v-7.13c0-1.7-.03-3.89-2.37-3.89-2.37 0-2.73 1.85-2.73 3.76V23H7.68V8.31Z"/></svg>
+      </span>
+      <span><b>LinkedIn</b><small>Novinky, akce a příběhy z komunity</small></span>
+      <svg class="arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+    </a>
+
+    <a class="link reveal hi" href="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=q8gL-se0sUOvIxgC0ZUHltmg99bB9nRNljlL-s5gE0FUM1pDSzBTRUhXSzNFMjJSUkZKSUZXNkhTWC4u" target="_blank" rel="noopener">
+      <span class="icon i-db" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v7c0 1.66 3.58 3 8 3s8-1.34 8-3V5"/><path d="M4 12v7c0 1.66 3.58 3 8 3s8-1.34 8-3v-7"/></svg>
+      </span>
+      <span><b>Databáze řešení</b><small>Zapište svou firmu — buďte vidět pro armádu i partnery</small></span>
+      <svg class="arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+    </a>
+
+    <a class="link reveal" href="https://chat.whatsapp.com/Bns0ArwcKu9I1H6PNNOF6y?mode=gi_t" target="_blank" rel="noopener">
+      <span class="icon i-wa" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a9.9 9.9 0 0 0-8.51 15.07L2 22l5.09-1.44A9.94 9.94 0 1 0 12 2Zm0 18.1a8.06 8.06 0 0 1-4.1-1.12l-.3-.18-3.02.85.86-2.94-.2-.31A8.1 8.1 0 1 1 12 20.1Zm4.56-6.03c-.25-.13-1.47-.73-1.7-.81-.23-.08-.4-.13-.56.12-.17.25-.64.81-.79.98-.14.17-.29.19-.54.06a6.6 6.6 0 0 1-3.3-2.88c-.25-.43.25-.4.71-1.32.08-.17.04-.31-.02-.44-.06-.12-.56-1.35-.77-1.85-.2-.48-.4-.42-.56-.43h-.48c-.17 0-.44.06-.66.31-.23.25-.87.85-.87 2.07 0 1.22.89 2.4 1.01 2.57.13.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.6.19 1.14.16 1.57.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.15-1.18-.06-.1-.23-.16-.48-.28Z"/></svg>
+      </span>
+      <span><b>WhatsApp komunita</b><small>Přidejte se — rychlé info a networking</small></span>
+      <svg class="arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+    </a>
+  </nav>
+
+  <footer class="reveal">Defence Hub · CzechInvest</footer>
+</div>
+
+<script>
+// hvězdy
+(function(){
+  var box=document.getElementById('stars');
+  for(var i=0;i<42;i++){
+    var s=document.createElement('span');
+    s.className='star';
+    var size=Math.random()*1.8+.6;
+    s.style.width=s.style.height=size+'px';
+    s.style.left=Math.random()*100+'%';
+    s.style.top=Math.random()*100+'%';
+    s.style.animationDelay=(Math.random()*3)+'s';
+    s.style.animationDuration=(2.4+Math.random()*2.4)+'s';
+    box.appendChild(s);
+  }
+})();
+
+// průlet rakety při otevření + replay kliknutím na logo
+(function(){
+  var r=document.getElementById('rocketWrap');
+  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function fly(){
+    if(reduce) return;
+    r.classList.remove('fly');
+    void r.offsetWidth; // restart animace
+    r.classList.add('fly');
+  }
+  window.addEventListener('load',function(){setTimeout(fly,150)});
+  document.getElementById('replay').addEventListener('click',fly);
+})();
+</script>
+</body>
+</html>
