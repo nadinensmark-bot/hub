@@ -6,6 +6,10 @@
 <meta name="color-scheme" content="light dark">
 <title>Formy vlády: prezidencialismus</title>
 <meta name="description" content="Vzdělávací rozhodovací hra pro střední školy: Jaké jsou výhody a rizika prezidentského systému?">
+<!-- Písma úvodního videa (volitelná: offline se použijí systémová písma, hra funguje i bez nich) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Atkinson+Hyperlegible+Next:wght@400..800&display=swap" rel="stylesheet">
 <!--
   ================================================================
   FORMY VLÁDY: PREZIDENCIALISMUS  (vzdělávací rozhodovací hra)
@@ -328,6 +332,36 @@
 
   footer { border-top: 1px solid var(--line); color: var(--muted); font-size: .8rem; text-align: center; padding: .8rem 16px; }
 
+  /* ---------- Úvodní video (přepis animace z Claude Design do vanilla JS) ---------- */
+  #intro {
+    position: fixed; inset: 0; z-index: 40; background: #15171b; color: #fff;
+    display: flex; flex-direction: column;
+  }
+  #intro[hidden] { display: none; }
+  .iv-viewport { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  .iv-stage {
+    position: relative; width: 1920px; height: 1080px; overflow: hidden; flex: none;
+    background: #F4F1EA; transform-origin: center; box-shadow: 0 20px 60px rgba(0,0,0,.4);
+    font-family: "Atkinson Hyperlegible Next", "Atkinson Hyperlegible", "Segoe UI", Roboto, system-ui, sans-serif;
+  }
+  .iv-stage * { box-sizing: border-box; }
+  .iv-stage .H { font-family: "Bricolage Grotesque", Georgia, "Segoe UI", system-ui, sans-serif; }
+  .iv-abs { position: absolute; }
+  .iv-nowrap { white-space: nowrap; }
+  .iv-bar {
+    flex: none; display: flex; align-items: center; gap: .8rem; padding: .6rem 16px;
+    background: #101215; border-top: 1px solid rgba(255,255,255,.1); font-size: .9rem;
+  }
+  .iv-bar .btn-ghost { color: #fff; border-color: rgba(255,255,255,.3); }
+  .iv-bar .btn-ghost:hover { background: rgba(255,255,255,.1); }
+  .iv-bar .btn { background: #fff; color: #15171b; }
+  .iv-track { flex: 1; height: 24px; display: flex; align-items: center; cursor: pointer; position: relative; }
+  .iv-track::before { content: ""; position: absolute; left: 0; right: 0; height: 4px; border-radius: 2px; background: rgba(255,255,255,.15); }
+  .iv-track > span { position: absolute; left: 0; height: 4px; border-radius: 2px; background: #D9711C; width: 0; }
+  .iv-time { font-variant-numeric: tabular-nums; min-width: 4.5rem; color: rgba(255,255,255,.7); }
+  .iv-scene { color: rgba(255,255,255,.7); min-width: 7rem; }
+  @media (max-width: 600px) { .iv-scene, .iv-time { display: none; } }
+
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; }
   }
@@ -638,6 +672,32 @@ const SHRNUTI = {
   zaver: "Stejný ústavní systém funguje dobře tam, kde jsou silné instituce a zvyk dodržovat pravidla (USA), a selhává tam, kde instituce chybí (část Latinské Ameriky). To je odpověď na otázku projektu.",
   zdroje: "Tabulka vychází z přednášky (Hague, Harrop, McCormick, kap. 9) a ze zdrojů Mainwaring a Shugart 1997, Linz 1990, Elgie 2008."
 };
+
+/* ---------- ÚVODNÍ VIDEO: scény a titulky ----------
+   Přepis animace „Prezidentský systém za 60 sekund“ (Claude Design, animations-v3).
+   dur = délka scény v sekundách; choreografie je v části LOGIKA (funkce introFrame).
+   Titulky: čas „at“ se počítá od začátku dané scény. */
+const INTRO_SCENES = [
+  { id: "S1", name: "Otázka", dur: 8 },
+  { id: "S2", name: "Dvě volby", dur: 12 },
+  { id: "S3", name: "Tři moci", dur: 12 },
+  { id: "S4", name: "Pat", dur: 12 },
+  { id: "S5", name: "Dva konce", dur: 10 },
+  { id: "S6", name: "Výzva", dur: 6 }
+];
+const INTRO_CAPS = [
+  { scene: "S1", at: 0.4, text: "V Česku zvolíš parlament a ten sestaví vládu." },
+  { scene: "S1", at: 4.6, text: "V USA je to jinak." },
+  { scene: "S2", at: 0.2, text: "Američané volí zvlášť prezidenta a zvlášť Kongres." },
+  { scene: "S2", at: 6.4, text: "Oba můžou říct: mě zvolil lid." },
+  { scene: "S3", at: 0.2, text: "Tři moci se navzájem hlídají." },
+  { scene: "S3", at: 7.0, text: "Říká se tomu brzdy a rovnováhy: nikdo nemůže vládnout sám." },
+  { scene: "S4", at: 0.2, text: "Když se neshodnou, nikdo nemusí ustoupit a nikdo nejde domů dřív." },
+  { scene: "S4", at: 9.0, text: "Vznikne pat." },
+  { scene: "S5", at: 0.2, text: "Jak pat dopadne, nezáleží na ústavě, ale na tom, jak silné jsou instituce." },
+  { scene: "S6", at: 0.2, text: "Teď si to vyzkoušej." },
+  { scene: "S6", at: 2.0, text: "Vyber si zemi a roli a zjisti, co se stane." }
+];
 
 /* ---------- SCÉNÁŘE ---------- */
 const SCENARIOS = {
@@ -1254,6 +1314,7 @@ const screens = {
         <div class="actions" style="justify-content:center">
           <button class="btn" data-go="primer">Začít</button>
           <button class="btn secondary" data-go="zeme">Přeskočit úvod, znám to</button>
+          <button class="btn secondary" data-intro="1">▶ Přehrát úvodní video</button>
         </div>
       </div>
     </section>`;
@@ -1593,6 +1654,7 @@ document.addEventListener("click", (e) => {
   if (t.id === "btnTheme") { toggleTheme(); return; }
   if (t.id === "btnHome") { go("uvod"); return; }
 
+  if (t.dataset.intro) { Intro.show(() => go("uvod")); return; }
   if (t.dataset.go) { go(t.dataset.go); return; }
   if (t.dataset.primer) {
     state.primerIndex = Math.max(0, Math.min(PRIMER.length - 1, state.primerIndex + Number(t.dataset.primer)));
@@ -1611,6 +1673,363 @@ document.addEventListener("keydown", (e) => {
 
 glDialog.addEventListener("click", (e) => { if (e.target === glDialog) glDialog.close(); });
 
+/* ============================================================
+   ÚVODNÍ VIDEO (přepis z React/animations-v3 do vanilla JS)
+   Celá animace je čistá funkce času T (sekundy). DOM se postaví jednou
+   (introBuild), každý snímek jen přepíše styly (introFrame).
+   ============================================================ */
+const Intro = (() => {
+  const C = {
+    paper: "#F4F1EA", ink: "#1B1E24", mute: "#5E646E", voter: "#9AA0A8", voter2: "#B3B8BF", voterLine: "#7E848D",
+    pres: "#D9711C", presT: "#FBE8D6", cong: "#6B4BC0", congT: "#ECE6F8", court: "#0F7470", courtT: "#DCEEEC",
+    green: "#23854A", greenT: "#DDF0E3", red: "#C8342C", redT: "#F8E0DD", band: "#1B1E24"
+  };
+  const G = { P: { x: 300, y: 260, w: 460, h: 320 }, K: { x: 1100, y: 250, w: 520, h: 340 }, S: { x: 730, y: 40, w: 400, h: 150 }, mid: 930 };
+  const CHECKS = [
+    { y: 316, dir: 1, color: C.pres, label: "veto" },
+    { y: 372, dir: -1, color: C.cong, label: "přehlasování 2/3" },
+    { y: 428, dir: -1, color: C.cong, label: "rozpočet" },
+    { y: 484, dir: -1, color: C.cong, label: "impeachment" },
+    { y: 540, dir: -1, color: C.cong, label: "schvaluje jmenování" }
+  ];
+  const VOTERS = Array.from({ length: 34 }, (_, i) => ({ x: 338 + i * 40, h: 30 + ((i * 37) % 7) * 1.6, c: i % 3 === 1 ? C.voter2 : C.voter }));
+
+  // Cue tabulka ze scén
+  const CUE = {}; let total = 0;
+  INTRO_SCENES.forEach(s => { CUE[s.id] = total; total += s.dur; });
+  const S1 = CUE.S1, S2 = CUE.S2, S3 = CUE.S3, S4 = CUE.S4, S5 = CUE.S5, S6 = CUE.S6;
+  const CAPS = INTRO_CAPS.map(c => ({ at: CUE[c.scene] + c.at, text: nbsp(esc(c.text)) }));
+
+  // Easing a pomocné funkce
+  const cl = (v, a, b) => Math.max(a, Math.min(b, v));
+  const easeOutCubic = t => (--t) * t * t + 1;
+  const easeInOutSine = t => -(Math.cos(Math.PI * t) - 1) / 2;
+  const easeInOutCubic = t => (t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1);
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const mixHex = (a, b, t) => {
+    const p = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+    const A = p(a), B = p(b);
+    return "rgb(" + A.map((v, i) => Math.round(lerp(v, B[i], t))).join(",") + ")";
+  };
+
+  // Šipky (SVG markup)
+  function polyInfo(pts) {
+    const segs = []; let L = 0;
+    for (let i = 0; i < pts.length - 1; i++) {
+      const dx = pts[i + 1][0] - pts[i][0], dy = pts[i + 1][1] - pts[i][1], l = Math.hypot(dx, dy);
+      segs.push({ x: pts[i][0], y: pts[i][1], dx, dy, l, s: L }); L += l;
+    }
+    return { segs, L };
+  }
+  function pointAt(info, d) {
+    for (let i = 0; i < info.segs.length; i++) {
+      const g = info.segs[i];
+      if (d <= g.s + g.l || i === info.segs.length - 1) {
+        const u = cl((d - g.s) / g.l, 0, 1);
+        return { x: g.x + g.dx * u, y: g.y + g.dy * u, ux: g.dx / g.l, uy: g.dy / g.l };
+      }
+    }
+  }
+  function arrow({ pts, p = 1, color, w = 6, head = 22, op = 1, brk = 0, noHead = false }) {
+    if (p <= 0.001 || op <= 0.001) return "";
+    if (brk > 0.001 && pts.length === 2) {
+      const [a, b] = pts;
+      const m = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+      const sx = Math.sign(b[0] - m[0]);
+      const rot = (sx === 0 ? 24 : 32 * sx) * brk;
+      return `<g opacity="${op}">${arrow({ pts: [a, m], p: 1, color, w, noHead: true })}
+        <g transform="translate(${6 * sx * brk} ${44 * brk}) rotate(${rot} ${m[0]} ${m[1]})" opacity="${1 - 0.45 * brk}">${arrow({ pts: [m, b], p: 1, color, w, head })}</g></g>`;
+    }
+    const info = polyInfo(pts), L = info.L;
+    const d = "M" + pts.map(q => q.join(" ")).join(" L ");
+    const vis = noHead ? p * L : Math.max(0, p * L - head * 0.8);
+    const t = pointAt(info, p * L);
+    const bx = t.x - t.ux * head, by = t.y - t.uy * head, px = -t.uy * head * 0.62, py = t.ux * head * 0.62;
+    return `<g opacity="${op}"><path d="${d}" fill="none" stroke="${color}" stroke-width="${w}" stroke-linejoin="round" stroke-dasharray="${vis} ${L + 400}"/>
+      ${noHead ? "" : `<polygon points="${t.x},${t.y} ${bx + px},${by + py} ${bx - px},${by - py}" fill="${color}"/>`}</g>`;
+  }
+
+  // Ikony
+  const icon = (kind, color, size) => {
+    const inner = kind === "star" ? `<polygon points="20,3 24.7,14.6 37.1,15.4 27.6,23.4 30.6,35.6 20,29 9.4,35.6 12.4,23.4 2.9,15.4 15.3,14.6" fill="#fff"/>`
+      : kind === "hemi" ? `<g fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round"><path d="M4 32 a16 16 0 0 1 32 0"/><path d="M11 32 a9 9 0 0 1 18 0"/><path d="M2 35 h36"/></g>`
+      : `<g fill="#fff"><polygon points="3,14 20,4 37,14"/><rect x="7" y="17" width="5" height="14"/><rect x="17.5" y="17" width="5" height="14"/><rect x="28" y="17" width="5" height="14"/><rect x="3" y="33" width="34" height="4"/></g>`;
+    return `<div style="width:${size}px;height:${size}px;border-radius:${size}px;background:${color};display:flex;align-items:center;justify-content:center;flex:none"><svg width="${size * 0.62}" height="${size * 0.62}" viewBox="0 0 40 40">${inner}</svg></div>`;
+  };
+  const soldier = (x, y, i) => `<svg class="iv-sold" data-i="${i}" width="100" height="250" viewBox="0 0 80 200" style="position:absolute;left:${x}px;top:${y}px"><g fill="${C.ink}">
+    <path d="M17 40 a23 23 0 0 1 46 0 h7 v7 h-60 v-7 z"/><circle cx="40" cy="54" r="14"/><path d="M12 82 q0-12 12-12 h32 q12 0 12 12 v66 h-56 z"/>
+    <rect x="17" y="146" width="19" height="52" rx="3"/><rect x="44" y="146" width="19" height="52" rx="3"/><rect x="66" y="22" width="7" height="104" rx="2"/></g></svg>`;
+
+  // ---- Diagram (1920×890): postavení DOM ----
+  function diagramHtml(v) {
+    const P = G.P, K = G.K, S = G.S;
+    const box = (cls, g, color, tint, extra) => `<div class="iv-abs iv-box ${cls}" style="left:${g.x}px;top:${g.y}px;width:${g.w}px;height:${g.h}px;background:${tint};border:4px solid ${color};border-radius:18px;transform-origin:center;${extra || ""}">`;
+    const stamp = (cls, right, top) => `<div class="iv-abs iv-stamp ${cls} H" style="right:${right}px;top:${top}px;border:4px solid ${C.ink};border-radius:8px;padding:6px 14px;background:${C.paper};font-weight:800;font-size:28px;letter-spacing:.08em;color:${C.ink};white-space:nowrap;transform-origin:center">ZVOLEN LIDEM</div>`;
+    const label = (cls, x, y, text, color) => `<div class="iv-abs iv-lab ${cls} iv-nowrap" style="left:${x}px;top:${y}px;transform:translateX(-50%);font-weight:700;font-size:26px;color:${color || C.ink};background:${C.paper};padding:1px 10px;border-radius:6px;opacity:0">${nbsp(text)}</div>`;
+    return `<div class="iv-abs iv-diag" data-v="${v}" style="left:0;top:0;width:1920px;height:890px">
+      <div class="iv-abs iv-vlab H iv-nowrap" style="left:150px;top:768px;font-weight:700;font-size:36px;color:${C.mute};opacity:0">Voliči</div>
+      <div class="iv-abs iv-vline" style="left:330px;top:842px;width:1370px;height:3px;background:${C.voter2};transform-origin:left;transform:scaleX(0)"></div>
+      ${VOTERS.map((o, i) => `<div class="iv-abs iv-voter" data-i="${i}" style="left:${o.x}px;top:${840 - o.h - 24}px;width:32px;opacity:0">
+        <div style="width:20px;height:20px;border-radius:20px;background:${o.c};margin:0 auto 4px"></div><div style="width:32px;height:${o.h}px;border-radius:16px 16px 4px 4px;background:${o.c}"></div></div>`).join("")}
+      ${box("iv-court", S, C.court, C.courtT, "display:flex;align-items:center;justify-content:center;gap:18px;z-index:1")}
+        ${icon("court", C.court, 62)}<div><div class="H iv-nowrap" style="font-weight:800;font-size:40px;line-height:1.05;color:${C.ink}">Nejvyšší soud</div><div class="iv-nowrap" style="font-weight:600;font-size:24px;color:${C.mute};margin-top:4px">soudní moc</div></div></div>
+      ${box("iv-pres", P, C.pres, C.presT, "display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px")}
+        ${icon("star", C.pres, 84)}<div class="H iv-nowrap" style="font-weight:800;font-size:52px;line-height:1;color:${C.ink}">Prezident</div><div class="iv-nowrap" style="font-weight:600;font-size:26px;color:${C.mute}">výkonná moc</div>
+        ${stamp("iv-stP", -64, -30)}</div>
+      ${box("iv-cong", K, C.cong, C.congT, "padding:22px;display:flex;flex-direction:column;gap:14px")}
+        <div style="display:flex;align-items:center;gap:16px;height:80px">${icon("hemi", C.cong, 64)}<div><div class="H iv-nowrap" style="font-weight:800;font-size:46px;line-height:1;color:${C.ink}">Kongres</div><div class="iv-nowrap" style="font-weight:600;font-size:24px;color:${C.mute};margin-top:4px">zákonodárná moc</div></div></div>
+        ${["Sněmovna reprezentantů", "Senát"].map((t, i) => `<div class="iv-ch" data-i="${i}" style="height:94px;background:#fff;border:3px solid ${C.cong};border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:30px;color:${C.ink};white-space:nowrap;opacity:0">${t}</div>`).join("")}
+        ${stamp("iv-stK", -36, -34)}</div>
+      <svg class="iv-arrows iv-abs" width="1920" height="890" style="left:0;top:0;overflow:visible;z-index:2"></svg>
+      <div class="iv-abs" style="inset:0;z-index:2;pointer-events:none">
+        ${CHECKS.map((c, i) => label("iv-clab", G.mid, c.y - 44, c.label)).join("")}
+        ${label("iv-rlab", G.mid, 204, "soudní přezkum", C.court)}
+      </div>
+      <div class="iv-abs iv-lock" style="left:${G.mid - 70}px;top:214px;width:140px;height:168px;z-index:2;transform-origin:center bottom;opacity:0">
+        <svg width="140" height="168" viewBox="0 0 100 120" style="position:absolute;inset:0;overflow:visible"><g class="iv-shackle"><path d="M26 58 V38 a24 24 0 0 1 48 0 V58" fill="none" stroke="${C.ink}" stroke-width="11"/></g><rect x="8" y="52" width="84" height="64" rx="12" fill="${C.ink}"/></svg>
+        <div class="iv-abs H" style="left:0;right:0;top:96px;text-align:center;font-weight:800;font-size:30px;color:#fff">4 roky</div>
+      </div>
+      <div class="iv-abs iv-army" style="left:0;top:0;z-index:4;opacity:0">${[0, 1, 2, 3, 4].map(i => soldier(640 + i * 120, 490, i)).join("")}</div>
+    </div>`;
+  }
+
+  // ---- Celá kompozice ----
+  function stageHtml() {
+    const head = (cls, x, text) => `<div class="iv-abs ${cls} H iv-nowrap" style="left:${x}px;width:960px;top:74px;text-align:center;font-weight:800;font-size:64px;color:${C.ink};opacity:0">${text}</div>`;
+    const result = (cls, x, text, color, ok) => `<div class="iv-abs ${cls}" style="left:${x}px;width:960px;top:668px;display:flex;justify-content:center;opacity:0">
+      <div class="H" style="display:flex;align-items:center;gap:14px;background:${color};color:#fff;border-radius:999px;padding:14px 34px;font-weight:800;font-size:42px"><svg width="34" height="34" viewBox="0 0 34 34"><path d="${ok ? "M6 18 L14 26 L28 9" : "M8 8 L26 26 M26 8 L8 26"}" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>${text}</div></div>`;
+    const chip = (cls, text, color) => `<div class="iv-chip ${cls} iv-nowrap" style="position:relative;padding:14px 30px;border-radius:999px;border:3px solid ${color};overflow:hidden;font-weight:700;font-size:36px;color:${C.ink}"><div class="iv-chipbg" style="position:absolute;inset:0;background:${color};opacity:0"></div><span style="position:relative">${text}</span></div>`;
+    const card = (cls, x, title, chips) => `<div class="iv-abs ${cls}" style="left:${x}px;top:330px;width:680px;height:360px;background:#fff;border:4px solid ${C.ink};border-radius:24px;padding:44px 40px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:40px;opacity:0">
+      <div class="H iv-nowrap" style="font-weight:800;font-size:64px;line-height:1;color:${C.ink}">${title}</div><div style="display:flex;gap:20px">${chips}</div></div>`;
+    return `
+      <div class="iv-abs" style="inset:0;background-image:radial-gradient(#DAD5C8 1.6px, transparent 1.8px);background-size:40px 40px"></div>
+      <div class="iv-abs iv-gT" style="left:0;top:0;width:960px;height:890px;background:${C.greenT};opacity:0"></div>
+      <div class="iv-abs iv-rT" style="left:960px;top:0;width:960px;height:890px;background:${C.redT};opacity:0"></div>
+      <div class="iv-abs iv-div" style="left:958px;top:40px;width:4px;height:810px;background:${C.ink};transform-origin:top;transform:scaleY(0)"></div>
+      <div class="iv-abs iv-frameA" style="left:0;top:0;width:1920px;height:890px;transform-origin:0 0">${diagramHtml("strong")}</div>
+      <div class="iv-abs iv-frameB" style="left:0;top:0;width:1920px;height:890px;transform-origin:0 0;opacity:0">${diagramHtml("weak")}</div>
+      ${head("iv-hL", 0, "Silné instituce")}${head("iv-hR", 960, "Slabé instituce")}
+      ${result("iv-chL", 0, "kompromis", C.green, true)}${result("iv-chR", 960, "převrat", C.red, false)}
+      <div class="iv-abs iv-title H iv-nowrap" style="transform-origin:0 50%;font-weight:800;font-size:128px;line-height:1.1;color:${C.ink};letter-spacing:-.01em;opacity:0">Kdo vládne v&nbsp;<span style="position:relative">USA?<span class="iv-ul" style="position:absolute;left:0;bottom:-4px;height:12px;width:100%;background:${C.ink};border-radius:6px;transform-origin:left;transform:scaleX(0)"></span></span></div>
+      ${card("iv-c1", 250, "Vyber zemi", chip("iv-sel1", "USA", C.ink) + chip("", "Latinská Amerika", C.ink))}
+      ${card("iv-c2", 990, "Vyber roli", chip("iv-sel2", "Prezident", C.pres) + chip("", "Kongres", C.cong))}
+      <div class="iv-abs" style="left:0;right:0;bottom:0;height:190px;background:${C.band}"></div>
+      <div class="iv-abs iv-cap" style="left:110px;right:110px;bottom:0;height:190px;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:700;font-size:54px;line-height:1.22;color:#fff;text-wrap:balance;pointer-events:none"></div>`;
+  }
+
+  // ---- Snímek: čistá funkce T ----
+  let R = null; // reference na prvky
+  function refs(stage) {
+    const q = s => stage.querySelector(s), qa = s => [...stage.querySelectorAll(s)];
+    const diag = el => ({
+      el, vlab: el.querySelector(".iv-vlab"), vline: el.querySelector(".iv-vline"), voters: [...el.querySelectorAll(".iv-voter")],
+      court: el.querySelector(".iv-court"), pres: el.querySelector(".iv-pres"), cong: el.querySelector(".iv-cong"),
+      stP: el.querySelector(".iv-stP"), stK: el.querySelector(".iv-stK"), ch: [...el.querySelectorAll(".iv-ch")],
+      arrows: el.querySelector(".iv-arrows"), clab: [...el.querySelectorAll(".iv-clab")], rlab: el.querySelector(".iv-rlab"),
+      lock: el.querySelector(".iv-lock"), shackle: el.querySelector(".iv-shackle"), army: el.querySelector(".iv-army"), sold: [...el.querySelectorAll(".iv-sold")]
+    });
+    return {
+      gT: q(".iv-gT"), rT: q(".iv-rT"), div: q(".iv-div"), frameA: q(".iv-frameA"), frameB: q(".iv-frameB"),
+      A: diag(q('.iv-diag[data-v="strong"]')), B: diag(q('.iv-diag[data-v="weak"]')),
+      hL: q(".iv-hL"), hR: q(".iv-hR"), chL: q(".iv-chL"), chR: q(".iv-chR"), title: q(".iv-title"), ul: q(".iv-ul"),
+      c1: q(".iv-c1"), c2: q(".iv-c2"), sel1: q(".iv-sel1"), sel2: q(".iv-sel2"), cap: q(".iv-cap")
+    };
+  }
+
+  function frameDiagram(D, variant, T) {
+    const E = (s, d) => easeOutCubic(cl((T - s) / d, 0, 1)), Dr = (s, d) => easeInOutSine(cl((T - s) / d, 0, 1)), M = (s, d) => easeInOutCubic(cl((T - s) / d, 0, 1));
+    const strong = variant === "strong", weak = variant === "weak";
+    const reset = M(S6, 1.0);
+    const env = E(S4 + 1.6, 1.0) * (1 - E(S4 + 10.3, 1.2));
+    const j = env * 6 * Math.sin((T - S4) * Math.PI * 2 * 1.3);
+    const vaL = Dr(S2 + 1.0, 1.0), vaR = Dr(S2 + 2.6, 1.0);
+    const pIn = E(S2 + 1.8, 0.7), kIn = E(S2 + 3.4, 0.7);
+    const ch1 = E(S2 + 4.0, 0.5), ch2 = E(S2 + 4.4, 0.5);
+    const stP = E(S2 + 6.8, 0.35), stK = E(S2 + 7.5, 0.35);
+    const pulse = 0.12 * Math.sin(Math.PI * Dr(S4 + 3.0, 0.9));
+    const voterBrk = weak ? M(S5 + 5.6, 0.7) : 0;
+    const courtIn = E(S3 + 0.2, 0.9);
+    const courtBack = M(S4 + 0.2, 1.0) * (1 - reset);
+    const drop = strong ? M(S5 + 2.8, 1.0) * (1 - reset) : 0;
+    const cScale = lerp(1 - 0.25 * courtBack, 0.85, drop);
+    const cOp = courtIn * lerp(1 - 0.65 * courtBack, 1, drop);
+    const cDy = lerp(lerp(-60, 0, courtIn), 440 - 115, drop);
+    const checkOp = cl(1 - M(S4 + 0.1, 0.7) + reset, 0, 1);
+    const checkP = i => Dr(S3 + 1.6 + i * 1.2, 0.7);
+    const reviewP = Dr(S3 + 7.6, 0.9);
+    const tugP = Dr(S4 + 1.0, 1.0);
+    const tugOp = (1 - reset) * (strong ? 1 - M(S5 + 3.6, 0.6) : 1);
+    const tugBrk = weak ? M(S5 + 5.2, 0.7) : 0;
+    const lockIn = E(S4 + 5.5, 0.5);
+    const lockOpen = strong ? M(S5 + 2.0, 0.5) : 0;
+    const lockOp = lockIn * (1 - reset) * (strong ? 1 - M(S5 + 2.6, 0.5) : 1);
+    const army = weak ? E(S5 + 6.2, 1.2) : 0;
+    const P = G.P, K = G.K, S = G.S;
+
+    D.vlab.style.opacity = E(S1 + 1.6, 0.8);
+    D.vline.style.transform = `scaleX(${Dr(S1 + 1.6, 1.4)})`;
+    D.voters.forEach((el, i) => { const k = E(S1 + 1.8 + i * 0.035, 0.6); el.style.opacity = k; el.style.transform = `translateY(${(1 - k) * 36}px)`; });
+
+    D.court.style.opacity = cOp; D.court.style.transform = `translate(0px, ${cDy}px) scale(${cScale})`; D.court.style.zIndex = drop > 0 ? 3 : 1;
+    D.pres.style.opacity = pIn; D.pres.style.transform = `translate(${j}px, ${(1 - pIn) * 50}px)`;
+    D.cong.style.opacity = kIn; D.cong.style.transform = `translate(${j}px, ${(1 - kIn) * 50}px)`;
+    const stampStyle = (el, p) => { el.style.opacity = p; el.style.display = p <= 0.001 ? "none" : ""; el.style.transform = `rotate(-9deg) scale(${lerp(1.9, 1, p) * (1 + pulse)})`; };
+    stampStyle(D.stP, stP); stampStyle(D.stK, stK);
+    D.ch.forEach((el, i) => { const k = i ? ch2 : ch1; el.style.opacity = k; el.style.transform = `translateY(${(1 - k) * 16}px)`; });
+
+    D.arrows.innerHTML =
+      arrow({ pts: [[530, 732], [530, 594]], p: vaL, color: C.voterLine, w: 7, brk: voterBrk }) +
+      arrow({ pts: [[1360, 732], [1360, 604]], p: vaR, color: C.voterLine, w: 7, brk: voterBrk }) +
+      CHECKS.map((c, i) => arrow({ pts: c.dir > 0 ? [[770, c.y], [1090, c.y]] : [[1090, c.y], [770, c.y]], p: checkP(i), op: checkOp, color: c.color, w: 5, head: 18 })).join("") +
+      arrow({ pts: [[S.x, 115], [530, 115], [530, P.y - 8]], p: reviewP, op: checkOp, color: C.court, w: 5, head: 18 }) +
+      arrow({ pts: [[S.x + S.w, 115], [1360, 115], [1360, K.y - 8]], p: reviewP, op: checkOp, color: C.court, w: 5, head: 18 }) +
+      `<g transform="translate(${j} 0)">` +
+      arrow({ pts: [[768, 420], [G.mid - 4, 420]], p: tugP, op: tugOp, color: C.pres, w: 16, head: 38, brk: tugBrk }) +
+      arrow({ pts: [[1092, 420], [G.mid + 4, 420]], p: tugP, op: tugOp, color: C.cong, w: 16, head: 38, brk: tugBrk }) + `</g>`;
+
+    D.clab.forEach((el, i) => { el.style.opacity = checkOp * E(S3 + 1.9 + i * 1.2, 0.5); });
+    D.rlab.style.opacity = checkOp * E(S3 + 8.2, 0.5);
+
+    D.lock.style.opacity = lockOp; D.lock.style.display = lockOp <= 0.001 ? "none" : "";
+    D.lock.style.transform = `scale(${lerp(0.6, 1, lockIn)})`;
+    D.shackle.setAttribute("transform", `translate(0 ${-14 * lockOpen}) rotate(${-22 * lockOpen} 74 58)`);
+
+    D.army.style.opacity = army; D.army.style.display = army <= 0.001 ? "none" : "";
+    D.army.style.transform = `translateX(${(1 - army) * 360}px)`;
+    if (army > 0.001) D.sold.forEach((el, i) => { el.style.transform = `translateY(${-Math.abs(Math.sin((T - S5) * Math.PI * 2.4 + i * 0.6)) * 8 * (1 - army)}px)`; });
+  }
+
+  function frame(T) {
+    if (!R) return;
+    const E = (s, d) => easeOutCubic(cl((T - s) / d, 0, 1)), Dr = (s, d) => easeInOutSine(cl((T - s) / d, 0, 1)), M = (s, d) => easeInOutCubic(cl((T - s) / d, 0, 1));
+    const cam = 1 + 0.035 * cl((T - S1) / (S5 - S1), 0, 1);
+    const k1 = M(S5, 1.2), k2 = M(S6, 1.2);
+    const s = lerp(lerp(cam, 0.52, k1), 0.2, k2);
+    const tx = lerp(lerp(G.mid * (1 - cam), -4, k1), 40, k2);
+    const ty = lerp(lerp(445 * (1 - cam), 169, k1), 30, k2);
+    const rOp = E(S5 + 0.3, 0.8) * (1 - M(S6, 0.6));
+    const un = M(S6, 0.8);
+    const hL = E(S5 + 0.9, 0.6) * (1 - un), hR = E(S5 + 1.3, 0.6) * (1 - un);
+    const gT = M(S5 + 4.0, 1.0) * (1 - un), rT = M(S5 + 6.8, 1.0) * (1 - un);
+    const chL = E(S5 + 4.4, 0.5) * (1 - un), chR = E(S5 + 7.2, 0.5) * (1 - un);
+    const div = Dr(S5 + 0.4, 0.8) * (1 - un);
+    const tIn = E(S1 + 0.3, 0.9), tk = M(S2, 1.0), tOut = 1 - M(S5, 0.6);
+    const ul = Dr(S1 + 4.9, 0.6);
+    const c1 = E(S6 + 0.8, 0.7), c2 = E(S6 + 1.1, 0.7), sel1 = M(S6 + 3.0, 0.4), sel2 = M(S6 + 4.0, 0.4);
+
+    R.gT.style.opacity = gT; R.rT.style.opacity = rT; R.div.style.transform = `scaleY(${div})`;
+    R.frameA.style.transform = `translate(${tx}px, ${ty}px) scale(${s})`;
+    frameDiagram(R.A, "strong", T);
+    R.frameB.style.opacity = rOp; R.frameB.style.display = rOp <= 0.001 ? "none" : "";
+    if (rOp > 0.001) { R.frameB.style.transform = `translate(${956 + (1 - k1) * 120}px, 169px) scale(0.52)`; frameDiagram(R.B, "weak", T); }
+    const headOp = (el, op) => { el.style.opacity = op; el.style.transform = `translateY(${(1 - op) * 24}px)`; };
+    headOp(R.hL, hL); headOp(R.hR, hR);
+    const resOp = (el, op) => { el.style.opacity = op; el.style.transform = `translateY(${(1 - op) * 20}px)`; };
+    resOp(R.chL, chL); resOp(R.chR, chR);
+    R.title.style.opacity = tIn * tOut; R.title.style.display = tOut <= 0.001 ? "none" : "";
+    R.title.style.left = lerp(960, 80, tk) + "px"; R.title.style.top = lerp(300, 66, tk) + "px";
+    R.title.style.transform = `translate(${-(1 - tk) * 50}%, -50%) translateY(${(1 - tIn) * 70}px) scale(${lerp(1, 0.36, tk)})`;
+    R.ul.style.transform = `scaleX(${ul * (1 - tk)})`;
+    const cardOp = (el, op) => { el.style.opacity = op; el.style.display = op <= 0.001 ? "none" : ""; el.style.transform = `translateY(${(1 - op) * 60}px)`; };
+    cardOp(R.c1, c1); cardOp(R.c2, c2);
+    const chipSel = (el, sel) => { el.querySelector(".iv-chipbg").style.opacity = sel; el.style.color = mixHex(C.ink, "#FFFFFF", sel); };
+    chipSel(R.sel1, sel1); chipSel(R.sel2, sel2);
+
+    // Titulky: jeden prvek, nejvýš jeden viditelný, prolínání 0.18 s
+    let active = null, end = Infinity;
+    for (let i = 0; i < CAPS.length; i++) {
+      if (T < CAPS[i].at) break;
+      active = CAPS[i]; end = i + 1 < CAPS.length ? CAPS[i + 1].at : Infinity;
+    }
+    if (!active || T >= end) { R.cap.style.opacity = 0; }
+    else {
+      let o = Math.min(1, (T - active.at) / 0.18);
+      if (isFinite(end)) o = Math.min(o, (end - T) / 0.18);
+      R.cap.style.opacity = cl(o, 0, 1);
+      if (R.cap.dataset.text !== active.text) { R.cap.dataset.text = active.text; R.cap.innerHTML = active.text; }
+    }
+  }
+
+  // ---- Přehrávač ----
+  let root, viewport, stage, bar, playBtn, track, fill, timeEl, sceneEl, skipBtn;
+  let time = 0, playing = false, raf = null, last = null, finished = false, onDone = null;
+
+  function fit() {
+    if (!viewport || !stage) return;
+    const sc = Math.min(viewport.clientWidth / 1920, viewport.clientHeight / 1080);
+    stage.style.transform = `scale(${Math.max(0.05, sc)})`;
+  }
+  function fmtT(t) { const m = Math.floor(t / 60), s = Math.floor(t % 60); return `${m}:${String(s).padStart(2, "0")}`; }
+  function sceneName(t) { let name = ""; INTRO_SCENES.forEach(s => { if (t >= CUE[s.id]) name = s.name; }); return name; }
+  function paint() {
+    frame(time);
+    fill.style.width = (time / total * 100) + "%";
+    timeEl.textContent = `${fmtT(time)} / ${fmtT(total)}`;
+    sceneEl.textContent = sceneName(time);
+    playBtn.textContent = playing ? "⏸ Pauza" : (finished ? "↺ Znovu" : "▶ Přehrát");
+    skipBtn.textContent = finished ? "Začít hru" : "Přeskočit úvod";
+    skipBtn.classList.toggle("btn", finished); skipBtn.classList.toggle("btn-ghost", !finished);
+  }
+  function step(ts) {
+    if (!playing) return;
+    if (last == null) last = ts;
+    time += (ts - last) / 1000; last = ts;
+    if (time >= total) { time = total; playing = false; finished = true; last = null; }
+    paint();
+    if (playing) raf = requestAnimationFrame(step);
+  }
+  function play() { if (finished) { time = 0; finished = false; } playing = true; last = null; paint(); raf = requestAnimationFrame(step); }
+  function pause() { playing = false; last = null; if (raf) cancelAnimationFrame(raf); paint(); }
+  function seek(t) { time = cl(t, 0, total); finished = time >= total; if (finished) playing = false; paint(); }
+
+  function onKey(e) {
+    if (!root || root.hidden) return;
+    if (e.code === "Space") { e.preventDefault(); playing ? pause() : play(); }
+    else if (e.code === "ArrowLeft") seek(time - (e.shiftKey ? 5 : 1));
+    else if (e.code === "ArrowRight") seek(time + (e.shiftKey ? 5 : 1));
+    else if (e.key === "Escape") { done(); }
+  }
+  function done() { pause(); hide(); if (onDone) onDone(); }
+
+  function build() {
+    root = document.createElement("div");
+    root.id = "intro"; root.setAttribute("role", "region"); root.setAttribute("aria-label", "Úvodní video");
+    root.innerHTML = `<div class="iv-viewport"><div class="iv-stage">${stageHtml()}</div></div>
+      <div class="iv-bar">
+        <button class="btn-ghost iv-play" aria-label="Přehrát nebo pozastavit">▶ Přehrát</button>
+        <span class="iv-time"></span>
+        <div class="iv-track" role="slider" aria-label="Pozice ve videu" tabindex="0" aria-valuemin="0" aria-valuemax="${total}"><span></span></div>
+        <span class="iv-scene"></span>
+        <button class="btn-ghost iv-skip">Přeskočit úvod</button>
+      </div>`;
+    document.body.appendChild(root);
+    viewport = root.querySelector(".iv-viewport"); stage = root.querySelector(".iv-stage"); bar = root.querySelector(".iv-bar");
+    playBtn = root.querySelector(".iv-play"); track = root.querySelector(".iv-track"); fill = track.firstElementChild;
+    timeEl = root.querySelector(".iv-time"); sceneEl = root.querySelector(".iv-scene"); skipBtn = root.querySelector(".iv-skip");
+    R = refs(stage);
+    playBtn.addEventListener("click", () => playing ? pause() : play());
+    skipBtn.addEventListener("click", done);
+    const seekFromEvent = e => { const r = track.getBoundingClientRect(); seek((e.clientX - r.left) / r.width * total); };
+    track.addEventListener("pointerdown", e => { seekFromEvent(e); const mv = ev => seekFromEvent(ev); const up = () => { window.removeEventListener("pointermove", mv); window.removeEventListener("pointerup", up); }; window.addEventListener("pointermove", mv); window.addEventListener("pointerup", up); });
+    window.addEventListener("resize", fit);
+    document.addEventListener("keydown", onKey);
+  }
+  function hide() { if (root) root.hidden = true; }
+
+  /** Spustí úvodní video. callback = co udělat po skončení nebo přeskočení. */
+  function show(callback, autoplay = true) {
+    onDone = callback;
+    if (!root) build();
+    root.hidden = false;
+    fit();
+    seek(0);
+    if (autoplay) play(); else paint();
+    skipBtn.focus();
+  }
+
+  return { show, hide, get total() { return total; } };
+})();
+
 /* ---------- Start ---------- */
 (function init() {
   try {
@@ -1620,6 +2039,9 @@ glDialog.addEventListener("click", (e) => { if (e.target === glDialog) glDialog.
     if (odz) state.dokoncene = JSON.parse(odz) || {};
   } catch (e) {}
   render();
+  // Úvodní video se přehraje automaticky; při prefers-reduced-motion se jen nabídne tlačítkem na úvodu.
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (!reduced && !location.hash.includes("bezvidea")) Intro.show(() => go("uvod"));
 })();
 </script>
 </body>
