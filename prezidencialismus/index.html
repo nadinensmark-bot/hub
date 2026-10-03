@@ -1,0 +1,1626 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Formy vlády: prezidencialismus</title>
+<meta name="description" content="Vzdělávací rozhodovací hra pro střední školy: Jaké jsou výhody a rizika prezidentského systému?">
+<!--
+  ================================================================
+  FORMY VLÁDY: PREZIDENCIALISMUS  (vzdělávací rozhodovací hra)
+  ================================================================
+  Jeden soubor, žádné závislosti, žádný build. Funguje offline.
+
+  JAK UPRAVIT OBSAH (bez zásahu do logiky):
+  - Všechny texty jsou v bloku <script id="data"> níže, v pořadí:
+      GLOSSARY   = slovníček (pole objektů {id, pojem, kratce, dlouze, priklad, jadro})
+      PRIMER     = panely úvodního vysvětlení (pole {nadpis, html})
+      ZEME, ROLE = karty výběru
+      KONCE      = čtyři možné konce
+      SHRNUTI    = závěrečná tabulka výhod a rizik
+      SCENARIOS  = čtyři cesty (klíč "usa-prezident", "usa-zakonodarci",
+                   "latam-prezident", "latam-zakonodarci")
+  - Pojmy v textech se píší jako [[id]] nebo [[id|zobrazený text]]
+    (druhý tvar pro skloňování, např. [[impeachment|impeachmentem]]).
+    Vykreslovač je převede na klikací prvek s popoverem ze slovníčku.
+  - Každý scénář má: brief, start {dz, km}, body (3 rozhodovací body).
+    Bod má buď přímo {situace, volby}, nebo "varianty" podle větve
+    z předchozího bodu: {podle: true, varianty: {nazevVetve: {situace, volby}}}.
+    Větev určuje pole "vetev" u volby v předchozím bodě; když chybí,
+    použije se varianta "default".
+  - Každá volba nese: id, text, dz, km (posun ukazatelů), dusledek,
+    realita ("V realitě"), pojem {nazev, text}, proc (do debriefu),
+    kontrafaktual (do debriefu), volitelně vetev, flag ("prevrat",
+    "impeachment") a poznamka (zobrazí se na obrazovce konce).
+  - Jak se určí konec: funkce urciKonec() v části LOGIKA. Pravidla:
+      1. flag "prevrat"                         -> rozpad
+      2. DZ pod prahem země (USA 20, LatAm 40)  -> rozpad
+      3. KM 80 a víc                            -> rozpad
+      4. flag "impeachment" a KM pod 75         -> impeachment
+         (flag "impeachment" a KM 75 a víc      -> rozpad: prezident
+          rozhodnutí neuznal, instituce nedržely)
+      5. DZ 65 a víc                            -> stabilita
+      6. jinak                                  -> pat
+  - Fakta k ověření před odevzdáním: viz README.md ve stejné složce.
+  ================================================================
+-->
+<style>
+  /* ---------- Barvy a proměnné ---------- */
+  :root {
+    --bg: #f6f4ee;
+    --bg-elev: #ffffff;
+    --bg-soft: #eceae2;
+    --text: #1c1b18;
+    --muted: #5d5b54;
+    --line: #d9d6cc;
+    --accent: #1f4e79;
+    --accent-ink: #ffffff;
+    --term: #1f4e79;
+    --focus: #e0882b;
+    --green: #2e7d4f;
+    --yellow: #b8860b;
+    --blue: #2f5fa8;
+    --red: #b3261e;
+    --grey: #6b6b6b;
+    --shadow: 0 2px 10px rgba(0,0,0,.08);
+    --radius: 14px;
+    --font-head: Georgia, "Times New Roman", "DejaVu Serif", serif;
+    --font-body: "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  }
+  :root[data-theme="dark"] {
+    --bg: #15171b;
+    --bg-elev: #1f2227;
+    --bg-soft: #272a30;
+    --text: #ecebe6;
+    --muted: #a8a7a0;
+    --line: #3a3e46;
+    --accent: #8db7e8;
+    --accent-ink: #0f1a26;
+    --term: #9cc4f0;
+    --focus: #f2a649;
+    --green: #5fbf85;
+    --yellow: #e0b84a;
+    --blue: #7fa6e6;
+    --red: #e8766d;
+    --grey: #a0a0a0;
+    --shadow: 0 2px 12px rgba(0,0,0,.4);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #15171b;
+      --bg-elev: #1f2227;
+      --bg-soft: #272a30;
+      --text: #ecebe6;
+      --muted: #a8a7a0;
+      --line: #3a3e46;
+      --accent: #8db7e8;
+      --accent-ink: #0f1a26;
+      --term: #9cc4f0;
+      --focus: #f2a649;
+      --green: #5fbf85;
+      --yellow: #e0b84a;
+      --blue: #7fa6e6;
+      --red: #e8766d;
+      --grey: #a0a0a0;
+      --shadow: 0 2px 12px rgba(0,0,0,.4);
+    }
+  }
+
+  /* ---------- Základ ---------- */
+  * { box-sizing: border-box; }
+  html { font-size: 18px; }
+  @media (min-width: 1100px) { html { font-size: 20px; } }
+  @media (max-width: 480px) { html { font-size: 16px; } }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    line-height: 1.55;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  h1, h2, h3 { font-family: var(--font-head); line-height: 1.2; margin: 0 0 .5em; }
+  h1 { font-size: 2.2rem; }
+  h2 { font-size: 1.6rem; }
+  h3 { font-size: 1.2rem; }
+  p { margin: 0 0 .9em; }
+  a { color: var(--accent); }
+  :focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+  /* ---------- Hlavička ---------- */
+  header {
+    position: sticky; top: 0; z-index: 20;
+    background: var(--bg-elev);
+    border-bottom: 1px solid var(--line);
+    box-shadow: var(--shadow);
+  }
+  .hdr-row {
+    max-width: 1100px; margin: 0 auto; padding: .6rem 16px;
+    display: flex; align-items: center; gap: .6rem; flex-wrap: wrap;
+  }
+  .brand { font-family: var(--font-head); font-weight: 700; font-size: 1.05rem; margin-right: auto; background: none; border: 0; color: var(--text); cursor: pointer; padding: .2rem 0; text-align: left; }
+  .hdr-actions { display: flex; gap: .4rem; }
+  .btn-ghost {
+    background: transparent; color: var(--text);
+    border: 1px solid var(--line); border-radius: 999px;
+    padding: .35rem .8rem; font: inherit; font-size: .9rem; cursor: pointer;
+  }
+  .btn-ghost:hover { background: var(--bg-soft); }
+
+  /* Ukazatele v hlavičce */
+  #stav {
+    max-width: 1100px; margin: 0 auto; padding: .3rem 16px .7rem;
+    display: grid; grid-template-columns: 1fr 1fr; gap: .8rem 1.6rem;
+  }
+  #stav[hidden] { display: none; }
+  .meter { font-size: .85rem; }
+  .meter-label { display: flex; justify-content: space-between; margin-bottom: .2rem; }
+  .meter-label strong { font-weight: 600; }
+  .bar { height: 12px; background: var(--bg-soft); border-radius: 999px; overflow: hidden; border: 1px solid var(--line); }
+  .bar > span { display: block; height: 100%; width: 0; border-radius: 999px; transition: width .9s ease, background-color .9s ease; }
+  .bar.dz > span { background: var(--green); }
+  .bar.dz.mid > span { background: var(--yellow); }
+  .bar.dz.low > span { background: var(--red); }
+  .bar.km > span { background: var(--blue); }
+  .bar.km.mid > span { background: var(--yellow); }
+  .bar.km.high > span { background: var(--red); }
+  .delta { font-weight: 700; margin-left: .4rem; }
+  .delta.plus { color: var(--green); }
+  .delta.minus { color: var(--red); }
+  @media (max-width: 600px) { #stav { grid-template-columns: 1fr; gap: .4rem; } }
+
+  /* ---------- Obsah ---------- */
+  main { flex: 1; width: 100%; max-width: 1100px; margin: 0 auto; padding: 1.4rem 16px 3rem; }
+  .screen[hidden] { display: none; }
+  .screen { animation: fadein .35s ease; }
+  @keyframes fadein { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  .card {
+    background: var(--bg-elev); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 1.2rem 1.4rem; box-shadow: var(--shadow);
+    margin-bottom: 1rem;
+  }
+  .lead { font-size: 1.15rem; }
+  .muted { color: var(--muted); }
+  .small { font-size: .9rem; }
+  .kicker { text-transform: uppercase; letter-spacing: .08em; font-size: .75rem; color: var(--muted); font-weight: 700; margin-bottom: .3rem; }
+  .actions { display: flex; gap: .6rem; flex-wrap: wrap; margin-top: 1rem; }
+  .btn {
+    background: var(--accent); color: var(--accent-ink);
+    border: 0; border-radius: 10px; padding: .7rem 1.3rem;
+    font: inherit; font-weight: 600; cursor: pointer;
+  }
+  .btn:hover { filter: brightness(1.08); }
+  .btn.secondary { background: var(--bg-soft); color: var(--text); border: 1px solid var(--line); }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media (max-width: 700px) { .grid2 { grid-template-columns: 1fr; } }
+
+  /* Karty výběru */
+  .choice-card {
+    text-align: left; width: 100%; height: 100%;
+    background: var(--bg-elev); border: 2px solid var(--line); border-radius: var(--radius);
+    padding: 1.2rem 1.3rem; font: inherit; color: var(--text); cursor: pointer;
+    transition: border-color .15s, transform .15s;
+  }
+  .choice-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .choice-card h3 { margin-bottom: .4rem; }
+  .choice-card .emoji { font-size: 2rem; display: block; margin-bottom: .3rem; }
+
+  /* Rozhodovací volby */
+  .options { display: grid; gap: .7rem; margin-top: 1rem; }
+  .option {
+    display: flex; gap: .8rem; align-items: flex-start; text-align: left;
+    background: var(--bg-elev); border: 2px solid var(--line); border-radius: 12px;
+    padding: .9rem 1rem; font: inherit; color: var(--text); cursor: pointer;
+    transition: border-color .15s;
+  }
+  .option:hover { border-color: var(--accent); }
+  .option .letter {
+    flex: 0 0 2rem; height: 2rem; border-radius: 50%; display: grid; place-items: center;
+    background: var(--accent); color: var(--accent-ink); font-weight: 700;
+  }
+
+  /* Důsledek */
+  .result-box { border-left: 5px solid var(--accent); }
+  .infobox { border-radius: 10px; padding: .8rem 1rem; margin: .8rem 0; background: var(--bg-soft); }
+  .infobox .kicker { margin-bottom: .2rem; }
+  .infobox.realita { border-left: 4px solid var(--yellow); }
+  .infobox.pojem { border-left: 4px solid var(--blue); }
+  .infobox.proc { border-left: 4px solid var(--green); }
+  .infobox.kontra { border-left: 4px solid var(--grey); }
+  .shift { display: flex; gap: 1.2rem; flex-wrap: wrap; margin: .6rem 0; font-size: .95rem; }
+
+  /* Pojmy v textu */
+  .term {
+    background: none; border: 0; padding: 0; font: inherit; color: var(--term);
+    text-decoration: underline dotted; text-decoration-thickness: 2px; text-underline-offset: 3px;
+    cursor: pointer;
+  }
+  .term:hover { text-decoration-style: solid; }
+  #popover {
+    position: absolute; z-index: 50; max-width: 22rem;
+    background: var(--bg-elev); border: 1px solid var(--line); border-radius: 10px;
+    box-shadow: var(--shadow); padding: .8rem 1rem; font-size: .9rem;
+  }
+  #popover[hidden] { display: none; }
+  #popover strong { display: block; margin-bottom: .2rem; }
+  #popover .pop-actions { display: flex; justify-content: space-between; gap: .5rem; margin-top: .5rem; }
+  #popover button { font: inherit; font-size: .85rem; }
+
+  /* Slovníček (dialog) */
+  dialog {
+    width: min(760px, 94vw); max-height: 88vh; border: 1px solid var(--line);
+    border-radius: var(--radius); background: var(--bg-elev); color: var(--text); padding: 0;
+  }
+  dialog::backdrop { background: rgba(0,0,0,.45); }
+  .dlg-head { display: flex; align-items: center; justify-content: space-between; padding: .9rem 1.2rem; border-bottom: 1px solid var(--line); position: sticky; top: 0; background: var(--bg-elev); }
+  .dlg-body { padding: .8rem 1.2rem 1.2rem; overflow: auto; max-height: calc(88vh - 4rem); }
+  .gl-section { margin: .8rem 0 .4rem; }
+  details.gl { border: 1px solid var(--line); border-radius: 10px; margin: .4rem 0; background: var(--bg); }
+  details.gl summary { cursor: pointer; padding: .6rem .9rem; font-weight: 600; list-style: none; display: flex; justify-content: space-between; gap: .5rem; }
+  details.gl summary::-webkit-details-marker { display: none; }
+  details.gl summary::after { content: "+"; color: var(--muted); }
+  details.gl[open] summary::after { content: "−"; }
+  details.gl .gl-in { padding: 0 .9rem .8rem; font-size: .95rem; }
+  details.gl .gl-in p { margin: .3em 0; }
+  .tag { display: inline-block; font-size: .7rem; padding: .05rem .5rem; border-radius: 999px; background: var(--bg-soft); color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .05em; }
+  .tag.core { background: var(--accent); color: var(--accent-ink); }
+
+  /* Primer schémata */
+  .schema { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; margin: .8rem 0; }
+  @media (max-width: 700px) { .schema { grid-template-columns: 1fr; } }
+  .schema .box { background: var(--bg-soft); border-radius: 10px; padding: .8rem 1rem; font-size: .95rem; }
+  .schema .box h3 { margin-bottom: .4rem; }
+  .flow { display: flex; flex-direction: column; gap: .3rem; align-items: stretch; }
+  .flow .node { background: var(--bg-elev); border: 1px solid var(--line); border-radius: 8px; padding: .4rem .7rem; text-align: center; }
+  .flow .arrow { text-align: center; color: var(--muted); font-size: .9rem; }
+  .triad { display: grid; grid-template-columns: repeat(3, 1fr); gap: .6rem; margin: .8rem 0; }
+  @media (max-width: 700px) { .triad { grid-template-columns: 1fr; } }
+  .triad .node { background: var(--bg-soft); border-radius: 10px; padding: .7rem; text-align: center; font-weight: 600; }
+  .checks { display: grid; gap: .4rem; margin: .6rem 0; }
+  .checks details { border: 1px solid var(--line); border-radius: 8px; padding: .4rem .8rem; background: var(--bg); }
+  .checks summary { cursor: pointer; font-weight: 600; }
+  .dots { display: flex; gap: .4rem; justify-content: center; margin: .4rem 0; }
+  .dots span { width: .6rem; height: .6rem; border-radius: 50%; background: var(--line); }
+  .dots span.on { background: var(--accent); }
+  ol.steps { padding-left: 1.3rem; }
+  ol.steps li { margin-bottom: .4rem; }
+
+  /* Konec */
+  .ending { border-top: 10px solid var(--grey); }
+  .ending.stabilita { border-top-color: var(--green); }
+  .ending.pat { border-top-color: var(--yellow); }
+  .ending.impeachment { border-top-color: var(--blue); }
+  .ending.rozpad { border-top-color: var(--red); }
+  .ending h1 { font-size: 2.4rem; }
+  .ending-scale { display: grid; grid-template-columns: repeat(4, 1fr); gap: .3rem; margin: .8rem 0; font-size: .8rem; text-align: center; }
+  .ending-scale div { padding: .4rem .2rem; border-radius: 6px; background: var(--bg-soft); color: var(--muted); }
+  .ending-scale div.on { font-weight: 700; color: var(--text); outline: 2px solid var(--accent); }
+  @media (max-width: 600px) { .ending-scale { grid-template-columns: 1fr 1fr; } }
+  ul.points { padding-left: 1.2rem; }
+  ul.points li { margin-bottom: .4rem; }
+
+  /* Debrief */
+  .debrief-card { border-left: 6px solid var(--accent); }
+  .debrief-card .step { font-family: var(--font-head); font-size: 1.1rem; color: var(--muted); }
+  .debrief-card dl { margin: 0; }
+  .debrief-card dt { font-weight: 700; margin-top: .6rem; font-size: .85rem; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+  .debrief-card dd { margin: .15rem 0 0; }
+
+  /* Shrnutí */
+  table.summary { width: 100%; border-collapse: collapse; margin: .6rem 0 1rem; font-size: .95rem; }
+  table.summary th, table.summary td { border: 1px solid var(--line); padding: .6rem .7rem; vertical-align: top; text-align: left; }
+  table.summary th { background: var(--bg-soft); }
+  table.summary td.plus { border-left: 4px solid var(--green); }
+  table.summary td.minus { border-left: 4px solid var(--red); }
+  @media (max-width: 700px) {
+    table.summary thead { display: none; }
+    table.summary tr { display: block; margin-bottom: .8rem; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+    table.summary td { display: block; border: 0; border-bottom: 1px solid var(--line); }
+    table.summary td::before { content: attr(data-label); display: block; font-weight: 700; font-size: .8rem; color: var(--muted); text-transform: uppercase; }
+  }
+  .badges { display: flex; gap: .5rem; flex-wrap: wrap; margin: .6rem 0; }
+  .badge { border: 1px solid var(--line); border-radius: 999px; padding: .3rem .8rem; font-size: .85rem; color: var(--muted); background: var(--bg-soft); }
+  .badge.done { background: var(--green); color: #fff; border-color: transparent; }
+
+  footer { border-top: 1px solid var(--line); color: var(--muted); font-size: .8rem; text-align: center; padding: .8rem 16px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hdr-row">
+    <button class="brand" id="btnHome" title="Na úvod">Formy vlády: prezidencialismus</button>
+    <div class="hdr-actions">
+      <button class="btn-ghost" id="btnGlossary" aria-haspopup="dialog">Slovníček</button>
+      <button class="btn-ghost" id="btnTheme" aria-label="Přepnout světlý a tmavý režim">◐ Režim</button>
+    </div>
+  </div>
+  <div id="stav" hidden aria-live="polite">
+    <div class="meter">
+      <div class="meter-label"><strong>Demokratické zdraví</strong><span><span id="dzVal">70</span><span id="dzDelta" class="delta"></span></span></div>
+      <div class="bar dz" id="dzBar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="70" aria-label="Demokratické zdraví"><span></span></div>
+    </div>
+    <div class="meter">
+      <div class="meter-label"><strong>Koncentrace moci u prezidenta</strong><span><span id="kmVal">30</span><span id="kmDelta" class="delta"></span></span></div>
+      <div class="bar km" id="kmBar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="30" aria-label="Koncentrace moci u prezidenta"><span></span></div>
+    </div>
+  </div>
+</header>
+
+<main id="app" aria-live="polite"></main>
+
+<footer>Vzdělávací hra, politologie UHK, téma 8: Formy vlády: prezidencialismus. Bez vítězů a poražených, každá cesta něco ukáže.</footer>
+
+<div id="popover" hidden role="dialog" aria-label="Vysvětlení pojmu"></div>
+
+<dialog id="glossary" aria-labelledby="glTitle">
+  <div class="dlg-head">
+    <h2 id="glTitle" style="margin:0">Slovníček</h2>
+    <button class="btn-ghost" id="btnGlClose">Zavřít</button>
+  </div>
+  <div class="dlg-body" id="glBody"></div>
+</dialog>
+
+<!-- ============================================================ -->
+<!-- DATA: tady se upravuje obsah hry                              -->
+<!-- ============================================================ -->
+<script id="data">
+"use strict";
+
+/* ---------- SLOVNÍČEK ----------
+   jadro: true = pojmy, které by hráč měl znát před hrou (zobrazí se nahoře) */
+const GLOSSARY = [
+  { id: "prezidentsky-system", pojem: "Prezidentský systém", jadro: true,
+    kratce: "Prezident je volen přímo lidmi, je hlavou státu i šéfem vlády a má pevné funkční období. Parlament se volí zvlášť.",
+    dlouze: "Prezident je volen přímo lidmi, je zároveň hlavou státu i šéfem vlády a má pevné funkční období. Parlament se volí zvlášť a prezident ho nemůže rozpustit.",
+    priklad: "USA, většina zemí Latinské Ameriky.",
+    kde: "Celá hra. Primer, panel 1." },
+  { id: "parlamentni-system", pojem: "Parlamentní systém", jadro: true,
+    kratce: "Vláda vzniká z parlamentu a závisí na jeho důvěře. Když ji ztratí, padne.",
+    dlouze: "Vláda vzniká z parlamentu a závisí na jeho důvěře; když ji ztratí, padne. Hlava státu je spíš reprezentativní. Krizi jde řešit předčasnými volbami.",
+    priklad: "Česká republika, Německo.",
+    kde: "Primer, panel 1 (pro srovnání)." },
+  { id: "vykonna-moc", pojem: "Výkonná moc (exekutiva)", jadro: true,
+    kratce: "Ti, kdo stát řídí den po dni: prezident, ministři, úřady.",
+    dlouze: "Ti, kdo stát řídí den po dni: prezident, ministři a úřady. V prezidentském systému ji vede prezident sám.",
+    priklad: "Prezident USA a jeho ministerstva.",
+    kde: "Role Prezident." },
+  { id: "zakonodarna-moc", pojem: "Zákonodárná moc (parlament, v USA Kongres)", jadro: true,
+    kratce: "Ti, kdo přijímají zákony a schvalují rozpočet.",
+    dlouze: "Ti, kdo přijímají zákony a schvalují rozpočet. Kongres USA má dvě komory: Sněmovnu reprezentantů (435 členů, volení na 2 roky) a Senát (100 členů, 6 let, 2 za každý stát).",
+    priklad: "Kongres USA, Národní shromáždění Venezuely.",
+    kde: "Role Zákonodárná moc." },
+  { id: "soudni-moc", pojem: "Soudní moc", jadro: true,
+    kratce: "Soudy. Nejvyšší soud USA vykládá ústavu a může zrušit zákon nebo prezidentův příkaz.",
+    dlouze: "Soudy. Nejvyšší soud USA vykládá ústavu a může zrušit zákon nebo prezidentův příkaz jako protiústavní. Soudci mají doživotní mandát, takže se nemusí bát prezidenta ani Kongresu.",
+    priklad: "Federální soudy, které v roce 2019 blokovaly financování pohraniční zdi.",
+    kde: "Cesta USA + Prezident, bod 2." },
+  { id: "delba-moci", pojem: "Oddělení mocí (dělba moci)", jadro: true,
+    kratce: "Výkonná, zákonodárná a soudní moc jsou v jiných rukou. Ani jedna nemůže vládnout sama.",
+    dlouze: "Výkonná, zákonodárná a soudní moc jsou v jiných rukou; ani jedna nemůže vládnout sama. V prezidentském systému je dělba ostřejší než v parlamentním.",
+    priklad: "Prezident USA nemůže sám schválit rozpočet, to smí jen Kongres.",
+    kde: "Primer, panel 2. Cesty USA." },
+  { id: "brzdy", pojem: "Brzdy a rovnováhy (checks and balances)", jadro: true,
+    kratce: "Nástroje, kterými se moci navzájem hlídají: veto, přehlasování, schvalování jmenování, impeachment, soudní přezkum, kontrola rozpočtu.",
+    dlouze: "Konkrétní nástroje, kterými se moci navzájem hlídají: prezident vetuje zákony, Kongres veto přehlasuje dvěma třetinami, Senát schvaluje jmenování ministrů a soudců, Kongres drží peníze, Sněmovna obžaluje a Senát soudí prezidenta, soud ruší protiústavní zákony i příkazy.",
+    priklad: "Senát odmítne prezidentova kandidáta na soudce.",
+    kde: "Primer, panel 2. Cesty 1 a 2." },
+  { id: "mandat", pojem: "Mandát", jadro: true,
+    kratce: "Pověření od voličů. Kdo vyhrál volby, tvrdí, že má právo prosadit svůj program.",
+    dlouze: "Pověření od voličů. Kdo vyhrál volby, tvrdí, že má právo prosadit svůj program. V prezidentském systému má mandát prezident i parlament, každý svůj.",
+    priklad: "„Lidé mě zvolili, abych tohle udělal.“",
+    kde: "Briefy všech cest." },
+  { id: "legitimita", pojem: "Legitimita", jadro: true,
+    kratce: "Oprávněnost vládnout. V demokracii ji dávají volby.",
+    dlouze: "Oprávněnost vládnout, tedy důvod, proč lidé moc uznávají. V demokracii ji dávají svobodné volby.",
+    priklad: "Vláda, která vyhrála volby, má legitimitu. Junta po převratu ne.",
+    kde: "Všechny cesty." },
+  { id: "dvoji-legitimita", pojem: "Dvojí legitimita", jadro: true,
+    kratce: "Prezident i parlament byli zvoleni zvlášť, oba se můžou odvolat na lid a ústava neříká, kdo má ustoupit.",
+    dlouze: "Prezident i parlament byli zvoleni zvlášť, oba se můžou odvolat na lid a ústava neříká, kdo má při sporu ustoupit. Podle politologa Juana Linze hlavní zdroj patu v prezidentském systému.",
+    priklad: "Chile 1973: prezident Allende i Kongres tvrdili, že mluví za lid.",
+    kde: "Primer, panel 3. Cesta 3, bod 1." },
+  { id: "pevne-obdobi", pojem: "Pevné funkční období (rigidita)", jadro: true,
+    kratce: "Prezident USA vládne 4 roky, ať se děje cokoli. Nejde vypsat předčasné volby.",
+    dlouze: "Prezident USA vládne 4 roky, ať se děje cokoli (maximálně dvakrát); nejde vypsat předčasné volby. Výhoda: stabilita. Riziko: špatný prezident nejde snadno sundat a krize se nedá „resetovat“.",
+    priklad: "Shutdown v USA nelze vyřešit pádem vlády jako v ČR, musí se vyjednat.",
+    kde: "Cesta 1, bod 1. Cesta 3, bod 2." },
+  { id: "rozdelena-vlada", pojem: "Rozdělená vláda", jadro: true,
+    kratce: "Prezident je z jedné strany, většina v Kongresu z druhé. V USA zhruba 60 % doby po druhé světové válce.",
+    dlouze: "Prezident je z jedné strany, většina alespoň v jedné komoře Kongresu z druhé. V USA to je běžný stav: zhruba 60 % doby po druhé světové válce.",
+    priklad: "Prezident Obama a republikánská Sněmovna po roce 2010.",
+    kde: "Brief cesty 1." },
+  { id: "impeachment", pojem: "Impeachment", jadro: true,
+    kratce: "Ústavní odvolání prezidenta. Sněmovna obžaluje, Senát soudí, k odsouzení jsou potřeba dvě třetiny Senátu.",
+    dlouze: "Ústavní odvolání prezidenta za velezradu, úplatkářství nebo jiné těžké zločiny. V USA: Sněmovna obžaluje prostou většinou, Senát soudí pod vedením předsedy Nejvyššího soudu a k odsouzení jsou potřeba dvě třetiny Senátu. V USA zatím nikdy neskončil odsouzením.",
+    priklad: "Clinton (1998 až 1999) a Trump (2019 až 2020, 2021): obžalováni, Senát zprostil.",
+    kde: "Cesta 2, body 2 a 3." },
+  { id: "oddelene-volby", pojem: "Oddělené volby a nezávislost přežití", jadro: false,
+    kratce: "Prezident nemůže rozpustit parlament a parlament nemůže prezidenta odvolat (jen impeachmentem).",
+    dlouze: "Prezident nemůže rozpustit parlament a parlament nemůže prezidenta odvolat (jen impeachmentem). Oba dokončí své období nezávisle na sobě.",
+    priklad: "V ČR může vláda padnout a mohou být předčasné volby. V USA ne.",
+    kde: "Primer, panel 1." },
+  { id: "pat", pojem: "Pat (deadlock)", jadro: false,
+    kratce: "Prezident a parlament se zablokují a nic se nehýbe.",
+    dlouze: "Prezident a parlament se navzájem zablokují a nic se nehýbe. Zákony neprocházejí, rozpočet se neschválí, krize se neřeší.",
+    priklad: "Shutdown v USA, Chile 1972 až 1973.",
+    kde: "Konec Trvalý pat." },
+  { id: "shutdown", pojem: "Shutdown", jadro: false,
+    kratce: "Když Kongres neschválí rozpočet, část úřadů USA zavře a zaměstnanci nedostanou plat.",
+    dlouze: "Když Kongres neschválí rozpočet, část federálních úřadů USA zavře a zaměstnanci nedostanou plat. Nejdelší shutdown trval 35 dní (prosinec 2018 až leden 2019).",
+    priklad: "Zavřené národní parky, nevyplacení zaměstnanci letištní kontroly.",
+    kde: "Cesta 1, bod 1." },
+  { id: "power-of-purse", pojem: "Kontrola nad penězi (power of the purse)", jadro: false,
+    kratce: "Jen Kongres smí přidělovat peníze úřadům. Hlavní zbraň parlamentu.",
+    dlouze: "Jen Kongres smí přidělovat peníze úřadům; tím kontroluje, jak se zákony provádějí. Hlavní zbraň parlamentu proti prezidentovi.",
+    priklad: "Kongres odmítne dát peníze na stavbu zdi na hranici.",
+    kde: "Cesta 1, bod 1. Cesta 2, bod 1." },
+  { id: "veto", pojem: "Veto", jadro: false,
+    kratce: "Prezident odmítne podepsat zákon. Kongres ho může přehlasovat dvoutřetinovou většinou v obou komorách.",
+    dlouze: "Prezident odmítne podepsat zákon, který schválil Kongres. Kongres ho může přehlasovat dvoutřetinovou většinou v obou komorách, což se stává málokdy.",
+    priklad: "Prezident vetuje rozpočet, který neobsahuje jeho priority.",
+    kde: "Cesta 1, bod 3." },
+  { id: "exekutivni-prikaz", pojem: "Exekutivní příkaz", jadro: false,
+    kratce: "Pokyn prezidenta úřadům. Nesmí jít proti zákonům Kongresu, soud ho může zrušit.",
+    dlouze: "Pokyn prezidenta ministerstvům a úřadům; nesmí jít proti zákonům Kongresu. Kongres ho může zrušit zákonem (který ale prezident může vetovat) a Nejvyšší soud ho může prohlásit za protiústavní.",
+    priklad: "Vyhlášení stavu nouze na hranici v roce 2019 kvůli penězům na zeď.",
+    kde: "Cesta 1, bod 1. Cesta 2, bod 1." },
+  { id: "dekrety", pojem: "Vládnutí dekrety", jadro: false,
+    kratce: "Prezident obchází parlament a vládne vlastními nařízeními.",
+    dlouze: "Prezident obchází parlament a vládne vlastními nařízeními. V USA je to omezené zákony a soudy; ve slabších demokraciích cesta k autoritářství.",
+    priklad: "Venezuela za Cháveze a Madura: zmocňovací zákony, prezident vydává zákony sám.",
+    kde: "Cesta 3, bod 1. Cesta 4, bod 1." },
+  { id: "soudni-prezkum", pojem: "Soudní přezkum", jadro: false,
+    kratce: "Soud posoudí, zda je zákon nebo příkaz v souladu s ústavou, a může ho zrušit.",
+    dlouze: "Soud posoudí, zda je zákon nebo prezidentův příkaz v souladu s ústavou, a může ho zrušit. Funguje jen tam, kde jsou soudy nezávislé.",
+    priklad: "Federální soudy v USA zablokovaly několik prezidentských příkazů.",
+    kde: "Cesta 1, bod 2. Cesta 2, bod 1." },
+  { id: "winner-takes-all", pojem: "Vítěz bere vše (winner takes all)", jadro: false,
+    kratce: "V prezidentských volbách vyhraje jeden a poražený nemá nic. Prohlubuje polarizaci.",
+    dlouze: "V prezidentských volbách vyhraje jeden kandidát a poražený nemá nic (na rozdíl od parlamentu, kde opozice sedí dál). Podle Linze to prohlubuje polarizaci.",
+    priklad: "Těsně poražená polovina země se čtyři roky cítí bez zastoupení.",
+    kde: "Celkové shrnutí." },
+  { id: "polarizace", pojem: "Polarizace", jadro: false,
+    kratce: "Společnost a politici se rozdělí do dvou nesmiřitelných táborů. Kompromis je skoro nemožný.",
+    dlouze: "Společnost a politici se rozdělí do dvou nesmiřitelných táborů a kompromis je skoro nemožný. Druhá strana už není soupeř, ale nepřítel.",
+    priklad: "Chile 1973, Venezuela po roce 2015, Kongres USA v posledních letech.",
+    kde: "Cesty 3 a 4." },
+  { id: "plebiscitarni", pojem: "Plebiscitární styl", jadro: false,
+    kratce: "Prezident tvrdí, že jen on zastupuje „skutečný lid“, a parlament, soudy nebo média považuje za překážku.",
+    dlouze: "Prezident tvrdí, že jen on zastupuje „skutečný lid“, a parlament, soudy nebo média považuje za překážku. Typické pro populistické prezidenty.",
+    priklad: "„Kongres je proti lidu, já mluvím za lid.“",
+    kde: "Cesta 3. Celkové shrnutí." },
+  { id: "zajeti-instituci", pojem: "Zajetí institucí", jadro: false,
+    kratce: "Prezident obsadí soudy, volební komisi nebo úřady svými lidmi, takže přestanou být nezávislé.",
+    dlouze: "Prezident obsadí soudy, volební komisi nebo úřady svými lidmi, takže přestanou být nezávislé. Navenek instituce existují, ale už nehlídají.",
+    priklad: "Venezuela: Nejvyšší soud obsazený prezidentovými lidmi zbavil Kongres pravomocí.",
+    kde: "Cesta 4, bod 1." },
+  { id: "prevrat", pojem: "Převrat (puč)", jadro: false,
+    kratce: "Násilné nebo mimoústavní převzetí moci, typicky armádou.",
+    dlouze: "Násilné nebo mimoústavní převzetí moci, typicky armádou. Řešení krize mimo pravidla ústavy.",
+    priklad: "Chile, 11. září 1973: armáda pod vedením generála Pinocheta svrhla prezidenta Allendeho.",
+    kde: "Cesta 3, bod 3. Konec Rozpad." },
+  { id: "electoral-college", pojem: "Volitelský sbor (Electoral College)", jadro: false,
+    kratce: "V USA prezidenta formálně volí volitelé za jednotlivé státy. Kandidát může vyhrát bez většiny odevzdaných hlasů.",
+    dlouze: "V USA prezidenta formálně nevolí přímo voliči, ale volitelé za jednotlivé státy; ve většině států bere vítěz všechny volitele. Kandidát tak může vyhrát bez většiny odevzdaných hlasů (stalo se v letech 2000 a 2016). Část voličů proto považuje pravidla za nespravedlivá.",
+    priklad: "Rok 2016: Donald Trump vyhrál ve volitelském sboru, Hillary Clintonová měla víc hlasů.",
+    kde: "Brief cesty 1." },
+  { id: "opozice", pojem: "Opozice", jadro: false,
+    kratce: "Strany, které nejsou u moci.",
+    dlouze: "Strany, které nejsou u moci. V prezidentském systému může opozice ovládat parlament, i když prezident je z jiné strany.",
+    priklad: "Republikáni v Kongresu za demokratického prezidenta.",
+    kde: "Všechny cesty." }
+];
+
+/* ---------- PRIMER (úvodní vysvětlení) ----------
+   html: může obsahovat HTML a značky [[id]] */
+const PRIMER = [
+  { nadpis: "Dva způsoby, jak postavit demokracii",
+    html: `
+    <div class="schema">
+      <div class="box">
+        <h3>Parlamentní systém (jako ČR)</h3>
+        <div class="flow">
+          <div class="node">Voliči</div><div class="arrow">↓ volí</div>
+          <div class="node">Parlament</div><div class="arrow">↓ vytvoří a drží důvěrou</div>
+          <div class="node">Vláda (premiér)</div>
+        </div>
+        <p class="small" style="margin-top:.5rem">Hlava státu je spíš reprezentativní. Když vláda ztratí důvěru, padne. Krize se dá řešit předčasnými volbami.</p>
+      </div>
+      <div class="box">
+        <h3>Prezidentský systém (USA)</h3>
+        <div class="flow">
+          <div class="node">Voliči</div><div class="arrow">↓ volí zvlášť ↓</div>
+          <div class="schema" style="margin:0">
+            <div class="node">Prezident<br><span class="small muted">hlava státu i šéf vlády</span></div>
+            <div class="node">Kongres<br><span class="small muted">parlament</span></div>
+          </div>
+        </div>
+        <p class="small" style="margin-top:.5rem">Kongres nemůže prezidenta odvolat (jen [[impeachment|impeachmentem]]). Prezident nemůže rozpustit Kongres.</p>
+      </div>
+    </div>
+    <p class="lead"><strong>Dvě oddělené volby = dva oddělené zdroje [[legitimita|legitimity]].</strong> Z toho vzniká všechno napětí v téhle hře.</p>` },
+  { nadpis: "Tři moci, které se hlídají: brzdy a rovnováhy",
+    html: `
+    <div class="triad">
+      <div class="node">Prezident<br><span class="small muted">výkonná moc</span></div>
+      <div class="node">Kongres<br><span class="small muted">zákonodárná moc: Sněmovna reprezentantů a Senát</span></div>
+      <div class="node">Nejvyšší soud<br><span class="small muted">soudní moc</span></div>
+    </div>
+    <p>Rozklikni, jak se navzájem [[brzdy|brzdí]]:</p>
+    <div class="checks">
+      <details><summary>Prezident → Kongres: veto</summary>Prezident odmítne podepsat zákon. Kongres ho může přehlasovat jen dvoutřetinovou většinou v obou komorách.</details>
+      <details><summary>Kongres → Prezident: peníze</summary>Jen Kongres schvaluje rozpočet. Bez jeho peněz prezident nic nepostaví a nic nezaplatí ([[power-of-purse|power of the purse]]).</details>
+      <details><summary>Senát → Prezident: jmenování</summary>Ministry, velvyslance a soudce prezident jen navrhuje. Schvaluje je Senát.</details>
+      <details><summary>Kongres → Prezident: impeachment</summary>Sněmovna prezidenta obžaluje, Senát ho soudí. K odsouzení jsou potřeba dvě třetiny Senátu.</details>
+      <details><summary>Nejvyšší soud → oba: soudní přezkum</summary>Soud může zrušit zákon Kongresu i prezidentův příkaz jako protiústavní. Soudci jsou jmenovaní doživotně.</details>
+      <details><summary>Prezident a Senát → soud: jmenování soudců</summary>Prezident soudce navrhuje, Senát je potvrzuje. Tak politika ovlivňuje soud, ale pomalu.</details>
+    </div>` },
+  { nadpis: "Proč z toho vzniká napětí",
+    html: `
+    <ol class="steps">
+      <li><strong>[[dvoji-legitimita|Dvojí legitimita]].</strong> Prezident i Kongres byli zvoleni zvlášť. Oba se můžou odvolat na lid. Ústava neříká, kdo má ustoupit.</li>
+      <li><strong>[[pevne-obdobi|Rigidita]].</strong> Prezident má pevné funkční období. Krize se nedá vyřešit předčasnými volbami jako u nás. Musí se přečkat, nebo vyjednat.</li>
+      <li><strong>[[rozdelena-vlada|Rozdělená vláda]].</strong> V USA je normální, že prezident je z jedné strany a většina Kongresu z druhé. Zhruba 60 % doby po druhé světové válce.</li>
+    </ol>
+    <p class="muted small">Teorie: politolog Juan Linz, „The Perils of Presidentialism“ (1990). Jeho hlavním materiálem byla Latinská Amerika.</p>` },
+  { nadpis: "Co budeš ve hře dělat",
+    html: `
+    <ol class="steps">
+      <li>Vybereš <strong>zemi</strong> (USA nebo Latinská Amerika) a <strong>roli</strong> (prezident nebo zákonodárná moc).</li>
+      <li>Projdeš <strong>třemi krizovými rozhodnutími</strong>. Po každém uvidíš, co se stalo, reálný historický příklad a jeden pojem.</li>
+      <li>Sleduješ dva ukazatele: <strong>demokratické zdraví</strong> a <strong>koncentraci moci u prezidenta</strong>.</li>
+      <li>Dojdeš k jednomu ze čtyř konců a dostaneš <strong>debrief</strong>: co se stalo, proč, a co by se stalo jinak.</li>
+    </ol>
+    <p class="lead"><strong>Není tu výhra ani prohra.</strong> I cesta, která skončí převratem, je odehraná správně: ukázala riziko.</p>` }
+];
+
+/* ---------- VÝBĚR ZEMĚ A ROLE ---------- */
+const ZEME = {
+  usa: { nazev: "USA", emoji: "🏛️",
+    popis: "Zavedená demokracie. Silné a staré instituce, nezávislé soudy, zažité zvyklosti. Armáda do politiky nemluví.",
+    prahRozpad: 20 },
+  latam: { nazev: "Latinská Amerika", emoji: "🌎",
+    popis: "Mladší a křehčí demokracie. Slabší instituce, silná polarizace, armáda v politice není daleko. Scénáře vycházejí z Chile 70. let a z Venezuely.",
+    prahRozpad: 40 }
+};
+const ROLE = {
+  prezident: { nazev: "Prezident", emoji: "🎙️",
+    popis: "Držíš výkonnou moc. Máš přímý mandát od voličů a chceš prosadit svůj program." },
+  zakonodarci: { nazev: "Zákonodárná moc", emoji: "⚖️",
+    popis: "Kongres, opozice a soudy. Tvůj úkol je kontrolovat prezidenta a bránit systém." }
+};
+
+/* ---------- ČTYŘI KONCE ---------- */
+const KONCE = {
+  stabilita: { nazev: "Stabilita a kompromis", poradi: 1,
+    popis: "Spor se vyřešil vyjednáním a systém drží. Brzdy a rovnováhy fungovaly tak, jak mají: nikdo nevyhrál všechno, ale nikdo nemusel porušit pravidla.",
+    pouceni: "Výhoda prezidentského systému: dělba moci nutí obě strany k dohodě a stát zůstává stabilní." },
+  pat: { nazev: "Trvalý pat", poradi: 2,
+    popis: "Prezident a zákonodárci se zablokovali. Instituce drží, ale stát nefunguje: zákony neprocházejí, rozpočet se vleče, krize se neřeší. Čeká se na další volby.",
+    pouceni: "Riziko prezidentského systému: dvojí legitimita a pevné funkční období. Nikdo nemusí ustoupit a krizi nejde „resetovat“ předčasnými volbami." },
+  impeachment: { nazev: "Impeachment: řešení v mezích pravidel", poradi: 3,
+    popis: "Moc prezidenta rostla, ale instituce zasáhly ústavní cestou. Sněmovna obžalovala, Senát soudil. Systém se ubránil legálně, i když s velkými obtížemi.",
+    pouceni: "Prezidentský systém má pojistku proti zneužití moci, ale je záměrně těžké ji použít. Chrání to stabilitu, ale špatného prezidenta se těžko zbavuješ." },
+  rozpad: { nazev: "Rozpad a převrat", poradi: 4,
+    popis: "Systém se zlomil mimo ústavu. Armáda, zrušení parlamentu, nebo pomalé vyprázdnění institucí zevnitř. Demokracie přestala fungovat.",
+    pouceni: "Nejvážnější riziko prezidentského systému: pat plus slabé instituce plus pevné funkční období vedou k řešení mimo pravidla." }
+};
+
+/* ---------- CELKOVÉ SHRNUTÍ (tabulka výhod a rizik) ---------- */
+const SHRNUTI = {
+  radky: [
+    { vlastnost: "Šéfa vlády volí přímo lidé.",
+      vyhoda: "Voliči mají větší výběr a víc rozhodují. Prezident má silný přímý mandát.",
+      riziko: "Vítěz bere vše: poražená polovina nemá nic. To prohlubuje polarizaci.",
+      cesty: ["usa-prezident", "latam-prezident"] },
+    { vlastnost: "Prezident je hlava státu i šéf vlády v jedné osobě.",
+      vyhoda: "Je jasné, kdo řídí stát a koho vinit z výsledků (jasná odpovědnost). Rozhoduje se rychle.",
+      riziko: "Prezident může začít tvrdit, že jen on zastupuje „skutečný lid“ (plebiscitární styl), a obcházet parlament dekrety.",
+      cesty: ["latam-prezident", "latam-zakonodarci"] },
+    { vlastnost: "Prezident i parlament mají pevné funkční období.",
+      vyhoda: "Parlament je nezávislý, nebojí se rozpuštění. Vláda nepadá, systém je stabilní a předvídatelný.",
+      riziko: "Dvojí legitimita a pat mezi prezidentem a parlamentem. Špatného prezidenta nejde snadno odvolat (rigidita).",
+      cesty: ["usa-zakonodarci", "usa-prezident"] }
+  ],
+  linz: [
+    "Když pat trvá a instituce jsou slabé (soudy nejsou nezávislé, armáda není pod civilní kontrolou), hrozí řešení mimo ústavu: převrat nebo rozklad demokracie zevnitř.",
+    "Když instituce drží (nezávislé soudy, zvyk dodržovat pravidla), stejný pat se vyřeší kompromisem, soudem nebo volbami."
+  ],
+  zaver: "Stejný ústavní systém funguje dobře tam, kde jsou silné instituce a zvyk dodržovat pravidla (USA), a selhává tam, kde instituce chybí (část Latinské Ameriky). To je odpověď na otázku projektu.",
+  zdroje: "Tabulka vychází z přednášky (Hague, Harrop, McCormick, kap. 9) a ze zdrojů Mainwaring a Shugart 1997, Linz 1990, Elgie 2008."
+};
+
+/* ---------- SCÉNÁŘE ---------- */
+const SCENARIOS = {
+
+  /* ===================== CESTA 1: USA + PREZIDENT ===================== */
+  "usa-prezident": {
+    nazev: "USA: hraješ za prezidenta",
+    start: { dz: 70, km: 30 },
+    brief: `Jsi prezident USA. Vyhrál jsi volby, ale Sněmovnu reprezentantů ovládá [[opozice]]. Je to [[rozdelena-vlada|rozdělená vláda]], v USA normální stav. Chceš prosadit svůj rozpočet, Kongres ho blokuje. Hrozí [[shutdown]], tedy zastavení financování části státu.
+    <br><br><span class="muted">Drobnost navíc: vyhrál jsi díky [[electoral-college|volitelskému sboru]], ale celkově jsi dostal méně hlasů než soupeř. Část země tvůj [[mandat]] zpochybňuje. Kongres se na to rád odvolává.</span>`,
+    body: [
+      { /* 1.1 */
+        situace: `Kongres neschválil tvůj rozpočet. Jen Kongres smí přidělovat peníze ([[power-of-purse|power of the purse]]). Bez dohody za týden začne [[shutdown]]. Co uděláš?`,
+        volby: [
+          { id: "1a", text: "Vyjednávat a slevit z části priorit.", dz: 5, km: 0, vetev: "dohoda",
+            dusledek: "Dohoda na poslední chvíli. Rozpočet prošel, ale bez tvých hlavních slibů. Média píší o ztrátě tváře, úřady ale fungují.",
+            realita: "Většina rozpočtových sporů v USA končí kompromisem na poslední chvíli. Dohody se často uzavírají doslova hodiny před půlnocí.",
+            pojem: { nazev: "Dělba moci a kontrola nad penězi", text: "Prezident nemůže sám utratit ani dolar. Peníze přiděluje Kongres. To je jeho hlavní zbraň a prezident s tím musí počítat." },
+            proc: "Prezident a Kongres mají každý svůj mandát, ale peníze drží jen Kongres. Když prezident chce vládnout, musí se s ním dohodnout. Dělba moci nutí ke kompromisu, i když to bolí.",
+            kontrafaktual: "Kdybys nechal shutdown, tlak by rostl na obě strany a někdo by nakonec ustoupil, ale stát by mezitím týdny nefungoval. Kdybys obešel Kongres příkazem, skončilo by to u soudu." },
+          { id: "1b", text: "Nechat vládu v shutdownu a tlačit na Kongres přes veřejnost.", dz: -5, km: 5, vetev: "dohoda",
+            dusledek: "Část úřadů zavřela, statisíce zaměstnanců nedostaly výplatu. Tlak roste na obě strany. Po několika týdnech někdo ustoupí, většinou s menším ziskem, než za jaký to stálo.",
+            realita: "Shutdown od 22. prosince 2018 do 25. ledna 2019 byl nejdelší v historii USA: 35 dní. Spor byl o peníze na zeď na hranici s Mexikem. Skončil bez těch peněz.",
+            pojem: { nazev: "Pevné funkční období (rigidita)", text: "V parlamentním systému by takový spor mohl shodit vládu a vést k předčasným volbám. V USA nejde vypsat nové volby. Krize se musí přečkat, nebo vyjednat." },
+            proc: "V prezidentském systému nikdo nemůže krizi „resetovat“ předčasnými volbami. Prezident i Kongres sedí dál. Shutdown je viditelný důsledek dvojí legitimity: oba tvrdí, že mají mandát, a oba čekají, kdo povolí první.",
+            kontrafaktual: "Kdybys vyjednával, rozpočet by prošel bez shutdownu, ale bez části tvých priorit. Kdybys obešel Kongres příkazem, dostal bys peníze rychle, ale soud by to pravděpodobně zastavil." },
+          { id: "1c", text: "Obejít Kongres: vyhlásit stav nouze a přesunout peníze exekutivním příkazem.", dz: -10, km: 15, vetev: "soud",
+            dusledek: "Rychlé. Peníze se přesunuly z jiných kapitol. Ale je to na hraně pravomocí a několik států i organizací tě okamžitě žaluje. Míří to k soudu.",
+            realita: "V únoru 2019 vyhlásil prezident Trump stav nouze na jižní hranici, aby získal peníze na zeď, které mu Kongres odmítl dát. Následovaly žaloby a soudní blokace části financování.",
+            pojem: { nazev: "Exekutivní příkaz a jeho meze", text: "Prezident může úřadům přikazovat, ale nesmí jít proti zákonům Kongresu. Kongres může příkaz zrušit zákonem a soud ho může prohlásit za protiústavní." },
+            proc: "Prezident má přímý mandát a cítí, že má právo jednat. Ale v systému dělby moci nemůže vládnout sám. Obcházení Kongresu zvyšuje koncentraci moci a oslabuje pravidla, i když je to „jen“ přesun peněz.",
+            kontrafaktual: "Kdybys vyjednával nebo nechal shutdown, zůstal bys uvnitř pravidel a soud by do toho nevstupoval. Zaplatil bys to politicky, ne institucionálně." }
+        ]
+      },
+      { /* 1.2: podle větve z 1.1 */
+        podle: true,
+        varianty: {
+          soud: {
+            situace: `Federální soud tvůj příkaz zablokoval. Rozhodl, že prezident nemůže obejít Kongres u peněz, které Kongres výslovně odmítl. Je to [[soudni-prezkum]] v praxi. Jak zareaguješ?`,
+            volby: [
+              { id: "2s-a", text: "Respektovat rozhodnutí soudu a vrátit se k jednání s Kongresem.", dz: 10, km: -5,
+                dusledek: "Ustoupil jsi. Opozice slaví, ale systém ukázal, že funguje: soud zastavil prezidenta a prezident to uznal. Tvoje důvěryhodnost u umírněných voličů roste.",
+                realita: "Soudní spory o financování pohraniční zdi v letech 2019 až 2020 skončily blokací části financování a nakonec změnou politiky po volbách v roce 2020.",
+                pojem: { nazev: "Soudní přezkum a nezávislost justice", text: "Soudci jsou jmenovaní doživotně, prezident je nemůže odvolat. Proto si můžou dovolit rozhodnout proti němu. Funguje to jen tam, kde prezident rozhodnutí respektuje." },
+                proc: "Brzdy a rovnováhy nejsou jen pravidla na papíře. Fungují, když je mocní dodržují i ve chvíli, kdy prohrávají. Respekt k soudu je ta „zvyklost“, která dělá ze starých institucí silné instituce.",
+                kontrafaktual: "Kdybys soud veřejně zpochybnil, krátkodobě bys mobilizoval své voliče, ale oslabil bys důvěru v soudy. Příště by se pravidla dodržovala o něco hůř." },
+              { id: "2s-b", text: "Veřejně soud zpochybnit a pokračovat jinou cestou.", dz: -10, km: 10,
+                dusledek: "Označil jsi soudce za „politické aktivisty“ a hledáš jiné kapitoly rozpočtu. Tvoji voliči jásají, ale polovina země vidí prezidenta, který nerespektuje pravidla. Soudy to nezastaví, ale důvěra v ně klesá.",
+                realita: "Prezidenti USA soudní rozhodnutí v posledku respektovali, i když je ostře kritizovali. Právě to je rozdíl mezi USA a zeměmi, kde prezident soud prostě ignoroval.",
+                pojem: { nazev: "Nezávislost justice", text: "Soud nemá armádu ani peníze. Jeho síla stojí na tom, že ostatní jeho rozhodnutí uznávají. Když prezident začne soudy zpochybňovat, oslabuje pojistku, která chrání i jeho." },
+                proc: "Instituce jsou silné jen tak, jak silná je zvyklost je poslouchat. Prezident se silným mandátem má pokušení říct „lid je se mnou, ne soudci“. To je začátek plebiscitárního stylu, i v USA.",
+                kontrafaktual: "Kdybys soud respektoval, ztratil bys peníze na projekt, ale posílil bys systém a svou pozici u umírněných voličů." }
+            ]
+          },
+          dohoda: {
+            situace: `Rozpočet je za tebou, ale blíží se volby do Kongresu (v polovině tvého období). Je to pro voliče první velké hodnocení tvé práce. Na čem postavíš kampaň své strany?`,
+            volby: [
+              { id: "2d-a", text: "Na kompromisu: „umím se dohodnout a stát funguje“.", dz: 5, km: 0,
+                dusledek: "Kampaň je nudná, ale důvěryhodná. Tvoje strana ztrácí méně, než se čekalo. Umírnění voliči oceňují, že úřady fungují.",
+                realita: "Strana prezidenta ve volbách v polovině období skoro vždy ztrácí křesla. Výjimky jsou vzácné (např. 2002).",
+                pojem: { nazev: "Rozdělená vláda", text: "V USA je normální, že prezident je z jedné strany a většina Kongresu z druhé. Zhruba 60 % doby po druhé světové válce. Systém s tím počítá a nutí k dohodám." },
+                proc: "Prezidentský systém odměňuje schopnost dohody napříč stranami, protože prezident bez Kongresu nic neprosadí. Kampaň na kompromisu je sázka na to, že voliči chtějí fungující stát víc než vítězství své strany.",
+                kontrafaktual: "Kdybys kampaňoval na konfrontaci, mobilizoval bys vlastní tábor, ale prohloubil polarizaci. Nová většina v Kongresu by s tebou jednala ještě hůř." },
+              { id: "2d-b", text: "Na konfrontaci: „Kongres mi brání plnit sliby“.", dz: -5, km: 5,
+                dusledek: "Mobilizoval jsi vlastní tábor, ale i ten druhý. Volby jsou těsné a nenávistné. Ať dopadnou jakkoli, Kongres je po nich rozdělenější.",
+                realita: "Polarizace Kongresu v posledních desetiletích prudce vzrostla: poslanci hlasují téměř výhradně podle strany a kompromisy jsou vzácnější než dřív.",
+                pojem: { nazev: "Polarizace", text: "Když se politici rozdělí do dvou nesmiřitelných táborů, kompromis je skoro nemožný. V prezidentském systému, kde prezident potřebuje Kongres, to vede k patu." },
+                proc: "Konfrontační kampaň funguje ve volbách, ale v systému dělby moci se po volbách musíš s protistranou zase dohodnout. Čím víc polarizace, tím horší vyjednávání a tím blíž k patu.",
+                kontrafaktual: "Kdybys postavil kampaň na kompromisu, strana by možná ztratila podobně, ale nová většina by s tebou byla ochotná jednat." }
+            ]
+          }
+        }
+      },
+      { /* 1.3 */
+        situace: `Volby do Kongresu vyhrála opozice ještě výrazněji. Teď má obě komory. Ty máš před sebou dva roky do konce období ([[pevne-obdobi|pevné funkční období]]). Jak budeš vládnout?`,
+        volby: [
+          { id: "3a", text: "Uznat výsledek a hledat s novou většinou společné body.", dz: 10, km: -10,
+            dusledek: "Tvoje velké reformy jsou pryč, ale menší zákony procházejí. Stát funguje. Voliči vidí prezidenta, který přijal porážku a pracuje dál.",
+            realita: "Prezidenti USA po ztrátě Kongresu často přecházejí k menším dohodám a zahraniční politice, kde mají volnější ruce. Např. prezident Clinton po roce 1994 nebo Obama po roce 2010.",
+            pojem: { nazev: "Pevné funkční období jako výhoda", text: "Prezident po prohraných volbách do Kongresu nepadá. Dokončí období, stát je stabilní a předvídatelný. To je silná stránka systému." },
+            proc: "Prezidentský systém dává stabilitu: prezident vládne dál i bez většiny. Cena je, že musí vyjednávat. Když to udělá, systém funguje a dělba moci se ukáže jako pojistka, ne jako překážka.",
+            kontrafaktual: "Kdybys dál obcházel Kongres příkazy, dva roky by se vedla válka příkazů, žalob a vyšetřování. Kdybys jen vetoval, nic by neprošlo a stát by se zasekl." },
+          { id: "3b", text: "Dál obcházet Kongres exekutivními příkazy a tvrdit, že mandát máš ty.", dz: -10, km: 15,
+            dusledek: "Vydáváš příkaz za příkazem, Kongres je ruší zákony, ty zákony vetuješ, soudy rozhodují případ od případu. Nic velkého se nestane, ale důvěra v pravidla klesá a Kongres zahajuje vyšetřování.",
+            realita: "Exekutivní příkazy používají všichni prezidenti USA, ale jejich dosah omezují zákony a soudy. Prezident, který se jimi snaží vládnout místo Kongresu, naráží na soudy a na vyšetřování.",
+            pojem: { nazev: "Vládnutí dekrety a jeho meze", text: "V USA je vládnutí příkazy omezené: soudy a Kongres je můžou zrušit. Ve slabších demokraciích je to cesta k autoritářství. Rozdíl dělají instituce." },
+            proc: "Tady vidíš, proč jsou USA jiné než křehké demokracie: i prezident, který obchází Kongres, narazí na soudy, na peníze a na vyšetřování. Instituce ho zpomalí a zastaví. Cena je ale pat a eroze důvěry.",
+            kontrafaktual: "Kdybys uznal výsledek a vyjednával, stát by fungoval a tvoje druhá polovina období by byla klidnější, i když bez velkých reforem." },
+          { id: "3c", text: "Vetovat vše, co nová většina pošle, a čekat na příští prezidentské volby.", dz: -5, km: 0,
+            dusledek: "Dva roky se nic nehýbe. Kongres schvaluje, ty vetuješ, Kongres nemá dvě třetiny na přehlasování. Stát funguje jen na setrvačnost. Voliči jsou unavení z obou stran.",
+            realita: "Veto bylo v historii USA přehlasováno jen u malého zlomku případů. Prezident bez většiny tak může Kongres zablokovat, ale ne prosadit nic vlastního.",
+            pojem: { nazev: "Pat (deadlock)", text: "Prezident a parlament se zablokují a nic se nehýbe. V prezidentském systému to může trvat celé roky, protože nikdo nemůže vypsat předčasné volby." },
+            proc: "Veto je obranná zbraň. Prezident s ním nic neprosadí, jen zastaví druhou stranu. V parlamentním systému by takový stav vedl k pádu vlády a novým volbám. V prezidentském musí všichni čekat do konce období.",
+            kontrafaktual: "Kdybys hledal společné body, menší zákony by prošly a stát by fungoval. Kdybys obcházel Kongres, přišla by vlna žalob a vyšetřování." }
+        ]
+      }
+    ],
+    shrnuti: {
+      default: [
+        "Výhoda: prezident má přímý mandát a pevné funkční období. Vládne dál i bez většiny v Kongresu, systém je stabilní.",
+        "Výhoda: dělba moci funguje jako pojistka. Kongres drží peníze, soudy hlídají příkazy. Prezident nemůže vládnout sám.",
+        "Riziko: dvojí legitimita vede k patu. Když obě strany tvrdí, že mají mandát, stát se může na měsíce zaseknout (shutdown).",
+        "V USA je převrat prakticky nedosažitelný. Silné instituce a zvyk dodržovat pravidla krizi vždy vrátí do mezí ústavy."
+      ]
+    }
+  },
+
+  /* ===================== CESTA 2: USA + ZÁKONODÁRNÁ MOC ===================== */
+  "usa-zakonodarci": {
+    nazev: "USA: hraješ za zákonodárnou moc",
+    start: { dz: 70, km: 45 },
+    brief: `Jsi vůdce většiny ve Sněmovně reprezentantů. Prezident začíná obcházet zákony [[exekutivni-prikaz|exekutivními příkazy]] a tvrdí, že má [[mandat]] od lidu. Soudy zatím mlčí. Tvůj úkol: udržet rovnováhu mocí, aniž bys rozbil stát.`,
+    body: [
+      { /* 2.1 */
+        situace: `Prezident vydal sérii sporných příkazů: přesouvá peníze bez souhlasu Kongresu a obchází zákon, který jsi schválil. Jaký nástroj z [[brzdy|brzd a rovnováh]] použiješ první?`,
+        volby: [
+          { id: "1a", text: "Podat žalobu k federálnímu soudu.", dz: 5, km: -5,
+            dusledek: "Soud se případem zabývá měsíce, ale nakonec část příkazů zruší. Pomalé, ale čisté: nikdo nemůže říct, že jsi porušil pravidla.",
+            realita: "Sněmovna reprezentantů v roce 2019 žalovala administrativu kvůli přesunu peněz na zeď na hranici. Federální soudy část financování zablokovaly.",
+            pojem: { nazev: "Soudní přezkum", text: "Soud posoudí, zda je prezidentův příkaz v souladu s ústavou a zákony, a může ho zrušit. Je to nejklidnější brzda, ale pomalá." },
+            proc: "Zákonodárci v USA nemusí hned sahat po nejtěžší zbrani. Mají nezávislé soudy, které spor rozhodnou podle pravidel. Tahle možnost existuje jen tam, kde prezident soudy neovládá.",
+            kontrafaktual: "Kdybys zablokoval rozpočet, zasáhl bys prezidenta rychleji, ale riskoval shutdown. Kdybys zahájil vyšetřování, zvýšil bys polarizaci dřív, než máš důkazy." },
+          { id: "1b", text: "Zablokovat prezidentovi rozpočet (power of the purse).", dz: 0, km: -5,
+            dusledek: "Prezident nemá peníze na své projekty. Ale hrozí shutdown a část veřejnosti viní tebe, ne prezidenta. Je to silná zbraň, která tne na obě strany.",
+            realita: "Kongres opakovaně použil rozpočet proti prezidentovi: od války ve Vietnamu (zákaz financování operací v Kambodži 1973) po spory o zeď na hranici.",
+            pojem: { nazev: "Kontrola nad penězi (power of the purse)", text: "Jen Kongres smí přidělovat peníze úřadům. Bez jeho souhlasu prezident nic nepostaví. Hlavní zbraň parlamentu." },
+            proc: "Rozpočet je nejsilnější zbraň Kongresu, protože prezident bez peněz nemůže vládnout. Ale v systému s pevnými mandáty nikdo neodstoupí, takže blokáda končí shutdownem, ne pádem vlády.",
+            kontrafaktual: "Kdybys šel k soudu, trvalo by to déle, ale bez shutdownu. Kdybys zahájil vyšetřování, obešel bys rozpočet, ale polarizoval zemi." },
+          { id: "1c", text: "Zahájit vyšetřování a směřovat k impeachmentu.", dz: 0, km: 0,
+            dusledek: "Vyšetřovací výbor má veřejná slyšení. Prezident mluví o „honu na čarodějnice“. Země je rozdělená, ale důkazy se postupně hromadí.",
+            realita: "Vyšetřování Watergate (1973 až 1974) začalo senátním výborem a trvalo přes rok, než se objevily nahrávky, které prezidenta Nixona usvědčily.",
+            pojem: { nazev: "Impeachment jako politický proces", text: "Impeachment je ústavní nástroj, ale rozhoduje o něm Kongres, ne soud. Je proto vždy i politický a prohlubuje rozdělení." },
+            proc: "Impeachment je nejtěžší brzda. V prezidentském systému je to jediná cesta, jak odvolat prezidenta mezi volbami. Protože ale rozhoduje politický orgán, je to vždy souboj stran, ne jen právní otázka.",
+            kontrafaktual: "Kdybys začal žalobou nebo rozpočtem, polarizace by rostla pomaleji a vyšetřování by bylo později věrohodnější." }
+        ]
+      },
+      { /* 2.2 */
+        situace: `Objevily se důkazy o zneužití moci: svědectví spolupracovníků, ale zatím žádná „kouřící zbraň“. V Senátu má tvoje strana 53 hlasů ze 100, k odsouzení prezidenta je potřeba 67. Co uděláš?`,
+        volby: [
+          { id: "2a", text: "Tlačit na impeachment hned, i bez jistoty v Senátu.", dz: -5, km: 0, vetev: "obzaloba",
+            dusledek: "Sněmovna prezidenta obžalovala po stranické linii. Tvoji voliči slaví, druhá polovina země mluví o puči. Senát je rozdělený a dvě třetiny nemáš.",
+            realita: "Prezident Clinton byl obžalován v prosinci 1998 a Senát ho v únoru 1999 zprostil. Prezident Trump byl obžalován dvakrát (prosinec 2019, leden 2021) a Senát ho zprostil v obou případech.",
+            pojem: { nazev: "Impeachment: Sněmovna obžaluje, Senát soudí", text: "Sněmovna obžaluje prostou většinou. Senát soudí a k odsouzení potřebuje dvě třetiny. Proto obžaloba bez podpory druhé strany nikdy nekončí odvoláním." },
+            proc: "Ústava USA udělala odvolání prezidenta záměrně těžké, aby většina Kongresu nemohla shodit prezidenta jen proto, že se jí nelíbí. Chrání to stabilitu, ale znamená to, že bez důkazů, které přesvědčí i druhou stranu, prezident zůstane.",
+            kontrafaktual: "Kdybys počkal na silnější důkazy, obžaloba by měla větší šanci v Senátu. Kdybys nechal rozhodnout volby, vyhnul by ses obvinění z puče, ale prezident by zůstal bez kontroly." },
+          { id: "2b", text: "Počkat na silnější důkazy a pokračovat ve vyšetřování.", dz: 5, km: 0, vetev: "obzaloba",
+            dusledek: "Vyšetřování trvá dál. Po měsících se objevují dokumenty, které prezidenta přímo usvědčují. Část senátorů jeho strany se začíná odvracet.",
+            realita: "Ve Watergate rozhodly nahrávky z Oválné pracovny, které musel prezident Nixon vydat po rozhodnutí Nejvyššího soudu (červenec 1974). Teprve pak ztratil podporu vlastní strany.",
+            pojem: { nazev: "Impeachment jako ústavní, ale politicky náročný nástroj", text: "Důkazy musí přesvědčit i senátory prezidentovy strany. Bez nich je impeachment jen gesto. S nimi je to nejsilnější brzda v systému." },
+            proc: "Protože k odsouzení jsou potřeba dvě třetiny Senátu, impeachment uspěje jen tehdy, když prezidentova vlastní strana uzná, že je neudržitelný. Trpělivost tady není slabost, je to jediná cesta, jak brzda může fungovat.",
+            kontrafaktual: "Kdybys spěchal, obžaloba by prošla Sněmovnou, ale v Senátu by neuspěla a prezident by to prodal jako vítězství. Kdybys nechal rozhodnout volby, prezident by možná vyhrál znovu." },
+          { id: "2c", text: "Nechat rozhodnout příští volby. Voliči ať to posoudí.", dz: 0, km: 5, vetev: "volby",
+            dusledek: "Vyšetřování pokračuje, ale bez obžaloby. Prezident mezitím vydává další příkazy. Kampaň je o něm: buď ho voliči potrestají, nebo mu dají nový mandát.",
+            realita: "Část Kongresu v obou velkých sporech (1998, 2019) argumentovala, že o prezidentovi mají rozhodnout voliči, ne impeachment. Je to legitimní, ale ponechává to prezidenta bez kontroly do voleb.",
+            pojem: { nazev: "Pevné funkční období (rigidita)", text: "Prezident sedí do konce období, ať dělá cokoli. Jediný „soud“ mimo impeachment jsou další volby, a ty můžou být daleko." },
+            proc: "V parlamentním systému by vláda, která ztratila důvěru, padla. V prezidentském musíš buď použít impeachment, nebo čekat na volby. To je rigidita: výhoda (stabilita) i riziko (špatný lídr zůstává) v jednom.",
+            kontrafaktual: "Kdybys zahájil obžalobu, systém by prezidenta alespoň viditelně brzdil. Kdybys počkal na důkazy, mohl bys mít obojí: brzdu i věrohodnost." }
+        ]
+      },
+      { /* 2.3: podle větve z 2.2 */
+        podle: true,
+        varianty: {
+          obzaloba: {
+            situace: `Sněmovna prezidenta obžalovala. Teď ho soudí Senát pod vedením předsedy Nejvyššího soudu. K odsouzení je potřeba 67 hlasů, tvoje strana má 53. Jak povedeš závěr?`,
+            volby: [
+              { id: "3o-a", text: "Jednat se senátory prezidentovy strany a nabídnout prezidentovi odchod se ctí (rezignaci).", dz: 10, km: -20, flag: "impeachment",
+                dusledek: "Vedení prezidentovy strany mu řeklo, že hlasy v Senátu nemá. Prezident rezignoval. Systém se ubránil bez odsouzení: stačila věrohodná hrozba.",
+                realita: "Prezident Nixon rezignoval 9. srpna 1974 poté, co mu vedoucí republikáni v Kongresu sdělili, že by při hlasování v Senátu nejspíš neobstál. Sněmovna o obžalobě ani nemusela hlasovat.",
+                pojem: { nazev: "Impeachment jako pojistka, která funguje hrozbou", text: "Impeachment v USA nikdy neskončil odsouzením. Jediný prezident, kterého donutil odejít, odešel sám, protože viděl, že hlasy proti němu má i vlastní strana." },
+                proc: "Brzda fungovala, protože instituce byly silnější než stranická loajalita. V zemi, kde prezident ovládá soudy a strana ho drží za každou cenu, by stejná obžaloba nic nezmohla. Tady vidíš, jak krize končí v mezích pravidel.",
+                kontrafaktual: "Kdybys hlasoval hned po stranické linii, Senát by prezidenta zprostil a on by zůstal do konce období s pocitem vítězství.",
+                poznamka: "V tvé cestě prezident odstoupil dřív, než Senát hlasoval. Impeachment zafungoval jako hrozba, ne jako rozsudek." },
+              { id: "3o-b", text: "Hlasovat hned, bez podpory druhé strany.", dz: -5, km: 0, flag: "impeachment",
+                dusledek: "Senát prezidenta zprostil: 53 hlasů pro odsouzení, 47 proti, daleko od 67. Prezident mluví o „úplném očištění“ a zůstává do konce období. Polarizace je rekordní.",
+                realita: "Senát zprostil prezidenta Clintona v únoru 1999 a prezidenta Trumpa v únoru 2020 i v únoru 2021. Ani jednou nebylo odsouzení blízko dvoutřetinové většině.",
+                pojem: { nazev: "Dvoutřetinová většina v Senátu", text: "Záměrně vysoká laťka. Zabraňuje odvolání prezidenta z politických důvodů, ale zároveň znamená, že prezident se silnou stranou je prakticky neodvolatelný." },
+                proc: "Impeachment je ústavní, ale rozhoduje politika. Když se Senát rozhoduje podle stran, dvě třetiny nikdo nesežene. Systém tak zůstal v mezích pravidel, ale prezident vyvázl. To je ta rigidita: špatného lídra je mezi volbami skoro nemožné sundat.",
+                kontrafaktual: "Kdybys jednal se senátory druhé strany a dal prezidentovi možnost odejít, mohl se systém ubránit jako v roce 1974.",
+                poznamka: "V tvé cestě Senát prezidenta zprostil. Ústavní nástroj byl použit, ale prezident zůstal. Přesně tak dopadly všechny tři impeachmenty v historii USA." },
+              { id: "3o-c", text: "Stáhnout obžalobu ze Senátu a soustředit se na volby.", dz: 5, km: 5,
+                dusledek: "Obžaloba zůstala viset bez soudu. Prezident ji prodává jako prohru Kongresu, ale vyšetřování ho oslabilo. Rozhodnou volby.",
+                realita: "Tenhle postup se v USA nestal, ale debata o tom, zda obžalobu vůbec posílat do Senátu, proběhla v lednu 2020 (Sněmovna ji několik týdnů zadržovala).",
+                pojem: { nazev: "Volby jako poslední brzda", text: "Když impeachment selže nebo není možný, zbývají jen volby. V prezidentském systému s pevným obdobím na ně můžeš čekat i roky." },
+                proc: "Ukazuje to meze brzd: Kongres může prezidenta brzdit a vyšetřovat, ale odvolat ho bez podpory jeho strany nemůže. Nakonec rozhodují voliči, což je výhoda (přímá odpovědnost) i riziko (do té doby je prezident bez kontroly).",
+                kontrafaktual: "Kdybys nechal Senát hlasovat, prezident by byl zproštěn, ale záznam by byl jasný. Kdybys vyjednával rezignaci, mohl odejít sám." }
+            ]
+          },
+          volby: {
+            situace: `Volby proběhly. Prezident je oslabený, ale zůstává. Tvoje strana udržela Sněmovnu. Prezident navrhuje dohodu: omezí příkazy, když mu pustíš část rozpočtu. Co uděláš?`,
+            volby: [
+              { id: "3v-a", text: "Vyjednat dohodu o mezích exekutivních příkazů.", dz: 10, km: -10,
+                dusledek: "Dohoda prošla: Kongres schválil zákon, který omezuje přesuny peněz bez souhlasu Kongresu, prezident ho podepsal. Spor skončil novým pravidlem.",
+                realita: "Po Watergate Kongres přijal řadu zákonů, které omezily prezidenta: např. zákon o rozpočtu (1974), který mu zakázal zadržovat peníze schválené Kongresem, a zákon o válečných pravomocech (1973).",
+                pojem: { nazev: "Brzdy a rovnováhy jako učící se systém", text: "Krize v USA často končí novým zákonem, který příští krizi ztíží. Instituce se tak posilují právě tím, že prošly sporem." },
+                proc: "Prezidentský systém umí krizi vyřešit dohodou, protože obě strany sedí dál a musí spolu vyjít. Když je zvykem respektovat pravidla, spor skončí novým pravidlem, ne převratem.",
+                kontrafaktual: "Kdybys blokoval vše, prezident by vládl příkazy dál a stát by se zasekl do konce jeho období." },
+              { id: "3v-b", text: "Odmítnout a blokovat prezidentovi vše do konce období.", dz: -10, km: 0,
+                dusledek: "Dva roky patu. Prezident vydává příkazy, ty je rušíš zákony, on je vetuje. Soudy řeší jeden případ za druhým. Nic velkého se nestane, ale stát stojí.",
+                realita: "Roky rozdělené vlády v USA bývají obdobím minima přijatých zákonů. Kongres po roce 2010 patřil k nejméně produktivním v moderní historii.",
+                pojem: { nazev: "Pat (deadlock)", text: "Prezident a parlament se zablokují. V prezidentském systému nikdo nemůže vypsat předčasné volby, takže pat trvá do konce období." },
+                proc: "Rigidita prezidentského systému: ani jedna strana nemůže ukončit spor předčasnými volbami. Pat je stabilní (nic se nerozpadne), ale stát nefunguje. Je to riziko, které v parlamentním systému v této podobě nehrozí.",
+                kontrafaktual: "Kdybys dohodu přijal, prezident by byl omezen novým zákonem a stát by fungoval." }
+            ]
+          }
+        }
+      }
+    ],
+    shrnuti: {
+      default: [
+        "Výhoda: protiváhy existují a fungují. Kongres má soudy, peníze i impeachment. Prezident v USA nemůže vládnout sám.",
+        "Riziko: odvolat prezidenta mezi volbami je záměrně těžké. Impeachment v USA nikdy neskončil odsouzením. To je rigidita: chrání stabilitu, ale špatného lídra těžko sundáš.",
+        "Impeachment je ústavní, ale rozhoduje politika. Bez podpory prezidentovy strany v Senátu je to jen gesto.",
+        "Kontrast s Latinskou Amerikou: stejná role tam selhává, protože soudy nejsou nezávislé a prezident rozhodnutí neuznává."
+      ]
+    }
+  },
+
+  /* ===================== CESTA 3: LATINSKÁ AMERIKA + PREZIDENT ===================== */
+  "latam-prezident": {
+    nazev: "Latinská Amerika: hraješ za prezidenta",
+    start: { dz: 60, km: 35 },
+    brief: `Jsi nově zvolený reformní prezident. Vyhrál jsi těsně, jen s malou částí hlasů ([[winner-takes-all|vítěz bere vše]]). Kongres ovládá [[opozice]], ekonomika se hroutí a společnost je rozdělená na dva tábory. Chceš prosadit velké reformy, Kongres ti je blokuje. Armáda zatím mlčí.
+    <br><br><span class="muted">Scénář vychází z Chile za prezidenta Salvadora Allendeho (1970 až 1973). Allende vyhrál s přibližně 36 % hlasů a Kongres ho zvolil až po dohodě s opozicí.</span>`,
+    body: [
+      { /* 3.1 */
+        situace: `Kongres zablokoval tvé klíčové reformy (znárodnění, pozemková reforma). Tvoji voliči čekají výsledky. Opozice říká, že většina lidí tě nevolila. Ty říkáš, že máš [[mandat]]. Co uděláš?`,
+        volby: [
+          { id: "1a", text: "Trpělivě vyjednávat s opozicí a reformy rozložit v čase.", dz: 10, km: 0, vetev: "klid",
+            dusledek: "Část reforem prošla v menší podobě. Tvoji radikálnější příznivci jsou netrpěliví a mluví o zradě. Ale Kongres s tebou jedná a armáda zůstává v kasárnách.",
+            realita: "V Chile jednal Allende s křesťanskými demokraty o kompromisu několikrát (naposledy v srpnu 1973), ale jednání vždy ztroskotala na tlaku radikálů v obou táborech.",
+            pojem: { nazev: "Dvojí legitimita", text: "Ty i Kongres jste zvoleni lidem. Ústava neříká, kdo má ustoupit. Jediná cesta v mezích pravidel je dohoda." },
+            proc: "V prezidentském systému nejde spor mezi prezidentem a parlamentem vyřešit tím, že jeden druhého odvolá. Buď dohoda, nebo pat. Vyjednávání je pomalé a frustruje voliče, ale drží systém pohromadě.",
+            kontrafaktual: "Kdybys vládl dekrety, reformy by šly rychle, ale opozice a soudy by je prohlásily za nezákonné a konflikt by eskaloval. Kdybys vyvedl lidi do ulic, mobilizoval bys i druhou stranu." },
+          { id: "1b", text: "Vládnout dekrety a obcházet Kongres.", dz: -15, km: 20, vetev: "eskalace",
+            dusledek: "Reformy běží přes nařízení a staré, zapomenuté zákony. Kongres je prohlašuje za neplatné, kontrolní úřad je odmítá podepsat. Opozice říká, že porušuješ ústavu. Dva zdroje moci, dvě pravdy.",
+            realita: "Allendeho vláda využívala k přebírání podniků dekrety a zákon z roku 1932, aby obešla Kongres. Opoziční Kongres v srpnu 1973 přijal usnesení, že vláda porušuje ústavu, a vyzval armádu k „obnovení pořádku“.",
+            pojem: { nazev: "Vládnutí dekrety", text: "Prezident obchází parlament a vládne vlastními nařízeními. Ve slabé demokracii je to cesta ke koncentraci moci a k otevřenému střetu s parlamentem." },
+            proc: "Dvojí legitimita naplno: prezident se odvolává na své voliče, Kongres na své. Když prezident začne vládnout dekrety, parlament ztrácí důvod respektovat pravidla a začne hledat jiné spojence, včetně armády.",
+            kontrafaktual: "Kdybys vyjednával, reformy by byly menší, ale Kongres by neměl důvod volat armádu. Kdybys mobilizoval ulici, konflikt by se přesunul z institucí na náměstí." },
+          { id: "1c", text: "Vyvést své příznivce do ulic a tlačit silou mobilizace.", dz: -10, km: 5, vetev: "eskalace",
+            dusledek: "Obrovské demonstrace na tvou podporu. O týden později ještě větší demonstrace opozice. Stávky, zablokované silnice, první násilí. Kongres tě viní z chaosu.",
+            realita: "V Chile se v letech 1972 až 1973 střídaly masové demonstrace obou táborů, stávky dopravců a obchodníků, zabírání továren a pouliční násilí. Země se dělila na dva nesmiřitelné tábory.",
+            pojem: { nazev: "Polarizace", text: "Společnost se rozdělí do dvou táborů, které se považují za nepřátele. Kompromis je pak zrada. V prezidentském systému, kde vítěz bere vše, polarizace roste rychle." },
+            proc: "Mobilizace ulice místo jednání v institucích je typická pro plebiscitární styl: prezident říká, že lid je s ním. Ale druhá strana má také svůj lid. Spor se přesouvá mimo pravidla a instituce ztrácejí kontrolu.",
+            kontrafaktual: "Kdybys vyjednával, reformy by zpomalily, ale ulice by zůstala klidná. Kdybys vládl dekrety, střet by zůstal v institucích, ale Kongres by tě obvinil z porušení ústavy." }
+        ]
+      },
+      { /* 3.2: podle větve z 3.1 */
+        podle: true,
+        varianty: {
+          klid: {
+            situace: `Polarizace přesto roste. Inflace stoupá, stávky dopravců ochromují zásobování, opozice v Kongresu tvrdí, že tvá vláda je nelegitimní. Armáda „sleduje situaci“. Co uděláš?`,
+            volby: [
+              { id: "2k-a", text: "Zmírnit tempo a nabídnout národní dohodu s opozicí.", dz: 10, km: -5, vetev: "dohoda",
+                dusledek: "Jednání s umírněnou opozicí dávají první výsledky: dohoda o rozsahu znárodnění a o rozpočtu. Radikálové na obou stranách zuří, ale armáda se uklidňuje.",
+                realita: "V Chile se o takovou dohodu pokoušel kardinál Silva Henríquez jako prostředník v srpnu 1973. Jednání ztroskotala. Historici se shodují, že to byla poslední šance odvrátit převrat.",
+                pojem: { nazev: "Rigidita a hledání východiska", text: "Pevné funkční období znamená, že spor nemůže ukončit předčasná volba. Zbývá jen dohoda, nebo zlom. Národní dohoda je pokus najít východisko uvnitř pravidel." },
+                proc: "Prezidentský systém nemá ventil, který má parlamentní (pád vlády, nové volby). Když prezident ani Kongres nemůžou odejít, jediná cesta, jak snížit tlak, je dohoda. Vyžaduje, aby obě strany uznaly druhou jako soupeře, ne nepřítele.",
+                kontrafaktual: "Kdybys přitvrdil a obvinil opozici ze sabotáže, armáda by to brala jako signál, že ústavní cesta skončila." },
+              { id: "2k-b", text: "Přitvrdit a obvinit opozici ze sabotáže.", dz: -15, km: 10, vetev: "armada",
+                dusledek: "Prohlásil jsi, že opozice a „cizí zájmy“ záměrně ničí ekonomiku. Tvoji příznivci zabírají továrny. Kongres odpovídá usnesením, že porušuješ ústavu. Generálové se scházejí bez tebe.",
+                realita: "Chile 1972 až 1973: inflace přes 300 %, nedostatek zboží, stávky, násilí. Obě strany se obviňovaly ze sabotáže. Kongres 22. srpna 1973 přijal usnesení o porušování ústavy vládou.",
+                pojem: { nazev: "Pevné funkční období (rigidita)", text: "Krize se nedá vyřešit předčasnými volbami. Prezident má mandát do roku 1976, Kongres do dalších voleb. Tlak roste a nemá kam uniknout." },
+                proc: "Tady vidíš Linzův argument naplno: rigidita (nikdo nemůže odejít) plus dvojí legitimita (oba mají mandát) plus polarizace (druhá strana je nepřítel). Když chybí ventil, tlak hledá cestu mimo ústavu.",
+                kontrafaktual: "Kdybys nabídl národní dohodu, armáda by neměla záminku a umírněná opozice by měla důvod jednat." }
+            ]
+          },
+          eskalace: {
+            situace: `Polarizace prudce roste. Inflace, nedostatek zboží, stávky, zabírání továren. Nejvyšší soud prohlásil, že tvá vláda nerespektuje jeho rozhodnutí. Armáda začíná být nervózní a generálové se scházejí. Co uděláš?`,
+            volby: [
+              { id: "2e-a", text: "Zmírnit a hledat národní dohodu s opozicí a církví jako prostředníkem.", dz: 10, km: -5, vetev: "armada",
+                dusledek: "Vrátil ses k jednání. Umírněná opozice chce záruky: konec dekretů, odzbrojení milic. Radikálové v tvém táboře mluví o zradě. Armáda jednání sleduje, ale přestala se scházet.",
+                realita: "V srpnu 1973 se Allende pokoušel o dohodu s křesťanskými demokraty, ale podmínky (mimo jiné vojáci ve vládě) nedokázaly uklidnit ani jednu stranu. O tři týdny později přišel převrat.",
+                pojem: { nazev: "Rigidita (pevné funkční období)", text: "Krize se nedá vyřešit předčasnými volbami. Prezident musí buď najít dohodu, nebo doufat, že vydrží do konce období." },
+                proc: "Vrácení konfliktu do institucí je jediná cesta v mezích pravidel. Ale čím později k ní dojde, tím míň důvěry zbývá. Prezidentský systém nemá nástroj, jak krizi rychle uzavřít, takže dohoda vždy přichází pozdě a draho.",
+                kontrafaktual: "Kdybys přitvrdil, Kongres a soudy by přestaly být tvými soupeři a staly by se spojenci armády." },
+              { id: "2e-b", text: "Přitvrdit a obvinit opozici ze sabotáže.", dz: -15, km: 10, vetev: "armada",
+                dusledek: "Vyhlásil jsi, že Kongres a soudy „slouží oligarchii“. Kongres přijal usnesení, že porušuješ ústavu, a vyzval armádu, ať zjedná pořádek. Velitel armády, který tě podporoval, rezignoval.",
+                realita: "Generál Carlos Prats, loajální ústavě, rezignoval 23. srpna 1973. Nahradil ho Augusto Pinochet. Kongres den předtím přijal usnesení, že vláda porušuje ústavu.",
+                pojem: { nazev: "Rigidita a zlom", text: "Když prezident ani parlament nemůžou odejít a žádný se nechce dohodnout, instituce ztrácejí důvěru a vzniká prostor pro „řešení“ mimo ústavu." },
+                proc: "Spojení dvojí legitimity, rigidity a polarizace. Každý má mandát, nikdo nemůže odejít, druhá strana je nepřítel. V zemi, kde armáda není pevně pod civilní kontrolou, je převrat logické vyústění, ne náhoda.",
+                kontrafaktual: "Kdybys nabídl národní dohodu, nebylo by jisté, že uspěje, ale armáda by ztratila záminku „obnovit pořádek“." }
+            ]
+          }
+        }
+      },
+      { /* 3.3: podle větve z 3.2 */
+        podle: true,
+        varianty: {
+          dohoda: {
+            situace: `Armáda zůstává v kasárnách. Dohoda s opozicí drží, ale Kongres ti dál blokuje velké reformy. Tvoji radikální příznivci chtějí referendum o nové ústavě, které by Kongres obešlo. Co uděláš?`,
+            volby: [
+              { id: "3d-a", text: "Přijmout menší reformy a dokončit období v mezích pravidel.", dz: 5, km: -5,
+                dusledek: "Tvoje období skončilo bez velkých reforem, ale v mírové zemi. Příští volby rozhodnou, kdo bude pokračovat. Demokracie přežila.",
+                realita: "V Latinské Americe přežily nejlépe ty prezidentské demokracie, kde prezidenti bez většiny stavěli koalice (např. Brazílie nebo Chile po roce 1990), i za cenu pomalých reforem.",
+                pojem: { nazev: "Brzdy a rovnováhy", text: "Kongres, který blokuje prezidenta, není porucha. Je to nástroj, jak zabránit, aby těsný vítěz vnutil svou vůli celé zemi." },
+                proc: "Prezidentský systém může fungovat i ve slabší demokracii, pokud prezident přijme, že těsný mandát neznamená právo na všechno. Výhoda stability se projeví jen tehdy, když prezident uzná meze své moci.",
+                kontrafaktual: "Kdybys obešel Kongres referendem, umírněná opozice by se přidala k radikálům a konflikt by se vrátil." },
+              { id: "3d-b", text: "Vypsat referendum o nové ústavě a obejít Kongres.", dz: -20, km: 20,
+                dusledek: "Opozice referendum bojkotovala, soud ho zpochybnil, výsledek nikdo neuznává. Dohoda se rozpadla. Zpět v patu, teď navíc se spornou ústavou.",
+                realita: "Hugo Chávez ve Venezuele prosadil v roce 1999 referendem novou ústavu, která posílila prezidenta. Byl to začátek postupné koncentrace moci, která za Madura dospěla k autoritářství.",
+                pojem: { nazev: "Plebiscitární styl", text: "Prezident tvrdí, že jen on zastupuje „skutečný lid“, a parlament považuje za překážku. Referendum místo parlamentu je jeho typický nástroj." },
+                proc: "Referendum vypadá demokraticky, ale obcházení parlamentu ničí dělbu moci: jeden člověk se opírá přímo o lid a instituce ztrácejí smysl. To je cesta, jak se prezidentský systém zevnitř mění v osobní vládu.",
+                kontrafaktual: "Kdybys přijal menší reformy, demokracie by přežila a volby by rozhodly, jestli tvůj program pokračuje." }
+            ]
+          },
+          armada: {
+            situace: `Armáda otevřeně naznačuje zásah. Generálové žádají tvou rezignaci „v zájmu národa“. Část tvých příznivců chce zbraně a odpor. Umírnění ti radí nabídnout [[prevrat|armádě]] a opozici východisko. Co uděláš?`,
+            volby: [
+              { id: "3a-a", text: "Ustoupit: vyhlásit referendum o své vládě a nabídnout odstoupení, pokud prohraješ.", dz: 5, km: -15,
+                dusledek: "Oznámil jsi referendum: pokud lid řekne ne, odstoupíš. Armáda váhá, umírněná opozice to vítá. Tvoji radikálové mluví o zradě. Není jisté, že vydržíš, ale zlom se zatím nestal.",
+                realita: "Allende podle svědectví plánoval oznámit referendum o své vládě 11. září 1973. Ten den ráno začal převrat. Nevíme, jestli by referendum krizi odvrátilo.",
+                pojem: { nazev: "Pevné funkční období a dobrovolný odchod", text: "Ústava prezidentovi nedává cestu, jak odejít dřív kromě rezignace. Nabídka referenda je pokus vytvořit ventil, který systém nemá." },
+                proc: "Prezident se tu snaží napodobit to, co parlamentní systém má zabudované: možnost vrátit spor voličům dřív, než vyprší období. Rigidita prezidencialismu znamená, že takový ventil musí prezident vytvořit sám a často pozdě.",
+                kontrafaktual: "Kdyby ses držel moci do konce, armáda by zasáhla. V Chile to znamenalo 17 let diktatury." },
+              { id: "3a-b", text: "Držet se moci. Mandát mám do konce období a neustoupím.", dz: -20, km: 10, flag: "prevrat",
+                dusledek: "Armáda zasáhla. Prezidentský palác bombardovaný, Kongres rozpuštěný, ústava zrušená. Tvoje vláda skončila mimo pravidla, stejně jako demokracie.",
+                realita: "11. září 1973 chilská armáda pod vedením generála Augusta Pinocheta svrhla prezidenta Allendeho. Allende v bombardovaném paláci La Moneda zemřel. Následovalo 17 let vojenské diktatury (do roku 1990).",
+                pojem: { nazev: "Převrat (puč)", text: "Mimoústavní převzetí moci, typicky armádou. Řešení krize mimo pravidla. Nejhorší konec, k jakému prezidentský systém může dojít." },
+                proc: "Linzův závěr: když pat trvá, obě strany mají mandát, nikdo nemůže odejít a instituce jsou slabé, krizi „vyřeší“ ten, kdo má zbraně. Pevné funkční období, které v USA dává stabilitu, tady znamenalo, že jediný způsob, jak prezidenta odstranit, byl převrat.",
+                kontrafaktual: "Kdybys nabídl referendum a odstoupení, nebylo by jisté, že armáda ustoupí, ale demokracie by měla šanci." }
+            ]
+          }
+        }
+      }
+    ],
+    shrnuti: {
+      default: [
+        "Riziko: dvojí legitimita. Prezident i Kongres tvrdí, že mluví za lid. Ústava neříká, kdo má ustoupit, a slabé instituce to nerozhodnou.",
+        "Riziko: rigidita. Pevné funkční období nejde zkrátit předčasnými volbami. Krize nemá ventil a tlak roste.",
+        "Riziko: vítěz bere vše a plebiscitární styl. Těsný vítěz si nárokuje všechno, poražená polovina nemá nic. Polarizace roste.",
+        "Když chybí nezávislé soudy a armáda pod civilní kontrolou, pat končí mimo ústavu: převratem (Chile 1973) nebo rozkladem zevnitř (Venezuela)."
+      ],
+      stabilita: [
+        "I ve slabší demokracii může prezidentský systém fungovat, pokud prezident uzná meze svého mandátu a vyjednává.",
+        "Cena je pomalost: velké reformy neprošly. To je výměna za stabilitu, kterou prezidentský systém nabízí.",
+        "Riziko tu zůstalo celou dobu: dvojí legitimita a rigidita nezmizely, jen se je podařilo udržet pod kontrolou.",
+        "Srovnej s převratem v jiné větvi: stejné instituce, stejná krize, jiné volby prezidenta."
+      ]
+    }
+  },
+
+  /* ===================== CESTA 4: LATINSKÁ AMERIKA + ZÁKONODÁRNÁ MOC ===================== */
+  "latam-zakonodarci": {
+    nazev: "Latinská Amerika: hraješ za zákonodárnou moc",
+    start: { dz: 50, km: 65 },
+    brief: `Jsi vůdce opoziční většiny v Kongresu. Právě jste vyhráli parlamentní volby. Prezident ale koncentruje moc: vládne [[dekrety]], oslabuje soudy a chce měnit ústavu. Tvůj úkol: demokratickými prostředky zabránit tomu, aby se z prezidenta stal vládce bez kontroly.
+    <br><br><span class="muted">Scénář vychází z Venezuely po roce 2015. Opozice tehdy vyhrála volby do Národního shromáždění, ale prezident Maduro jeho pravomoci postupně obešel.</span>`,
+    body: [
+      { /* 4.1 */
+        situace: `Prezident obchází Kongres: vydává dekrety se silou zákona a Kongres ignoruje. Většinu máš, ale prezident jmenoval na poslední chvíli nové soudce Nejvyššího soudu ze svých lidí. Jaký nástroj použiješ?`,
+        volby: [
+          { id: "1a", text: "Napadnout dekrety u Nejvyššího soudu.", dz: 5, km: 0,
+            dusledek: "Soud rozhodl do týdne: všechny dekrety jsou v pořádku a Kongres je „v pohrdání“ soudem. Soud, který má prezidenta hlídat, hlídá Kongres. Ale veřejnost i zahraničí viděly, že jsi šel ústavní cestou.",
+            realita: "Venezuelský Nejvyšší soud, obsazený v prosinci 2015 narychlo prezidentovými lidmi, od roku 2016 systematicky rušil rozhodnutí opozičního Národního shromáždění a v březnu 2017 na něj přenesl jeho pravomoci.",
+            pojem: { nazev: "Zajetí institucí", text: "Prezident obsadí soudy, volební komisi nebo úřady svými lidmi, takže přestanou být nezávislé. Instituce existuje, ale už nehlídá." },
+            proc: "Soudní přezkum funguje jen tam, kde jsou soudy nezávislé. V USA zastavil prezidentův příkaz. Tady soud posvětil všechno. Ukazuje to, že brzdy a rovnováhy nejsou samočinné: stojí na lidech, kteří je obsazují.",
+            kontrafaktual: "Kdybys zablokoval rozpočet, prezident by si peníze vzal mimo rozpočet (např. z ropné společnosti). Kdybys mobilizoval veřejnost a zahraničí, získal bys tlak zvenčí, ale prezident by tě označil za agenta cizích mocností." },
+          { id: "1b", text: "Blokovat rozpočet a všechny prezidentovy zákony.", dz: 0, km: 5,
+            dusledek: "Prezident předložil rozpočet rovnou Nejvyššímu soudu, který ho „schválil“ místo Kongresu. Tvoje hlavní zbraň přestala fungovat. Konfrontace se vyostřuje.",
+            realita: "V říjnu 2016 prezident Maduro předložil rozpočet Nejvyššímu soudu místo Národnímu shromáždění. Soud ho schválil s tím, že parlament je „v pohrdání soudem“.",
+            pojem: { nazev: "Kontrola nad penězi (power of the purse)", text: "Hlavní zbraň parlamentu: jen on přiděluje peníze. Funguje jen tehdy, když prezident a soudy pravidlo respektují." },
+            proc: "V USA je kontrola rozpočtu nejsilnější zbraní Kongresu. Tady prezident pravidlo prostě obešel přes soud, který ovládá. Stejná ústavní zbraň, jiný výsledek. Rozdíl nedělá text ústavy, ale to, zda instituce drží.",
+            kontrafaktual: "Kdybys šel k soudu, prohrál bys, ale ukázal bys, že jsi dodržel pravidla. Kdybys mobilizoval veřejnost, prezident by rozpočet obešel stejně, ale měl bys tlak zvenčí." },
+          { id: "1c", text: "Zmobilizovat veřejnost a získat mezinárodní tlak.", dz: 5, km: 0,
+            dusledek: "Statisíce lidí v ulicích, sousední státy a mezinárodní organizace vyzývají prezidenta k dialogu. Prezident mluví o „zahraničním spiknutí“, ale cítí tlak.",
+            realita: "Venezuelská opozice organizovala v letech 2016 až 2017 masové protesty. Organizace amerických států a řada zemí regionu vládu kritizovaly. Dialog zprostředkovaný Vatikánem (2016) ztroskotal.",
+            pojem: { nazev: "Opozice a mimoinstitucionální tlak", text: "Když brzdy uvnitř systému selhávají, opozice hledá tlak zvenčí: ulici a zahraničí. Pomáhá to, ale institucionální moc to nenahradí." },
+            proc: "Když prezident ovládl soudy, opozice má jen nástroje mimo instituce. V prezidentském systému nemůže vládu svrhnout hlasováním o nedůvěře. Mobilizace je legitimní, ale ukazuje, že ústavní brzdy už selhaly.",
+            kontrafaktual: "Kdybys šel k soudu nebo blokoval rozpočet, prezident by tě přes zajatý soud obešel. Mobilizace aspoň udržuje tlak a pozornost světa." }
+        ]
+      },
+      { /* 4.2 */
+        situace: `Prezident přitvrdil. Svolal nové „Ústavodárné shromáždění“, zvolené podle pravidel, která si sám napsal. To si přisvojilo pravomoci Kongresu. Máš parlament, který už nic nerozhoduje. Co uděláš?`,
+        volby: [
+          { id: "2a", text: "Pokračovat ústavní cestou: zasedat, hlasovat, dokumentovat porušování ústavy.", dz: 5, km: 0, vetev: "ustavni",
+            dusledek: "Kongres zasedá dál, i když jeho zákony nikdo neprovádí. Je to symbol, ale důležitý: jediná zvolená instituce, kterou svět uznává. Prezident nemůže tvrdit, že opozice odešla od pravidel.",
+            realita: "Venezuelské Národní shromáždění zasedalo dál i po roce 2017, přestože Ústavodárné shromáždění (zvolené v červenci 2017 při bojkotu opozice) převzalo jeho pravomoci. Řada zemí uznávala Národní shromáždění jako jediný legitimní orgán.",
+            pojem: { nazev: "Dvojvládí a vyprazdňování demokracie", text: "Dvě instituce si nárokují stejnou moc. Demokracie formálně existuje (volby, parlament), ale její orgány jsou obcházeny a vyprázdněny." },
+            proc: "Opozice, která zůstane v mezích pravidel, prohrává doma, ale drží legitimitu. V prezidentském systému nemůže prezidenta svrhnout hlasováním, takže legitimita je jediné, co jí zbývá. Je to sázka na to, že se pravidla jednou vrátí.",
+            kontrafaktual: "Kdybys bojkotoval, prezident by řekl, že opozice sama odešla. Kdybys hledal armádu, riskoval bys, že z protiváhy prezidenta se staneš spolupachatelem převratu." },
+          { id: "2b", text: "Bojkotovat všechno: volby, jednání i instituce.", dz: -10, km: 10, vetev: "ustavni",
+            dusledek: "Opozice odešla ze hry. Prezident obsadil uvolněné instituce svými lidmi a vyhrál „volby“ bez soupeře. Zahraničí protestuje, ale doma už není nikdo, kdo by moc brzdil.",
+            realita: "Venezuelská opozice bojkotovala volby Ústavodárného shromáždění (2017) a prezidentské volby (2018). Výsledkem byla moc bez protiváhy a mezinárodní spor o legitimitu prezidenta.",
+            pojem: { nazev: "Zajetí institucí", text: "Když opozice vyklidí instituce, prezident je obsadí svými lidmi. Instituce formálně existují, ale už nikoho nehlídají." },
+            proc: "Bojkot je pochopitelná reakce na nefér pravidla, ale v prezidentském systému, kde nejde vládu shodit, znamená vyklidit poslední prostor, kde protiváha existuje. Prezident pak vládne bez brzd.",
+            kontrafaktual: "Kdybys pokračoval ústavní cestou, Kongres by nic neprosadil, ale zůstal by jedinou uznávanou institucí." },
+          { id: "2c", text: "Hledat podporu u části armády.", dz: -15, km: 0, vetev: "armada",
+            dusledek: "Část důstojníků naslouchá. Ale prezident o tom ví, zatýká „spiklence“ a používá to jako důkaz, že opozice chystá puč. Z protiváhy se stáváš hrozbou pro ústavu, kterou chceš bránit.",
+            realita: "V roce 2019 vyzval předseda Národního shromáždění Juan Guaidó armádu, aby přešla na stranu opozice (pokus z 30. dubna 2019). Armáda zůstala věrná prezidentovi a režim to využil k represi.",
+            pojem: { nazev: "Převrat (puč) jako pokušení opozice", text: "Když ústavní cesta nefunguje, i opozice může sáhnout po armádě. Ale převrat, ať ho dělá kdokoli, je řešení mimo pravidla." },
+            proc: "Linzův argument platí pro obě strany: pat v prezidentském systému svádí k řešení mimo ústavu i opozici, ne jen prezidenta. V zemi, kde armáda rozhoduje spory politiků, přestává být demokracie demokracií bez ohledu na to, kdo armádu zavolá.",
+            kontrafaktual: "Kdybys pokračoval ústavní cestou, doma bys nic nezměnil, ale nedal bys prezidentovi záminku k represi." }
+        ]
+      },
+      { /* 4.3: podle větve z 4.2 */
+        podle: true,
+        varianty: {
+          ustavni: {
+            situace: `Vyvrcholení. Ekonomika je v troskách, miliony lidí odcházejí ze země. Prezident pod tlakem zvenčí nabízí „dialog“. Část opozice chce impeachment, i když prezident Kongres neuznává. Co uděláš?`,
+            volby: [
+              { id: "3u-a", text: "Vyjednat s mezinárodním zprostředkováním dohodu o nových, férových volbách.", dz: 15, km: -15,
+                dusledek: "Dohoda: nová volební komise, mezinárodní pozorovatelé, termín voleb. Prezident ji podepsal pod tlakem sankcí a sousedů. Není jisté, že ji dodrží, ale je to cesta zpět k pravidlům.",
+                realita: "Ve Venezuele probíhala jednání s mezinárodním zprostředkováním opakovaně (Vatikán 2016, Norsko 2019, Mexiko 2021, dohoda z Barbadosu 2023). Prezidentské volby v červenci 2024 skončily sporem o výsledek.",
+                pojem: { nazev: "Legitimita obnovená volbami", text: "Jediná cesta, jak v prezidentském systému vrátit spor k lidu, jsou férové volby. Když je prezident ovládá, musí je vynutit tlak zvenčí." },
+                proc: "Prezidentský systém nemá vnitřní ventil pro krizi (žádný pád vlády). Když instituce selžou, zbývá tlak zvenčí a dohoda o volbách. Je to vzácný a křehký výsledek, ale jediný, který vrací krizi do mezí pravidel.",
+                kontrafaktual: "Kdybys zahájil impeachment, prezident by ho ignoroval a soud by ho zrušil. Kdybys vyhlásil generální stávku, represe by zesílila." },
+              { id: "3u-b", text: "Zahájit impeachment prezidenta v Kongresu.", dz: 0, km: 5, flag: "impeachment",
+                dusledek: "Kongres odhlasoval, že prezident opustil úřad porušováním ústavy. Prezident se tomu vysmál, soud hlasování zrušil. Ale je to ústavní krok a svět ho uznává. Co se stane dál, závisí na tom, jak moc má prezident instituce v rukou.",
+                realita: "Venezuelské Národní shromáždění v roce 2019 prohlásilo prezidenta za uzurpátora a předsedu parlamentu Guaidóa za úřadujícího prezidenta. Uznalo ho přes 50 zemí, ale armáda a soudy zůstaly s Madurem. Pro srovnání Brazílie: tam Kongres impeachmentem odvolal dva prezidenty (Collor 1992, Rousseffová 2016), protože instituce držely.",
+                pojem: { nazev: "Impeachment ve slabé demokracii", text: "Impeachment funguje, jen když ho prezident a armáda uznají. V Brazílii ano, ve Venezuele ne. Rozhoduje síla institucí, ne text ústavy." },
+                proc: "Tady se rozchází cesta 2 (USA) a cesta 4. Stejný ústavní nástroj: v USA prezident uzná výsledek, v zajatém systému ho ignoruje. Impeachment je jen tak silný, jak silné jsou instituce, které ho vymáhají.",
+                kontrafaktual: "Kdybys vyjednával mezinárodně zprostředkovanou dohodu, nebyla by jistá, ale vracela by spor k volbám místo k otázce, kdo je prezident.",
+                poznamka: "Jak to dopadlo, závisí na tom, jak moc měl prezident instituce v rukou. Pokud skončíš v Rozpadu, prezident impeachment ignoroval a Kongres rozpustil. Pokud v Impeachmentu, instituce ještě držely natolik, že rozhodnutí platilo." },
+              { id: "3u-c", text: "Vyhlásit generální stávku a nepřetržité protesty.", dz: -10, km: 5,
+                dusledek: "Měsíce protestů, desítky mrtvých, tisíce zatčených. Prezident vydržel: armáda a zajaté soudy stojí za ním. Protesty slábnou, lidé odcházejí ze země.",
+                realita: "Protesty ve Venezuele v roce 2017 trvaly přes čtyři měsíce a zahynulo při nich přes 120 lidí. Režim vydržel. Ze země odešlo přes 7 milionů lidí.",
+                pojem: { nazev: "Polarizace a represe", text: "Když prezident ovládá armádu a soudy, protesty nemají institucionální cestu, jak uspět. Spor se řeší silou, ne pravidly." },
+                proc: "Ukazuje to meze protiváhy ve slabé demokracii: opozice může dělat všechno správně a stejně prohrát, protože prezident drží armádu a soudy. Dvojí legitimita se mění v jednu: tu, kterou vymáhá síla.",
+                kontrafaktual: "Kdybys vyjednával s mezinárodním tlakem, protesty by byly tvou pákou, ne jediným nástrojem." }
+            ]
+          },
+          armada: {
+            situace: `Část generálů ti nabízí zásah: „sesadíme prezidenta a předáme moc Kongresu“. Jiní tě varují, že armáda, která jednou sesadí prezidenta, moc tak snadno nevrátí. Co uděláš?`,
+            volby: [
+              { id: "3a-a", text: "Odmítnout a vrátit se k ústavní cestě a mezinárodnímu tlaku.", dz: 10, km: -5,
+                dusledek: "Odmítl jsi puč. Ztratil jsi rychlé řešení, ale zachoval legitimitu. Zahraničí tě podporuje, prezident je dál izolovaný. Dlouhá cesta, ale v mezích pravidel.",
+                realita: "Většina latinskoamerických demokracií po roce 1990 přežila krize právě proto, že opozice i armáda odmítly převrat jako nástroj (např. Brazílie, Chile, Uruguay).",
+                pojem: { nazev: "Civilní kontrola armády", text: "Demokracie přežívá, když armáda nerozhoduje spory politiků. Ani „dobrý“ převrat tohle pravidlo neporuší beztrestně." },
+                proc: "Linz varuje, že pat v prezidentském systému svádí k mimoústavnímu řešení obě strany. Opozice, která odmítne armádu, přijímá, že pravidla platí i tehdy, když prohrává. To je ta zvyklost, ze které vyrůstají silné instituce.",
+                kontrafaktual: "Kdybys zásah přijal, prezident by byl pryč, ale v zemi by vládla armáda, ne Kongres." },
+              { id: "3a-b", text: "Přijmout nabídku armády.", dz: -25, km: 0, flag: "prevrat",
+                dusledek: "Armáda sesadila prezidenta. Kongresu slíbila předat moc „až se situace uklidní“. Uklidňuje se už dva roky. Volby odloženy, opoziční noviny zavřené. Demokracie nepřežila ani prezidenta, ani jeho odpůrce.",
+                realita: "Honduras 2009: armáda s podporou Kongresu a Nejvyššího soudu sesadila prezidenta Zelayu, který chtěl obejít ústavu. Většina světa to odsoudila jako převrat, přestože ho zaštítily civilní instituce.",
+                pojem: { nazev: "Převrat (puč)", text: "Mimoústavní převzetí moci, typicky armádou. Řešení krize mimo pravidla, ať ho spustí prezident nebo opozice." },
+                proc: "Nejvážnější riziko prezidencialismu z druhé strany: pat a slabé instituce dovedly k převratu i tu stranu, která chtěla demokracii bránit. Pevné funkční období neumožnilo prezidenta odvolat v mezích pravidel, a tak ho odstranili mimo ně.",
+                kontrafaktual: "Kdybys odmítl, prezident by vládl dál, ale demokracie by měla šanci se vrátit volbami." }
+            ]
+          }
+        }
+      }
+    ],
+    shrnuti: {
+      default: [
+        "Riziko: zajetí institucí. Když prezident ovládne soudy a volební komisi, brzdy a rovnováhy existují jen na papíře.",
+        "Riziko: protiváha selhává, i když se opozice chová podle pravidel. V prezidentském systému nejde vládu shodit hlasováním, zbývá jen soud (zajatý), rozpočet (obejitý) nebo ulice.",
+        "Kontrast s cestou 2 (USA): stejná role, stejné nástroje. V USA uspějí, protože instituce drží. Zde selhávají, protože nedrží.",
+        "Pat ve slabé demokracii svádí k řešení mimo ústavu obě strany: prezidenta i opozici."
+      ]
+    }
+  }
+};
+</script>
+
+<!-- ============================================================ -->
+<!-- LOGIKA: tady se mění chování hry, ne texty                    -->
+<!-- ============================================================ -->
+<script>
+"use strict";
+
+/* ---------- Herní stav (jediný zdroj pravdy) ---------- */
+const state = {
+  screen: "uvod",
+  primerIndex: 0,
+  zeme: null,          // "usa" | "latam"
+  role: null,          // "prezident" | "zakonodarci"
+  dz: 70, km: 30,
+  bodIndex: 0,         // 0..2
+  log: [],             // [{bodIndex, situace, volba, dzPred, kmPred, dzPo, kmPo}]
+  flags: {},           // {prevrat: true, impeachment: true}
+  konec: null,
+  pending: null,       // volba čekající na "Dál"
+  dokoncene: {}        // {"usa-prezident": "stabilita", ...} jen v paměti
+};
+
+const $ = (sel) => document.querySelector(sel);
+const app = $("#app");
+const stav = $("#stav");
+const glossaryById = Object.fromEntries(GLOSSARY.map(g => [g.id, g]));
+
+/* ---------- Pomocné funkce pro text ---------- */
+
+// Nezlomitelné mezery za jednopísmennými předložkami a spojkami (česká typografie).
+function nbsp(html) {
+  return html.replace(/(^|[\s(„"‚>])([ksvzouaiKSVZOUAI])\s+(?=\S)/g, "$1$2 ");
+}
+
+// Převod značek [[id]] a [[id|text]] na klikací pojmy.
+function renderTerms(html) {
+  return html.replace(/\[\[([a-z0-9-]+)(?:\|([^\]]+))?\]\]/g, (m, id, text) => {
+    const g = glossaryById[id];
+    if (!g) return text || id;
+    // Bez explicitního textu: název pojmu bez závorky, s malým písmenem (uprostřed věty)
+    const base = g.pojem.replace(/\s*\(.*$/, "");
+    const label = text || base.charAt(0).toLowerCase() + base.slice(1);
+    return `<button type="button" class="term" data-term="${id}" aria-describedby="popover">${label}</button>`;
+  });
+}
+
+function fmt(html) { return nbsp(renderTerms(html)); }
+
+function esc(s) { return String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+
+function scenarioKey() { return `${state.zeme}-${state.role}`; }
+function scenario() { return SCENARIOS[scenarioKey()]; }
+
+/* ---------- Ukazatele ---------- */
+function clamp(v) { return Math.max(0, Math.min(100, v)); }
+
+function renderStav(deltaDz, deltaKm) {
+  const dzBar = $("#dzBar"), kmBar = $("#kmBar");
+  $("#dzVal").textContent = state.dz;
+  $("#kmVal").textContent = state.km;
+  dzBar.setAttribute("aria-valuenow", state.dz);
+  kmBar.setAttribute("aria-valuenow", state.km);
+  dzBar.classList.toggle("low", state.dz < 40);
+  dzBar.classList.toggle("mid", state.dz >= 40 && state.dz < 65);
+  kmBar.classList.toggle("high", state.km >= 70);
+  kmBar.classList.toggle("mid", state.km >= 50 && state.km < 70);
+  requestAnimationFrame(() => {
+    dzBar.firstElementChild.style.width = state.dz + "%";
+    kmBar.firstElementChild.style.width = state.km + "%";
+  });
+  const d1 = $("#dzDelta"), d2 = $("#kmDelta");
+  const showDelta = (el, d) => {
+    el.textContent = d ? (d > 0 ? `+${d}` : `${d}`) : "";
+    el.className = "delta " + (d > 0 ? "plus" : d < 0 ? "minus" : "");
+  };
+  showDelta(d1, deltaDz || 0);
+  showDelta(d2, deltaKm || 0);
+}
+
+/* ---------- Logika konce ---------- */
+function urciKonec() {
+  const z = ZEME[state.zeme];
+  if (state.flags.prevrat) return "rozpad";
+  if (state.dz < z.prahRozpad) return "rozpad";
+  if (state.km >= 80) return "rozpad";
+  if (state.flags.impeachment) return state.km >= 75 ? "rozpad" : "impeachment";
+  if (state.dz >= 65) return "stabilita";
+  return "pat";
+}
+
+/* ---------- Aktuální rozhodovací bod ---------- */
+function aktualniBod() {
+  const bod = scenario().body[state.bodIndex];
+  if (!bod.podle) return bod;
+  const posledni = state.log[state.log.length - 1];
+  const vetev = posledni && posledni.volba.vetev;
+  return bod.varianty[vetev] || bod.varianty.default || Object.values(bod.varianty)[0];
+}
+
+/* ---------- Navigace ---------- */
+function go(screen) {
+  state.screen = screen;
+  render();
+  window.scrollTo({ top: 0, behavior: "auto" });
+  const h = app.querySelector("h1, h2");
+  if (h) { h.setAttribute("tabindex", "-1"); h.focus({ preventScroll: true }); }
+}
+
+function resetHra() {
+  state.zeme = null; state.role = null;
+  state.bodIndex = 0; state.log = []; state.flags = {}; state.konec = null; state.pending = null;
+}
+
+function startScenar() {
+  const s = scenario();
+  state.dz = s.start.dz; state.km = s.start.km;
+  state.bodIndex = 0; state.log = []; state.flags = {}; state.konec = null; state.pending = null;
+  go("brief");
+}
+
+function zvolit(volbaId) {
+  const bod = aktualniBod();
+  const volba = bod.volby.find(v => v.id === volbaId);
+  const dzPred = state.dz, kmPred = state.km;
+  state.dz = clamp(state.dz + (volba.dz || 0));
+  state.km = clamp(state.km + (volba.km || 0));
+  if (volba.flag) state.flags[volba.flag] = true;
+  state.log.push({ bodIndex: state.bodIndex, situace: bod.situace, volba, dzPred, kmPred, dzPo: state.dz, kmPo: state.km, vsechny: bod.volby });
+  state.pending = volba;
+  render();
+  renderStav(volba.dz, volba.km);
+  const box = app.querySelector(".result-box");
+  if (box) { box.setAttribute("tabindex", "-1"); box.focus({ preventScroll: true }); box.scrollIntoView({ behavior: "smooth", block: "start" }); }
+}
+
+function dal() {
+  state.pending = null;
+  if (state.bodIndex >= 2) {
+    state.konec = urciKonec();
+    state.dokoncene[scenarioKey()] = state.konec;
+    try { localStorage.setItem("prez-odznaky", JSON.stringify(state.dokoncene)); } catch (e) { /* bez localStorage to nevadí */ }
+    go("konec");
+  } else {
+    state.bodIndex++;
+    go("bod");
+  }
+}
+
+/* ---------- Vykreslení obrazovek ---------- */
+const screens = {
+
+  uvod() {
+    return `
+    <section class="screen">
+      <div class="card" style="text-align:center; padding: 2.5rem 1.4rem">
+        <div class="kicker">Vzdělávací rozhodovací hra</div>
+        <h1>Formy vlády: prezidencialismus</h1>
+        <p class="lead">Zvol si zemi a roli, projdi krizí a zjisti, proč stejný ústavní systém jednou drží a jindy se zlomí.</p>
+        <p class="lead"><strong>Výzkumná otázka: Jaké jsou výhody a rizika prezidentského systému?</strong></p>
+        <p class="muted small">Odhad: 7 minut na jednu cestu. Pak si vyzkoušej jinou kombinaci a srovnej.</p>
+        <div class="actions" style="justify-content:center">
+          <button class="btn" data-go="primer">Začít</button>
+          <button class="btn secondary" data-go="zeme">Přeskočit úvod, znám to</button>
+        </div>
+      </div>
+    </section>`;
+  },
+
+  primer() {
+    const i = state.primerIndex;
+    const p = PRIMER[i];
+    const dots = PRIMER.map((_, k) => `<span class="${k === i ? "on" : ""}"></span>`).join("");
+    return `
+    <section class="screen">
+      <div class="kicker">Jak funguje prezidentský systém, ${i + 1} ze ${PRIMER.length}</div>
+      <div class="card">
+        <h2>${p.nadpis}</h2>
+        ${fmt(p.html)}
+      </div>
+      <div class="dots" aria-hidden="true">${dots}</div>
+      <div class="actions" style="justify-content:space-between">
+        <div>
+          ${i > 0 ? `<button class="btn secondary" data-primer="-1">Zpět</button>` : ""}
+        </div>
+        <div style="display:flex;gap:.6rem;flex-wrap:wrap">
+          <button class="btn secondary" data-go="slovnicek">Přeskočit</button>
+          ${i < PRIMER.length - 1
+            ? `<button class="btn" data-primer="1">Dál</button>`
+            : `<button class="btn" data-go="slovnicek">Pokračovat ke slovníčku</button>`}
+        </div>
+      </div>
+    </section>`;
+  },
+
+  slovnicek() {
+    return `
+    <section class="screen">
+      <div class="kicker">Slovníček</div>
+      <h2>Pojmy, které ve hře potkáš</h2>
+      <p class="muted">Zvýrazněné pojmy nahoře je dobré znát před hrou. Slovníček je dostupný kdykoli přes tlačítko v hlavičce. V textech jsou pojmy <span class="term" style="cursor:default">podtržené</span> a klikací.</p>
+      ${glossaryHtml()}
+      <div class="actions">
+        <button class="btn" data-go="zeme">Jdu hrát: vybrat zemi</button>
+      </div>
+    </section>`;
+  },
+
+  zeme() {
+    return `
+    <section class="screen">
+      <div class="kicker">Krok 1 ze 2</div>
+      <h2>Vyber zemi</h2>
+      <p class="muted">Stejný prezidentský systém, jiné prostředí.</p>
+      <div class="grid2">
+        ${Object.entries(ZEME).map(([k, z]) => `
+          <button class="choice-card" data-zeme="${k}">
+            <span class="emoji" aria-hidden="true">${z.emoji}</span>
+            <h3>${z.nazev}</h3>
+            <p style="margin:0">${nbsp(z.popis)}</p>
+          </button>`).join("")}
+      </div>
+    </section>`;
+  },
+
+  role() {
+    return `
+    <section class="screen">
+      <div class="kicker">Krok 2 ze 2, země: ${ZEME[state.zeme].nazev}</div>
+      <h2>Za koho hraješ?</h2>
+      <div class="grid2">
+        ${Object.entries(ROLE).map(([k, r]) => `
+          <button class="choice-card" data-role="${k}">
+            <span class="emoji" aria-hidden="true">${r.emoji}</span>
+            <h3>${r.nazev}</h3>
+            <p style="margin:0">${nbsp(r.popis)}</p>
+          </button>`).join("")}
+      </div>
+      <div class="actions"><button class="btn secondary" data-go="zeme">Zpět na výběr země</button></div>
+    </section>`;
+  },
+
+  brief() {
+    const s = scenario();
+    return `
+    <section class="screen">
+      <div class="kicker">${ZEME[state.zeme].nazev} · ${ROLE[state.role].nazev}</div>
+      <h2>${s.nazev}</h2>
+      <div class="card">
+        <div class="kicker">Situace</div>
+        <p class="lead" style="margin:0">${fmt(s.brief)}</p>
+      </div>
+      <div class="card">
+        <div class="kicker">Ukazatele na začátku</div>
+        <p style="margin:0"><strong>Demokratické zdraví ${s.start.dz}</strong>: jak moc systém funguje podle pravidel a drží pohromadě.<br>
+        <strong>Koncentrace moci u prezidenta ${s.start.km}</strong>: jak moc se moc stahuje k jedné osobě.</p>
+        <p class="muted small" style="margin:.5rem 0 0">Ukazatele nejsou skóre. Hra nemá vítěze. Každá cesta něco ukáže.</p>
+      </div>
+      <div class="actions">
+        <button class="btn" data-go="bod">Jdeme na první rozhodnutí</button>
+        <button class="btn secondary" data-go="role">Změnit roli</button>
+      </div>
+    </section>`;
+  },
+
+  bod() {
+    const bod = aktualniBod();
+    const n = state.bodIndex + 1;
+    const p = state.pending;
+    const letters = ["A", "B", "C", "D"];
+    let html = `
+    <section class="screen">
+      <div class="kicker">${ZEME[state.zeme].nazev} · ${ROLE[state.role].nazev} · rozhodnutí ${n} ze 3</div>
+      <div class="card">
+        <h2>Rozhodnutí ${n}</h2>
+        <p class="lead" style="margin:0">${fmt(bod.situace)}</p>
+      </div>`;
+    if (!p) {
+      html += `<div class="options" role="group" aria-label="Volby">
+        ${bod.volby.map((v, i) => `
+          <button class="option" data-volba="${v.id}">
+            <span class="letter" aria-hidden="true">${letters[i]}</span>
+            <span>${nbsp(esc(v.text))}</span>
+          </button>`).join("")}
+      </div>`;
+    } else {
+      const d = (x) => x > 0 ? `+${x}` : `${x}`;
+      html += `
+      <div class="card result-box">
+        <div class="kicker">Zvolil jsi: ${esc(p.text)}</div>
+        <h3>Co se stalo</h3>
+        <p>${fmt(p.dusledek)}</p>
+        <div class="shift">
+          <span>Demokratické zdraví: <strong class="${p.dz > 0 ? "delta plus" : p.dz < 0 ? "delta minus" : ""}" style="margin:0">${d(p.dz)}</strong></span>
+          <span>Koncentrace moci: <strong class="${p.km > 0 ? "delta minus" : p.km < 0 ? "delta plus" : ""}" style="margin:0">${d(p.km)}</strong></span>
+        </div>
+        <div class="infobox realita"><div class="kicker">V realitě</div>${fmt(p.realita)}</div>
+        <div class="infobox pojem"><div class="kicker">Pojem: ${esc(p.pojem.nazev)}</div>${fmt(p.pojem.text)}</div>
+        <div class="actions">
+          <button class="btn" data-dal="1">${state.bodIndex >= 2 ? "Zobrazit konec" : "Dál"}</button>
+        </div>
+      </div>`;
+    }
+    html += `</section>`;
+    return html;
+  },
+
+  konec() {
+    const k = KONCE[state.konec];
+    const s = scenario();
+    const body = (s.shrnuti[state.konec] || s.shrnuti.default);
+    const poznamky = state.log.map(l => l.volba.poznamka).filter(Boolean);
+    const scale = Object.entries(KONCE).sort((a, b) => a[1].poradi - b[1].poradi)
+      .map(([id, kk]) => `<div class="${id === state.konec ? "on" : ""}">${kk.poradi}. ${kk.nazev.split(":")[0]}</div>`).join("");
+    return `
+    <section class="screen">
+      <div class="card ending ${state.konec}">
+        <div class="kicker">Konec cesty: ${ZEME[state.zeme].nazev} · ${ROLE[state.role].nazev}</div>
+        <h1>${k.nazev}</h1>
+        <p class="lead">${nbsp(k.popis)}</p>
+        ${poznamky.map(pz => `<p><em>${nbsp(esc(pz))}</em></p>`).join("")}
+        <p><strong>${nbsp(k.pouceni)}</strong></p>
+        <div class="kicker" style="margin-top:1rem">Čtyři typické způsoby, jak prezidentské systémy řeší krizi (od nejlepšího po nejhorší)</div>
+        <div class="ending-scale">${scale}</div>
+        <p class="muted small">Stav ukazatelů na konci: demokratické zdraví ${state.dz}, koncentrace moci ${state.km}.</p>
+      </div>
+      <div class="card">
+        <h2>Co tahle cesta ukázala o prezidencialismu</h2>
+        <ul class="points">${body.map(b => `<li>${fmt(b)}</li>`).join("")}</ul>
+      </div>
+      <div class="actions">
+        <button class="btn" data-go="debrief">Projít si, co se stalo a proč</button>
+        <button class="btn secondary" data-go="shrnuti">Celkové shrnutí</button>
+      </div>
+    </section>`;
+  },
+
+  debrief() {
+    const k = KONCE[state.konec];
+    const karty = state.log.map((l, i) => {
+      const d = (x) => x > 0 ? `+${x}` : `${x}`;
+      const jine = l.vsechny.filter(v => v.id !== l.volba.id).map(v => esc(v.text)).join("; ");
+      return `
+      <div class="card debrief-card">
+        <div class="step">Rozhodnutí ${i + 1}</div>
+        <dl>
+          <dt>Situace</dt><dd>${fmt(l.situace)}</dd>
+          <dt>Co sis vybral</dt><dd><strong>${nbsp(esc(l.volba.text))}</strong></dd>
+          <dt>Co to způsobilo</dt><dd>${fmt(l.volba.dusledek)}<br><span class="muted small">Demokratické zdraví ${l.dzPred} → ${l.dzPo} (${d(l.volba.dz)}), koncentrace moci ${l.kmPred} → ${l.kmPo} (${d(l.volba.km)}).</span></dd>
+          <dt>Proč to tak je</dt><dd><div class="infobox proc" style="margin:.3rem 0">${fmt(l.volba.proc)}</div></dd>
+          <dt>V realitě</dt><dd><div class="infobox realita" style="margin:.3rem 0">${fmt(l.volba.realita)}</div></dd>
+          <dt>Kdyby ses rozhodl jinak</dt><dd><div class="infobox kontra" style="margin:.3rem 0">${fmt(l.volba.kontrafaktual)}<br><span class="muted small">Jiné možnosti v tomhle bodě: ${nbsp(jine)}.</span></div></dd>
+        </dl>
+      </div>`;
+    }).join("");
+    const s = scenario();
+    const zaver = (s.shrnuti[state.konec] || s.shrnuti.default);
+    return `
+    <section class="screen">
+      <div class="kicker">Debrief</div>
+      <h2>Co se právě stalo a proč</h2>
+      <p class="lead">Hrál jsi za <strong>${ROLE[state.role].nazev.toLowerCase()}</strong> v zemi <strong>${ZEME[state.zeme].nazev}</strong>. Dopadlo to takto: <strong>${k.nazev}</strong>.</p>
+      ${karty}
+      <div class="card">
+        <h3>Závěr cesty</h3>
+        <p>${nbsp(k.pouceni)}</p>
+        <ul class="points">${zaver.map(b => `<li>${fmt(b)}</li>`).join("")}</ul>
+        <p class="muted"><em>Zkus teď stejnou krizi za druhou stranu nebo v druhé zemi a srovnej, co se změní.</em></p>
+      </div>
+      <div class="actions">
+        <button class="btn" data-restart="1">Zkusit jinou kombinaci</button>
+        <button class="btn secondary" data-go="shrnuti">Zobrazit celkové shrnutí</button>
+      </div>
+    </section>`;
+  },
+
+  shrnuti() {
+    const badges = Object.keys(SCENARIOS).map(key => {
+      const [z, r] = key.split("-");
+      const done = state.dokoncene[key];
+      return `<span class="badge ${done ? "done" : ""}">${done ? "✓ " : ""}${ZEME[z].nazev} · ${ROLE[r].nazev}${done ? ": " + KONCE[done].nazev.split(":")[0] : ""}</span>`;
+    }).join("");
+    const rows = SHRNUTI.radky.map(r => `
+      <tr>
+        <td data-label="Vlastnost">${fmt(r.vlastnost)}<br><span class="muted small">Zažiješ: ${r.cesty.map(c => SCENARIOS[c].nazev).join("; ")}</span></td>
+        <td data-label="Výhoda" class="plus">${fmt(r.vyhoda)}</td>
+        <td data-label="Riziko" class="minus">${fmt(r.riziko)}</td>
+      </tr>`).join("");
+    return `
+    <section class="screen">
+      <div class="kicker">Celkové shrnutí</div>
+      <h2>Jaké jsou výhody a rizika prezidentského systému?</h2>
+      <div class="card">
+        <table class="summary">
+          <thead><tr><th>Vlastnost prezidentského systému</th><th>Výhoda</th><th>Riziko</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+        <h3>Co k tomu dodává Juan Linz</h3>
+        <ul class="points">${SHRNUTI.linz.map(b => `<li>${fmt(b)}</li>`).join("")}</ul>
+        <p class="lead"><strong>${nbsp(SHRNUTI.zaver)}</strong></p>
+        <p class="muted small">${nbsp(SHRNUTI.zdroje)}</p>
+      </div>
+      <div class="card">
+        <h3>Které cesty jsi prošel</h3>
+        <div class="badges">${badges}</div>
+        <p class="muted small">Pointa hry je v kontrastu: stejná krize, jiná země nebo jiná strana, jiný výsledek.</p>
+      </div>
+      <div class="actions">
+        <button class="btn" data-restart="1">Hrát znovu</button>
+        <button class="btn secondary" data-go="uvod">Na úvod</button>
+      </div>
+    </section>`;
+  }
+};
+
+function glossaryHtml() {
+  const card = (g) => `
+    <details class="gl" id="gl-${g.id}">
+      <summary><span>${esc(g.pojem)}</span>${g.jadro ? `<span class="tag core">jádro</span>` : `<span class="tag">rozšíření</span>`}</summary>
+      <div class="gl-in">
+        <p>${nbsp(esc(g.dlouze))}</p>
+        <p><strong>Příklad:</strong> ${nbsp(esc(g.priklad))}</p>
+        <p class="muted small"><strong>Kde se to ve hře objeví:</strong> ${nbsp(esc(g.kde))}</p>
+      </div>
+    </details>`;
+  const core = GLOSSARY.filter(g => g.jadro), ext = GLOSSARY.filter(g => !g.jadro);
+  return `
+    <h3 class="gl-section">Jádro: znát před hrou</h3>
+    ${core.map(card).join("")}
+    <h3 class="gl-section">Rozšíření</h3>
+    ${ext.map(card).join("")}`;
+}
+
+function render() {
+  const inGame = ["brief", "bod", "konec", "debrief"].includes(state.screen);
+  stav.hidden = !inGame;
+  app.innerHTML = screens[state.screen]();
+  if (inGame && !state.pending) renderStav(0, 0);
+}
+
+/* ---------- Popover pro pojmy ---------- */
+const popover = $("#popover");
+function openPopover(btn) {
+  const g = glossaryById[btn.dataset.term];
+  if (!g) return;
+  popover.innerHTML = `<strong>${esc(g.pojem)}</strong>${nbsp(esc(g.kratce))}
+    <div class="pop-actions">
+      <button type="button" class="btn-ghost" data-glopen="${g.id}">Víc ve slovníčku</button>
+      <button type="button" class="btn-ghost" data-popclose="1">Zavřít</button>
+    </div>`;
+  popover.hidden = false;
+  const r = btn.getBoundingClientRect();
+  const pw = Math.min(popover.offsetWidth, window.innerWidth - 32);
+  let left = r.left + window.scrollX;
+  if (left + pw > window.scrollX + window.innerWidth - 16) left = window.scrollX + window.innerWidth - 16 - pw;
+  if (left < 16) left = 16;
+  popover.style.left = left + "px";
+  popover.style.top = (r.bottom + window.scrollY + 8) + "px";
+  popover.querySelector("[data-popclose]").focus();
+  popover._anchor = btn;
+}
+function closePopover(refocus) {
+  if (popover.hidden) return;
+  popover.hidden = true;
+  if (refocus && popover._anchor) popover._anchor.focus();
+}
+
+/* ---------- Slovníček (dialog) ---------- */
+const glDialog = $("#glossary");
+function openGlossary(id) {
+  $("#glBody").innerHTML = glossaryHtml();
+  if (typeof glDialog.showModal === "function") glDialog.showModal(); else glDialog.setAttribute("open", "");
+  if (id) {
+    const d = $("#glBody").querySelector(`#gl-${id}`);
+    if (d) { d.open = true; d.scrollIntoView({ block: "start" }); d.querySelector("summary").focus(); }
+  }
+}
+
+/* ---------- Téma ---------- */
+function toggleTheme() {
+  const root = document.documentElement;
+  const cur = root.getAttribute("data-theme");
+  const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const isDark = cur ? cur === "dark" : systemDark;
+  root.setAttribute("data-theme", isDark ? "light" : "dark");
+  try { localStorage.setItem("prez-theme", isDark ? "light" : "dark"); } catch (e) {}
+}
+
+/* ---------- Události (delegace) ---------- */
+document.addEventListener("click", (e) => {
+  const t = e.target.closest("button");
+  if (!t) { if (!e.target.closest("#popover")) closePopover(false); return; }
+
+  if (t.classList.contains("term")) { openPopover(t); return; }
+  if (t.dataset.popclose) { closePopover(true); return; }
+  if (t.dataset.glopen) { closePopover(false); openGlossary(t.dataset.glopen); return; }
+  if (!t.closest("#popover")) closePopover(false);
+
+  if (t.id === "btnGlossary") { openGlossary(); return; }
+  if (t.id === "btnGlClose") { glDialog.close ? glDialog.close() : glDialog.removeAttribute("open"); return; }
+  if (t.id === "btnTheme") { toggleTheme(); return; }
+  if (t.id === "btnHome") { go("uvod"); return; }
+
+  if (t.dataset.go) { go(t.dataset.go); return; }
+  if (t.dataset.primer) {
+    state.primerIndex = Math.max(0, Math.min(PRIMER.length - 1, state.primerIndex + Number(t.dataset.primer)));
+    go("primer"); return;
+  }
+  if (t.dataset.zeme) { state.zeme = t.dataset.zeme; go("role"); return; }
+  if (t.dataset.role) { state.role = t.dataset.role; startScenar(); return; }
+  if (t.dataset.volba) { zvolit(t.dataset.volba); return; }
+  if (t.dataset.dal) { dal(); return; }
+  if (t.dataset.restart) { resetHra(); go("zeme"); return; }
+});
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") closePopover(true);
+});
+
+glDialog.addEventListener("click", (e) => { if (e.target === glDialog) glDialog.close(); });
+
+/* ---------- Start ---------- */
+(function init() {
+  try {
+    const th = localStorage.getItem("prez-theme");
+    if (th) document.documentElement.setAttribute("data-theme", th);
+    const odz = localStorage.getItem("prez-odznaky");
+    if (odz) state.dokoncene = JSON.parse(odz) || {};
+  } catch (e) {}
+  render();
+})();
+</script>
+</body>
+</html>
