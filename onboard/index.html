@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Aboard the Bohemia Rhapsody</title>
-<meta name="description" content="Your guide to the evening: programme, what's on, food and drink, the ship and practical details. Strategic Alliance Networking Dinner aboard the Bohemia Rhapsody, Prague, 22 October 2026.">
+<meta name="description" content="Your guide to the evening: programme, what's on, food and drink, the ship and practical details. NATO DIANA Accelerators Prague Summit Dinner aboard the Bohemia Rhapsody, Prague, 22 October 2026.">
 <meta property="og:title" content="Aboard the Bohemia Rhapsody">
-<meta property="og:description" content="Your guide to the evening aboard the Bohemia Rhapsody. Strategic Alliance Networking Dinner, Prague, 22 October 2026.">
+<meta property="og:description" content="Your guide to the evening aboard the Bohemia Rhapsody. NATO DIANA Accelerators Prague Summit Dinner, Prague, 22 October 2026.">
 <meta property="og:image" content="assets/hero.webp">
 <meta name="theme-color" content="#050f1f">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -244,14 +244,36 @@
   .route svg{width:48px;height:48px;color:var(--brass);margin-bottom:12px}
   @media (max-width:700px){.ship{grid-template-columns:1fr}}
 
+  /* the river: one entry per landmark, in sailing order */
+  .river{list-style:none;margin:44px 0 0;padding:0;display:grid;gap:0}
+  .river li{display:grid;grid-template-columns:72px 1fr 1.4fr;gap:12px 40px;padding:30px 0;border-top:1px solid var(--ink-faint);min-width:0}
+  .river li:last-child{border-bottom:1px solid var(--ink-faint)}
+  .river .no{font-family:var(--disp);font-weight:600;font-size:34px;line-height:1;color:var(--brass-bright);font-variant-numeric:tabular-nums}
+  .river h3{margin:0;font-family:var(--disp);font-weight:600;font-size:clamp(26px,2.6vw,34px);line-height:1.08}
+  .river .side{display:inline-block;margin-top:10px;font-family:var(--body);font-weight:500;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-dim);border:1px solid var(--ink-faint);border-radius:999px;padding:5px 10px}
+  .river .side.sb{border-color:rgba(140,170,114,.5);color:#b9d19f}
+  .river .side.pt{border-color:rgba(184,53,47,.6);color:#e39a95}
+  .river .side.ov{border-color:rgba(201,162,74,.5);color:var(--brass-bright)}
+  .river .txt{min-width:0;color:var(--ink-dim);font-size:15px;line-height:1.68}
+  .river .txt p{margin:0 0 10px}
+  .river .txt p:last-child{margin:0}
+  .river .txt .lf{display:block;margin-top:12px;padding-left:14px;border-left:2px solid rgba(201,162,74,.5);color:var(--ink);font-size:14px}
+  .river .txt .lf b{font-weight:600;color:var(--brass-bright)}
+  .legend{display:flex;flex-wrap:wrap;gap:10px 22px;margin-top:22px;font-size:13px;color:var(--ink-dim)}
+  .legend span::before{content:"";display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:8px;vertical-align:middle}
+  .legend .sb::before{background:#b9d19f}.legend .pt::before{background:#e39a95}.legend .ov::before{background:var(--brass-bright)}
+  @media (max-width:860px){.river li{grid-template-columns:56px 1fr}.river .txt{grid-column:2}.river .no{font-size:28px}}
+
   /* practical */
   .prac{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:22px 40px;margin-top:40px}
   .prac .p{border-top:1px solid var(--ink-faint);padding-top:14px;min-width:0}
   .prac .p .l{font-family:var(--body);font-weight:500;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--brass)}
   .prac .p .v{font-family:var(--disp);font-weight:600;font-size:clamp(22px,2.4vw,28px);color:var(--ink);margin-top:4px;line-height:1.1}
   .prac .p .d{font-size:14px;color:var(--ink-dim);margin-top:4px;line-height:1.55}
-  .hostcard{display:grid;grid-template-columns:160px 1fr;gap:28px;align-items:center;margin-top:44px;padding:26px 30px;border:1px solid var(--ink-faint);border-radius:8px;background:rgba(14,36,64,.45)}
-  .hostcard .ph{width:160px;height:160px;border-radius:50%;background:var(--steel) center 30%/cover no-repeat;border:2px solid rgba(201,162,74,.5);box-shadow:0 14px 30px rgba(0,0,0,.5)}
+  .hosts{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:44px}
+  @media (max-width:900px){.hosts{grid-template-columns:1fr}}
+  .hostcard{display:grid;grid-template-columns:140px 1fr;gap:24px;align-items:center;margin-top:0;padding:24px 26px;border:1px solid var(--ink-faint);border-radius:8px;background:rgba(14,36,64,.45)}
+  .hostcard .ph{width:140px;height:140px;border-radius:50%;background:var(--steel) center 30%/cover no-repeat;border:2px solid rgba(201,162,74,.5);box-shadow:0 14px 30px rgba(0,0,0,.5)}
   .hostcard .k{font-family:var(--body);font-weight:500;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--brass)}
   .hostcard h3{margin:4px 0 0;font-family:var(--disp);font-weight:600;font-size:34px;line-height:1.05}
   .hostcard p{margin:6px 0 0;color:var(--ink-dim);font-size:15px;line-height:1.6}
@@ -303,6 +325,7 @@
     <a href="#whats-on">What&rsquo;s on</a>
     <a href="#food">Food &amp; drink</a>
     <a href="#ship">The ship</a>
+    <a href="#river">The river</a>
     <a href="#practical">Practical</a>
   </nav>
 </div>
@@ -318,7 +341,7 @@
   <div class="datemark rv"><b>22 October 2026</b>Prague &middot; Vltava</div>
 
   <div class="hud">
-    <div class="eyebrow rv">Strategic Alliance Networking Dinner &middot; Thursday 22 October 2026</div>
+    <div class="eyebrow rv">NATO DIANA Accelerators Prague Summit Dinner &middot; Thursday 22 October 2026</div>
     <h1 aria-label="Welcome aboard the Bohemia Rhapsody.">
       <span class="w"><span>Welcome&nbsp;</span></span><span class="w"><span>aboard&nbsp;</span></span><br>
       <span class="w"><span>the&nbsp;</span></span><span class="w"><span>Bohemia&nbsp;</span></span><span class="w"><span>Rhapsody.</span></span>
@@ -372,7 +395,7 @@
           <p class="kicker sr">Tonight</p>
           <h2 class="subhead sr d1">An invitation-only evening on the Vltava, <em>beneath a lit Prague Castle.</em></h2>
         </div>
-        <p class="lead sr d2">The Strategic Alliance Networking Dinner brings together <strong>NATO DIANA, allied armed forces, Ukraine, government, industry, startups and investors</strong> on one deck for one evening. Each of us came as a ship. Tonight we sail as a fleet. This page is your guide: what happens when, what is served, and where to be.</p>
+        <p class="lead sr d2">The NATO DIANA Accelerators Prague Summit Dinner brings together <strong>NATO DIANA, allied armed forces, Ukraine, government, industry, startups and investors</strong> on one deck for one evening. Each of us came as a ship. Tonight we sail as a fleet. This page is your guide: what happens when, what is served, and where to be.</p>
       </div>
     </div>
   </section>
@@ -430,7 +453,7 @@
           <dt>Return</dt><dd>21:30, same pier</dd>
           <dt>Format</dt><dd>Standing reception with bar</dd>
           <dt>Dress</dt><dd>Business casual</dd>
-          <dt>Host</dt><dd>Leo&scaron; Mauer, Defence Hub CzechInvest</dd>
+          <dt>Hosts</dt><dd>Leo&scaron; Mauer and Na&#271;a Sokolov&aacute;, Defence Hub CzechInvest</dd>
         </dl>
         <p class="toast">The toast is raised beneath Prague Castle. Keep a glass in hand when the lights go down.</p>
       </aside>
@@ -487,7 +510,8 @@
           <ul>
             <li><b>Kulajda</b><span>Bohemian dill and mushroom soup, served in cups. <span class="fill">potvrdit</span></span></li>
             <li><b>Mini &#345;&iacute;ze&#269;ky</b><span>Bite-size Czech schnitzels. <span class="fill">potvrdit</span></span></li>
-            <li><b><span class="fill">doplnit dal&scaron;&iacute; polo&#382;ky z fin&aacute;ln&iacute;ho menu</span></b><span>Vegetarian and allergen information: <span class="fill">doplnit</span></span></li>
+            <li><b>Buffet by Prague Boats Catering</b><span><span class="fill">doplnit: kter&yacute; raut byl objedn&aacute;n (Raut 1&ndash;4, Staro&#269;esk&yacute;, Vegetari&aacute;nsk&yacute;) a jeho polo&#382;ky</span></span></li>
+            <li><b>Vegetarian and allergens</b><span><span class="fill">doplnit</span></span></li>
           </ul>
         </div>
         <div class="m sr d3">
@@ -539,6 +563,109 @@
     </div>
   </section>
 
+  <section class="block" id="river">
+    <div class="col">
+      <div class="chead">
+        <div>
+          <p class="kicker sr">The river</p>
+          <h2 class="subhead sr d1">What you are looking at, <em>bank by bank.</em></h2>
+        </div>
+        <p class="lead sr d2">The Vltava runs north through Prague, so we head upstream first. The west bank with the Castle sits to starboard on the way out and to port on the way home. The order below follows the usual run to Vy&scaron;ehrad and back. <span class="fill">potvrdit trasu s kapit&aacute;nem</span></p>
+      </div>
+      <div class="legend sr d2"><span class="sb">Starboard, the right-hand side facing forward</span><span class="pt">Port, the left-hand side</span><span class="ov">Overhead or ahead</span></div>
+      <ol class="river">
+        <li class="sr">
+          <div class="no">01</div>
+          <div><h3>&#268;ech Bridge</h3><span class="side ov">Overhead, minutes after casting off</span></div>
+          <div class="txt">
+            <p>The first bridge we pass under is Prague&rsquo;s shortest across the Vltava, 169 metres, and its only Art Nouveau one. Built 1905 to 1908 to the design of architect Jan Koula, it is named after the poet Svatopluk &#268;ech. The bronze figures of Victory holding torches on the tall columns at each end are by Anton&iacute;n Popp.</p>
+            <span class="lf"><b>Look up:</b> the hill ahead of the bridge is Letn&aacute;. The giant metronome on top (1991) stands where the largest Stalin monument in Europe stood from 1955 until it was blown up in 1962.</span>
+          </div>
+        </li>
+        <li class="sr">
+          <div class="no">02</div>
+          <div><h3>Rudolfinum</h3><span class="side pt">Port, Old Town bank</span></div>
+          <div class="txt">
+            <p>The neo-Renaissance building with the rooftop statues opened in 1885 as a concert hall and gallery, and is home to the Czech Philharmonic. Its Dvo&#345;&aacute;k Hall is where the composer himself conducted the orchestra&rsquo;s first concert in 1896.</p>
+            <p>Between the wars it was not a concert hall at all: from 1919 to 1939 it housed the Chamber of Deputies of the new Czechoslovak parliament.</p>
+          </div>
+        </li>
+        <li class="sr">
+          <div class="no">03</div>
+          <div><h3>Prague Castle and St Vitus Cathedral</h3><span class="side sb">Starboard, above the Lesser Town. The toast is raised here.</span></div>
+          <div class="txt">
+            <p>Founded around 880 by Prince Bo&#345;ivoj, the Castle has been the seat of Bohemian dukes and kings, Holy Roman Emperors and, since 1918, Czech presidents. Guinness lists it as the largest coherent castle complex in the world, roughly 70,000 square metres.</p>
+            <p>The cathedral that crowns it took 585 years. Charles IV laid the foundation stone in 1344 and brought in Matthias of Arras and then Peter Parler to build it; the west towers you see were finished only in 1929, in time for the millennium of St Wenceslas.</p>
+            <span class="lf"><b>Tonight:</b> as the ship turns beneath the lit Castle, the lights on deck go down. That is your cue to step out and raise a glass.</span>
+          </div>
+        </li>
+        <li class="sr">
+          <div class="no">04</div>
+          <div><h3>Charles Bridge</h3><span class="side ov">Overhead</span></div>
+          <div class="txt">
+            <p>Charles IV founded it in 1357 and Peter Parler built it; legend has the first stone laid at 5:31 on 9 July 1357, a palindrome of odd numbers (1-3-5-7-9-7-5-3-1) chosen by the court astrologers. Until 1841 it was the only crossing of the Vltava in Prague, which made it the city&rsquo;s trade route and, more than once, its battlefield.</p>
+            <p>The 30 statues came later, mostly Baroque, between 1683 and 1714. The first and most famous is St John of Nepomuk, thrown from this bridge into the river in 1393 on the orders of King Wenceslas IV.</p>
+            <span class="lf"><b>Look for:</b> the Old Town Bridge Tower on the port side, Parler&rsquo;s work too, and one of the finest Gothic gate towers in Europe.</span>
+          </div>
+        </li>
+        <li class="sr">
+          <div class="no">05</div>
+          <div><h3>Kampa and the &#268;ertovka</h3><span class="side sb">Starboard, just past the bridge</span></div>
+          <div class="txt">
+            <p>The island of Kampa is cut off from the Lesser Town by the &#268;ertovka, the &ldquo;Devil&rsquo;s Stream&rdquo;, a millrace dug in the 12th century. The large wooden wheel you can see still belongs to the Grand Priory Mill, which worked until 1936. Locals call the stretch Prague&rsquo;s Venice.</p>
+            <p>A few steps inland is the John Lennon Wall, where Prague&rsquo;s young painted songs and slogans the regime kept whitewashing throughout the 1980s.</p>
+          </div>
+        </li>
+        <li class="sr">
+          <div class="no">06</div>
+          <div><h3>Shooters&rsquo; Island and the Legion Bridge</h3><span class="side ov">Ahead, then overhead</span></div>
+          <div class="txt">
+            <p>St&#345;eleck&yacute; ostrov takes its name from the marksmen&rsquo;s guild that practised here from the 16th century. In 1882 it hosted the first mass gymnastics rally of the Sokol movement, the start of a tradition that filled stadiums for a century.</p>
+            <p>The bridge that steps across it is the Legion Bridge (1898 to 1901), named for the Czechoslovak Legions of the First World War.</p>
+          </div>
+        </li>
+        <li class="sr">
+          <div class="no">07</div>
+          <div><h3>National Theatre</h3><span class="side pt">Port, the golden roof</span></div>
+          <div class="txt">
+            <p>Paid for by public collections under the motto <em>N&aacute;rod sob&#283;</em>, &ldquo;the nation to itself&rdquo;, the theatre opened in June 1881, burned down in August, and was rebuilt from a second collection in two years. It reopened in 1883 with Smetana&rsquo;s opera <em>Libu&scaron;e</em>, written for the occasion.</p>
+            <span class="lf"><b>Look for:</b> the gilded roof and the two bronze chariots. The foundation stones inside were brought from mountains and sites all over the Czech lands.</span>
+          </div>
+        </li>
+        <li class="sr">
+          <div class="no">08</div>
+          <div><h3>&#381;of&iacute;n on Slavonic Island</h3><span class="side pt">Port</span></div>
+          <div class="txt">
+            <p>The cream palace on the island has been Prague&rsquo;s ballroom since the 1830s. Berlioz and Liszt performed here, and in June 1848 the island hosted the Slavic Congress, the first gathering of Slavic nations under the Habsburg crown, cut short by the Prague uprising that same month.</p>
+          </div>
+        </li>
+        <li class="sr">
+          <div class="no">09</div>
+          <div><h3>Dancing House</h3><span class="side pt">Port, at the Jir&aacute;sek Bridge</span></div>
+          <div class="txt">
+            <p>&ldquo;Fred and Ginger&rdquo;, by Vlado Miluni&#263; and Frank Gehry, finished in 1996 on a corner left empty since an American bombing raid on 14 February 1945, when crews bound for Dresden hit Prague by mistake. V&aacute;clav Havel grew up in the house next door and backed the project.</p>
+          </div>
+        </li>
+        <li class="sr">
+          <div class="no">10</div>
+          <div><h3>Vy&scaron;ehrad</h3><span class="side pt">Port, the rock with twin spires. The turning point.</span></div>
+          <div class="txt">
+            <p>Legend puts the beginning of Prague on this rock: Princess Libu&scaron;e is said to have stood here and foretold a city &ldquo;whose glory will touch the stars&rdquo;. History puts a royal seat here in the 11th century, when Vratislav II ruled from Vy&scaron;ehrad rather than the Castle.</p>
+            <p>The twin neo-Gothic spires belong to the Basilica of St Peter and St Paul (towers completed 1903). Behind it lies the Vy&scaron;ehrad cemetery and the Slav&iacute;n tomb, the resting place of Dvo&#345;&aacute;k, Smetana, Mucha and the &#268;apek brothers.</p>
+          </div>
+        </li>
+        <li class="sr">
+          <div class="no">11</div>
+          <div><h3>Pet&#345;&iacute;n on the way home</h3><span class="side pt">Port, after Charles Bridge</span></div>
+          <div class="txt">
+            <p>Heading back downstream, the wooded hill to port is Pet&#345;&iacute;n. The lookout tower on top (1891, 63.5 metres) was built for the Jubilee Exhibition as Prague&rsquo;s answer to the Eiffel Tower, two years after Paris. Below it runs the Hunger Wall, which Charles IV commissioned in 1360, according to tradition to give the poor paid work.</p>
+            <span class="lf"><b>Last look:</b> the Castle slides past once more, this time to port, before we come alongside at Dvo&#345;&aacute;kovo n&aacute;b&#345;e&#382;&iacute;.</span>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
   <section class="block" id="practical">
     <div class="col">
       <div class="chead">
@@ -546,7 +673,7 @@
           <p class="kicker sr">Practical</p>
           <h2 class="subhead sr d1">Where to be, what to wear, <em>who to ask.</em></h2>
         </div>
-        <p class="lead sr d2">Everything you need before you leave the hotel. Anything else, ask anyone wearing a crew badge.</p>
+        <p class="lead sr d2">Everything you need before you leave the hotel. Anything else, ask your hosts or anyone wearing a crew badge.</p>
       </div>
       <div class="prac">
         <div class="p sr d1"><div class="l">Boarding</div><div class="v">18:30 at pier 3</div><div class="d">Dvo&#345;&aacute;kovo n&aacute;b&#345;e&#382;&iacute;, by &#268;ech Bridge, Prague 1. The ship sails at 19:00 and cannot wait for late arrivals.</div></div>
@@ -556,12 +683,22 @@
         <div class="p sr d1"><div class="l">Wi-Fi</div><div class="v"><span class="fill">doplnit</span></div><div class="d">Network and password, if the ship provides one.</div></div>
         <div class="p sr d2"><div class="l">On the night</div><div class="v"><span class="fill">doplnit kontakt</span></div><div class="d">Phone number for the organising team on 22 October.</div></div>
       </div>
-      <div class="hostcard sr d2">
-        <div class="ph" role="img" aria-label="Leoš Mauer" style="background-image:url('assets/leos-mauer.jpg')"></div>
-        <div>
-          <div class="k">Your host tonight</div>
-          <h3>Leo&scaron; Mauer</h3>
-          <p>Defence Hub CzechInvest, part of the NATO DIANA network. Come and say hello: he wants to hear what you are building.</p>
+      <div class="hosts">
+        <div class="hostcard sr d2">
+          <div class="ph" role="img" aria-label="Leoš Mauer" style="background-image:url('assets/leos-mauer.jpg')"></div>
+          <div>
+            <div class="k">Your hosts tonight</div>
+            <h3>Leo&scaron; Mauer</h3>
+            <p>Director, Defence Hub CzechInvest, and head of the NATO DIANA accelerator for Czechia. He raises the toast beneath the Castle.</p>
+          </div>
+        </div>
+        <div class="hostcard sr d3">
+          <div class="ph" role="img" aria-label="Naďa Sokolová" style="background-image:url('assets/nada-sokolova.jpg')"></div>
+          <div>
+            <div class="k">&nbsp;</div>
+            <h3>Na&#271;a Sokolov&aacute;</h3>
+            <p>Defence Hub CzechInvest. She put this evening together. Anything you need on board, from an introduction to a taxi, start with her.</p>
+          </div>
         </div>
       </div>
     </div>
@@ -590,7 +727,7 @@
 
 <footer class="foot">
   <img src="assets/part-of-diana-white.png" alt="Part of the DIANA network">
-  <span>Strategic Alliance Networking Dinner &middot; 22 Oct 2026</span>
+  <span>NATO DIANA Accelerators Prague Summit Dinner &middot; 22 Oct 2026</span>
   <img src="assets/logo-cobrand-white.png" alt="Defence Hub · CzechInvest">
 </footer>
 
