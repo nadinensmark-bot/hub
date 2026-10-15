@@ -214,10 +214,21 @@
   .card svg{width:28px;height:28px;display:block;margin-bottom:14px;color:var(--brass)}
 
   /* menu */
-  .menu{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-top:40px}
+  .menu{display:grid;grid-template-columns:1.55fr 1fr;gap:18px;margin-top:40px}
+  .menu .side{display:grid;gap:18px;align-content:start}
+  .mgrid{display:grid;grid-template-columns:1fr 1fr;gap:22px 28px;margin-top:18px}
+  .mgrid h4{margin:0 0 10px;font-family:var(--body);font-weight:500;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--chart-dim);padding-bottom:8px;border-bottom:1.5px solid var(--chart-line)}
+  .mgrid ul{margin:0 !important}
+  .mgrid li{padding-bottom:9px !important}
+  .tg{display:inline-flex;gap:4px;margin-left:6px;vertical-align:1px}
+  .tg i{font-style:normal;font-family:var(--body);font-weight:600;font-size:9.5px;letter-spacing:.06em;color:var(--chart-ink);background:rgba(20,33,58,.1);border-radius:3px;padding:2px 5px}
+  .tg i.vg{background:rgba(140,170,114,.3)}
+  .al{font-size:12px;color:var(--chart-dim);letter-spacing:.04em}
+  .mkey{margin:18px 0 0;padding-top:12px;border-top:1.5px solid var(--chart-line);font-size:12.5px;color:var(--chart-dim);line-height:1.6}
+  @media (max-width:620px){.mgrid{grid-template-columns:1fr}}
   .menu .note{border:1px solid var(--ink-faint);border-radius:8px;padding:26px 24px;color:var(--ink-dim);font-size:15px;line-height:1.65;min-width:0}
   .menu .note h3{margin:0 0 10px;font-family:var(--disp);font-weight:600;font-size:28px;line-height:1.1;color:var(--ink)}
-  @media (max-width:980px){.menu{grid-template-columns:1fr 1fr}.menu .note{grid-column:1 / -1}}
+  @media (max-width:980px){.menu{grid-template-columns:1fr}}
   .menu .m{background:var(--chart);color:var(--chart-ink);border-radius:8px;padding:26px 24px;min-width:0;position:relative;overflow:hidden}
   .menu .m::before{content:"";position:absolute;top:0;left:0;right:0;height:5px;
     background:linear-gradient(90deg,var(--brass-deep),var(--brass) 30%,var(--brass-bright) 50%,var(--brass) 70%,var(--brass-deep))}
@@ -229,7 +240,7 @@
   .menu .m li b{font-family:var(--body);font-weight:600;font-size:15px}
   .menu .m li span{font-size:14px;color:var(--chart-dim);line-height:1.5}
   .menu .m .fill{color:var(--brass-deep);background:rgba(154,117,48,.1);border-color:rgba(154,117,48,.6)}
-  @media (max-width:640px){.menu{grid-template-columns:1fr}.menu .note{grid-column:auto}}
+  
 
   /* ship */
   .ship{display:grid;grid-template-columns:1.2fr .8fr;gap:32px 56px;margin-top:40px;align-items:start}
@@ -509,28 +520,34 @@
           <h3>Canap&eacute;s and buffet</h3>
           <ul>
             <li><b>Canap&eacute;s on trays</b><span>Camembert with cranberry jelly &middot; smoked salmon</span></li>
-            <li><b>Cold buffet</b><span>Czech cheeses and cured meats, Grana Padano, duck p&acirc;t&eacute;, mixed salad, Greek salad, bread</span></li>
-            <li><b>Hot buffet</b><span>Bone-in ham, beef goulash, chicken schnitzels, chicken wok, Karlovy Vary dumplings</span></li>
-            <li><b>Dessert</b><span>Brownies, cheesecake, fresh fruit</span></li>
-            <li><span>Buffet 1 by Prague Boats Catering. <span class="fill">zkontrolovat proti objedn&aacute;vce</span> Vegetarian and allergens: <span class="fill">doplnit</span></span></li>
           </ul>
+          <div class="mgrid">
+            <div><h4>Cold buffet</h4><ul><li><b>Selection of breads, dressing<span class="tg"><i class="">V</i></span></b><span> <span class="al">1 3 7 11</span></span></li><li><b>Grana Padano<span class="tg"><i class="">GF</i><i class="">V</i></span></b><span> <span class="al">7 12</span></span></li><li><b>Bocconcini salad<span class="tg"><i class="">GF</i><i class="">V</i></span></b><span> <span class="al">7 8 12</span></span></li><li><b>Duck p&acirc;t&eacute; with cranberry sauce<span class="tg"><i class="">GF</i></span></b><span> <span class="al">7</span></span></li><li><b>Czech cheeses and cured meats<span class="tg"><i class="">GF</i></span></b><span> <span class="al">7 8 12</span></span></li><li><b>Pork belly<span class="tg"><i class="">GF</i></span></b></li><li><b>Mixed leaf salad, dressing<span class="tg"><i class="">GF</i><i class="vg">VG</i></span></b></li><li><b>Greek salad<span class="tg"><i class="">GF</i><i class="">V</i></span></b><span> <span class="al">7 12</span></span></li></ul></div>
+            <div><h4>Hot buffet</h4><ul><li><b>Kulajda<span class="tg"><i class="">V</i></span></b><span>Bohemian dill and mushroom soup with egg, served in cups <span class="al"><span class="fill">doplnit alergeny</span></span></span></li><li><b>Bone-in ham<span class="tg"><i class="">GF</i></span></b><span> <span class="al">10 12</span></span></li><li><b>Beef goulash in dark beer</b><span> <span class="al">1</span></span></li><li><b>Chicken schnitzel bites</b><span> <span class="al">1 3 7</span></span></li><li><b>Pasta pomodoro<span class="tg"><i class="">V</i></span></b><span> <span class="al">1</span></span></li><li><b>Spicy chicken wings, chilli and honey<span class="tg"><i class="">GF</i></span></b></li><li><b>Paella with roasted vegetables<span class="tg"><i class="vg">VG</i></span></b></li></ul></div>
+            <div><h4>Sides</h4><ul><li><b>Grilled vegetables<span class="tg"><i class="">GF</i><i class="vg">VG</i></span></b></li><li><b>Karlovy Vary dumplings<span class="tg"><i class="">V</i></span></b><span> <span class="al">1 3 7 8</span></span></li><li><b>Jasmine rice<span class="tg"><i class="">GF</i><i class="vg">VG</i></span></b></li><li><b>American potatoes<span class="tg"><i class="">GF</i><i class="vg">VG</i></span></b></li></ul></div>
+            <div><h4>Desserts</h4><ul><li><b>Homemade chocolate brownies<span class="tg"><i class="">V</i></span></b><span> <span class="al">1 3 8</span></span></li><li><b>Cheesecake<span class="tg"><i class="">V</i></span></b><span> <span class="al">1 3 7</span></span></li><li><b>Fresh fruit salad<span class="tg"><i class="">GF</i><i class="vg">VG</i></span></b></li></ul></div>
+          </div>
+          <p class="mkey"><b>V</b> vegetarian &middot; <b>VG</b> vegan &middot; <b>GF</b> gluten-free &middot; allergens by EU number: 1 gluten, 3 eggs, 7 milk, 8 nuts, 9 celery, 10 mustard, 11 sesame, 12 sulphites. Buffet 1 by Prague Boats Catering.</p>
         </div>
+        <div class="side">
         <div class="m sr d3">
           <p class="k">To drink</p>
           <h3>Open bar</h3>
           <ul>
-            <li><b>Giacondi Grillo</b><span>Sicilian white</span></li>
-            <li><b>Giacondi Nero d&rsquo;Avola Rosato</b><span>Sicilian ros&eacute;</span></li>
-            <li><b>Giacondi Nero d&rsquo;Avola</b><span>Sicilian red</span></li>
-            <li><b>Soft drinks</b><span>Pepsi, Pepsi Max, Mirinda, 7 Up, Schweppes Tonic</span></li>
-            <li><b>Juice and water</b><span>Orange and apple juice, still and sparkling water</span></li>
+            <li><b>Beer</b><span>Pilsner Urquell lager &middot; Kozel &#268;ern&yacute; 11&deg; dark &middot; Birell non-alcoholic</span></li>
+            <li><b>Cider</b><span></span></li>
+            <li><b>Wine, Codici, Sicily</b><span>Grillo, dry white &middot; Nero d&rsquo;Avola Rosato, dry ros&eacute; &middot; Nero d&rsquo;Avola, dry red</span></li>
+            <li><b>Soft drinks</b><span>Pepsi, Pepsi Max, Mirinda, 7 Up &middot; Toma 100% juice, orange and apple</span></li>
+            <li><b>Water</b><span>Jugs of water with lemon and lime on the tables &middot; mineral water and soda at the bar</span></li>
+            <li><b>Coffee and tea</b><span>All evening</span></li>
           </ul>
         </div>
         <div class="note sr d4">
           <h3>How the bar works</h3>
-          <p>There is no welcome drink to wait for. Walk up, ask, and keep your glass topped up all evening: the bar is unlimited for the whole cruise.</p>
+          <p>There is no welcome drink to wait for. Walk up, ask, and keep your glass topped up all evening: everything on the bar is unlimited for the whole cruise.</p>
           <p>Before the Castle, take whatever you are drinking to the open deck. That is the glass you raise.</p>
-          <p>Driving later? The juices and the water are on the same bar, no questions asked.</p>
+          <p>Driving later? Birell, the juices and the water are on the same bar, no questions asked. Coffee and tea run until we come alongside.</p>
+        </div>
         </div>
       </div>
     </div>
