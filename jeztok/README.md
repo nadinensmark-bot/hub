@@ -45,8 +45,15 @@ Formát (celý popis s komentáři je v [`obsah/_sablona.js`](obsah/_sablona.js)
 smaž `skryty: true`, přidej `<script src="obsah/kurz-xxx.js">` do `index.html` a do seznamu
 v `sw.js` (aby fungoval offline).
 
-Ukázkové kurzy (`obsah/kurz-*.js`) jsou **jen demo**, aby appka hned něco ukazovala:
-Jak se učit, Finanční gramotnost, Angličtina – falešní přátelé. Klidně je smaž.
+Kurzy v `obsah/`:
+
+- **`kurz-defence.js` – Understanding Defence: a Business Perspective (VŠE, 2DEBU)** – 99 karet
+  v 7 tématech podle materiálů kurzu (video 1–3, case study, veletrhy 2026/27). Texty jsou vlastní
+  české parafráze pro osobní studium; materiály kurzu jsou © Dr. Kristýna Helm – pokud je repozitář
+  veřejný, zvaž, zda soubor nechat v repu, nebo ho z něj odstranit a nahrát si ho do appky jen
+  lokálně (Kurzy → Přidat kurz → Nahrát soubor umí přímo tento `.js` soubor).
+- `kurz-uceni.js`, `kurz-finance.js`, `kurz-anglictina.js` – **jen demo**, aby appka hned něco
+  ukazovala. Klidně je smaž.
 
 ## Rady, jak psát karty, aby to drželo
 
