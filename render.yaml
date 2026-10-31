@@ -21,3 +21,28 @@ services:
         value: claude-haiku-4-5
       - key: MODEL_ANALYZA
         value: claude-sonnet-5
+
+  # Ježtok – backend (účty, postup učení, testy, vlastní kurzy, volitelně AI).
+  # Návod: jeztok/server/README.md. Pro trvalá data nastavte DATABASE_URL (Postgres),
+  # jinak se na free tieru SQLite při každém nasazení smaže.
+  - type: web
+    name: jeztok-backend
+    runtime: node
+    rootDir: jeztok/server
+    plan: free
+    buildCommand: npm install
+    startCommand: node server.js
+    healthCheckPath: /api/health
+    envVars:
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: ALLOWED_ORIGIN
+        value: https://nadinensmark-bot.github.io
+      - key: DATABASE_URL      # Postgres connection string (Neon / Render Postgres); bez něj SQLite (efemérní)
+        sync: false
+      - key: ANTHROPIC_API_KEY # volitelné – zapne AI dovysvětlení a generování kurzů
+        sync: false
+      - key: MODEL_VYSVETLI
+        value: claude-opus-5-5
+      - key: MODEL_KURZ
+        value: claude-opus-5-5

@@ -1,5 +1,11 @@
 # Hub Relay — Defence CRM
 
+> **Ježtok 🦔** – ve složce [`jeztok/`](jeztok/) je mobilní učební appka: feed jako TikTok, ale
+> s učivem (karty, kvízy, lekce), lo-fi hudba generovaná v prohlížeči, ježek Bodlík, opakování
+> v rozestupech, testy, vlastní kurzy z JSON nebo (s AI) z vložených poznámek. Po nasazení na
+> GitHub Pages běží na `…/jeztok/`. Volitelný backend pro účty a sledování postupu je
+> v `jeztok/server/` (návod tamtéž). Obsah: `jeztok/obsah/`.
+
 > **Nové:** ve složce [`navigator/`](navigator/) je **DH Kompas** — průvodce EU programy
 > pro defence & dual-use startupy: výběr programu, hlídání výzev a uzávěrek, jak napsat
 > přihlášku, dual-use test podle kontrolních seznamů (Společný vojenský seznam EU
